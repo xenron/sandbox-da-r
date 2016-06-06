@@ -41,6 +41,28 @@ win.nme
 lose.nme
 # 股票选取(end)
 
+# # 股票选取(begin)
+# fin <- read.csv("D:/tmp/Finance Report 2012.csv", header=TRUE)
+# sort(table(fin$Nnindcd))
+# fin.net <- fin[fin$Nnindcd == "CSRC医药制造业",]
+# stk.net.list <- fin.net[,"Stkcd"]
+# stk.net.num <- length(stk.net.list)
+# stk.net.num
+# rank.net <- apply(fin.net, MARGIN=2,FUN=function(var) rev(rank(var)))
+# rank.net <- data.frame(rank.net)
+# k <- 15
+# win.select <- ifelse(rank.net$EPS <=k & rank.net$ROE <= k & rank.net$NPM <= k, 1, 0)
+# win.select
+# fin.win.net <- fin.net[ win.select == 1,]
+# fin.lose.net <- fin.net[ win.select ==0, ]
+# win.list <- fin.win.net$Stkcd
+# lose.list <- fin.lose.net$Stkcd
+# win.nme <- fin.win.net$Stknme
+# lose.nme <- fin.lose.net$Stknme
+# win.nme
+# lose.nme
+# # 股票选取(end)
+
 # 表现实测(begin)
 idx.data <- read.table("D:/tmp/TRD_Index.txt",header=TRUE)
 idx.HS300 <- idx.data[idx.data$Indexcd == 902 & as.Date(idx.data$Trddt) >= as.Date("2013-01-01"), c("Trddt","Clsindex")]
