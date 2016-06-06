@@ -32,12 +32,15 @@ win.select
 fin.win.net <- fin.net[ win.select == 1,]
 fin.lose.net<- fin.net[ win.select == 0,]
 win.list <- fin.win.net$Stkcd
-win.list <- fin.win.net$Stkcd
+# win.list <- fin.win.net$Stkcd
+lose.list <- fin.lose.net$Stkcd
 win.nme <- fin.win.net$Stknme
 lose.nme <- fin.lose.net$Stknme
-win.nme #输出结果
+# 输出结果
+win.nme
 lose.nme
 # 股票选取(end)
+
 # 表现实测(begin)
 idx.data <- read.table("D:/tmp/TRD_Index.txt",header=TRUE)
 idx.HS300 <- idx.data[idx.data$Indexcd == 902 & as.Date(idx.data$Trddt) >= as.Date("2013-01-01"), c("Trddt","Clsindex")]
@@ -45,8 +48,8 @@ idx.HS300 <- xts(idx.HS300$Clsindex, order.by=as.Date(idx.HS300$Trddt))
 names(idx.HS300) <- "HS300"
 win.prc.car <- xts( order.by=index(idx.HS300) )
 lose.prc.car <- xts( order.by=index(idx.HS300) )
-conn <- odbcConnectAccess2007(access.file="D:/tmp/Stock.accdb",uid="test", pwd="test")
 
+conn <- odbcConnectAccess2007(access.file="D:/tmp/Stock.accdb",uid="test", pwd="test")
 for( stk.cd.i in win.list ){
   prc.query <- paste("SELECT Trddt, Adjprcwd FROM Stock WHERE Trddt >= #1/1/2013# AND Stkcd = ", stk.cd.i)
   stk.prc.i <- sqlQuery(conn, prc.query)
@@ -59,15 +62,14 @@ for( stk.cd.i in lose.list ){
   stk.prc.xts.i <- xts(stk.prc.i$Adjprcwd, order.by=as.Date(stk.prc.i$Trddt))
   lose.prc.car <- merge(lose.prc.car, stk.prc.xts.i, all=TRUE)
 }
-
 close(conn)
 
 head(lose.prc.car)
 head(win.prc.car)
 
-plot(win.prc.car, screens=1)
-plot(lose.prc.car, screens=1)
-plot(na.approx(lose.prc.car), screens=1)
+# plot(win.prc.car, screens=1)
+# plot(lose.prc.car, screens=1)
+# plot(na.approx(lose.prc.car), screens=1)
 
 win.mean <- xts(rowMeans(na.locf(win.prc.car[, -3])), order.by=index(win.prc.car) )
 lose.mean <- xts(rowMeans(na.locf(lose.prc.car[, -18])), order.by=index(lose.prc.car) )
@@ -76,13 +78,13 @@ rep(coredata(win.mean[1]), length(win.mean))
 coredata(lose.mean[1])
 win.ret <- win.mean / rep(coredata(win.mean[1]), length(win.mean))
 lose.ret <- lose.mean / rep(coredata(lose.mean[1]), length(win.mean))
-plot(win.mean)
-plot(lose.mean)
-plot(merge(win.ret, lose.ret)[1:30], screens=1, col=c('darkred', 'darkgreen'), main="Cumulative Return of Win and Lose Groups")
+# plot(win.mean)
+# plot(lose.mean)
+# plot(merge(win.ret, lose.ret)[1:30], screens=1, col=c('darkred', 'darkgreen'), main="Cumulative Return of Win and Lose Groups")
 # 表现实测(end)
 
 # （2）试运行课程代码中CAPM模型Alpha的批量化计算，并找出超额收益率最高的5家公司
-source("D:/tmp/CAPMsource.R")
+source("D:/tmp/CAPM source.R")
 head(alpha.CAPM.df,3)
 alpha.CAPM.df[is.na(alpha.CAPM.df)==1]<-0
 alpha.CAPM.df$sum<-apply(alpha.CAPM.df[-1],1,sum)
