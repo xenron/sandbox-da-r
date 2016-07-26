@@ -1,0 +1,133 @@
+> f <- function(x) { 
+abs(x - 2.5) + (x - 1)^2 
+}
+
+> curve(f, from=0, to=5)
+> golden.method(f, a=1, b=3)
+> curve(f, from=0, to=5, cex.lab=1.5)
+> res <- golden.method(f, a=1, b=3)
+> points(res$minimizer,f(res$minimizer))
+> g <- function(x) {
+  abs(x-2.5) - abs(x -1) - abs(x -0.5)
+}
+> curve(g, from=-10, to=10)
+> h <- function(x) { 
+	-g(x)
+}
+
+> golden.method(h, a=-5, b=5)
+> f <- function(x) { 
+
+abs(x - 2.5) + (x - 1)^2 
+}
+> optimize(f, interval=c(1, 3), tol=0.000001)
+> optimize(f, lower=1, upper=3, tol=0.000001)
+> g <- function(x) {
+   abs(x-2.5) - abs(x -1) - abs(x -0.5)
+ }
+> optimize(g, lower=-5, upper=5, tol=0.000001, maximum=TRUE)
+> f <- function(x) {
+	exp(-x^2) + x^3
+ }
+> curve(f, from=-1, to=4)
+> newton.method(f, fp, fpp, x0=1)
+> optimize(f, interval=c(0, 2), tol=0.000001)
+> install.packages('spuRs')
+> library('spuRs')
+>  newtonraphson(minimizer.ftn, x0=1, tol=0.000001)
+> optim(par=1, fn=f)
+> optim(1, f, method="Brent", lower=0, upper=2)
+> rosenbrock.f <- function(x1,y1) {
+> x <- seq(-3, 3, by=0.2)
+> y <- seq(-2, 3, by=0.2)
+> z <- outer(x, y, rosenbrock.f)
+>persp(x,y,z,phi=40,theta=40,col="turquoise",shade=.000001,ticktype="detailed", cex.lab=1.5, zlab="")
+> rosenbrock.f2 <- function(x) {
+> optim(par=c(0.7,0.7), rosenbrock.f2)
+> optim(par=c(1.5,1.5), rosenbrock.f2)
+> set.seed(267)
+> optim(par=c(0.7,0.7), rosenbrock.f2, method="SANN")
+> x1 <- seq(-4, 4, by=0.5)
+> x2 <- seq(-4, 4, by=0.5)
+> mat <- as.matrix(expand.grid(x1, x2))
+> colnames(mat) <- c("x1", "x2")
+> z <- apply(mat, 1, h)
+> df <- data.frame(mat, z)
+> library(lattice) 
+> wireframe(z ~ x1 * x2 , data=df, shade = TRUE, scales = list(arrows = FALSE), screen = list(z = -35, x = -50))
+> hfn <- function(x, y){
+> x <- seq(-5, 5, by=0.2)
+> y <- seq(-5, 5, by=0.2)
+> z <- outer(x, y, hfn)
+> persp(x,y,z,phi=35,theta=50,col="purple",shade=.00000001, ticktype="detailed")
+> optim(par=c(0,0), h, method="BFGS", hessian = T)
+> install.packages("lpSolveAPI")
+> library(lpSolveAPI)
+> lp1 <- make.lp(2, 2)
+> set.column(lp1, 1, c(1, 1))
+> set.column(lp1, 2, c(1, 2))
+> set.objfn(lp1, c(4, 7))
+> set.constr.type(lp1, rep(">=", 2))
+> set.rhs(lp1, c(4, 6))
+> lp1
+> plot(lp1)
+> write.lp(lp1,'model1.lp',type='lp')
+> solve(lp1)
+> ?solve.lpExtPtr
+> get.variables(lp1)
+> get.objective(lp1)
+> install.packages("lpSolve")
+> library(lpSolve)
+> lp.ex1 <- lp(objective.in=c(4, 7), const.mat=matrix(c(1,1,1,2), nrow=2), const.rhs=c(4, 6), const.dir=rep(">=", 2)) 
+> lp.ex1
+>  lp.ex1$solution
+> lp2 <- make.lp(1, 2)
+> set.column(lp2, 1, c(1))
+> set.column(lp2, 2, c(1))
+> set.objfn(lp2, c(50, 82))
+> set.constr.type(lp2, c("<="))
+> set.rhs(lp2, c(200))
+> set.bounds(lp2, lower = c(65, 92), columns = c(1, 2))
+> set.bounds(lp2, upper = c(100, 170), columns = c(1, 2))
+> set.type(lp2, 1, "integer")
+> set.type(lp2, 2, "integer")
+> lp2
+> lp.control(lp2,sense='max')
+> write.lp(lp2,'model2.lp',type='lp')
+> solve(lp2)
+> get.variables(lp2)
+> get.objective(lp2)
+> lp.ex2 <- lp(objective.in=c(50, 82), const.mat=matrix(c(1,1,1,0,0,1,0,0,1,1), nrow=5), const.rhs=c(200, 65, 100, 92, 170), const.dir=c("<=", ">=", "<=", ">=", "<="), direction="max", int.vec=c(1, 2))
+> lp.ex2
+> lp.ex2$solution
+> lp.ex3 <- lp(objective.in=c(3, 4, -4), const.mat=matrix(c(1,3,1,2,-1,-1,-2,1,1), nrow=3), const.rhs=c(14, 0, 2), const.dir=c("<=", ">=", "<="), direction="min")
+> lp.ex3
+> lp.ex3$solution
+> install.packages("quadprog")
+> library("quadprog")
+> help(solve.QP)
+> QP <- 2*diag(c(1, 2, 4))
+> QP
+> d <- c(-1, -1, 5)
+> A <- matrix(c(-1, 1, 0, 0, 0, -1, -1, 0, 0), nrow=3)
+> A
+> b <- c(-1, 5, 0)
+> qp1 <- solve.QP(QP, -d, t(A), b)
+> qp1$solution
+> qp1$value
+> install.packages("Rsolnp")
+> library("Rsolnp")
+> help(solnp) 
+> f <- function(x){
+ 	4*x[1] - 2*x[2]
+ }
+> ctr <- function(x){
+ 	x[1]^2 + x[2]^2
+ }
+> constraints <- c(41)
+> x0 <- c(1, 1)
+> gnlp1 <- solnp(x0, fun = f, eqfun = ctr, eqB = constraints)
+> gnlp1$par
+> x0 <- c(-5, -5)
+> gnlp2 <- solnp(x0, fun = f, ineqfun = ctr, ineqLB = c(0), ineqUB=c(45))
+> gnlp2$par

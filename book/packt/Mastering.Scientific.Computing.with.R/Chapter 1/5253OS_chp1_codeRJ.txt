@@ -1,0 +1,305 @@
+> The user will type this into R
+> # If the user types this, R will treat it as a comment
+> x <- c(1, 2, 3)
+> integer_vector <- c(1L, 2L, 12L, 29L)
+> integer_vector
+> logical_vector <- c(T, TRUE, F, FALSE) 
+> logical_vector
+> character_vector <- c("Apple", "Pear", "Red", "Green", "These are my favorite fruits and colors")
+> character_vector
+> numeric_vector <- c(1, 3.4, 5, 10)
+> numeric_vector
+> seq(1, 12, by=3)
+> seq(1, 12) #note the default parameter for by is 1
+> y <- 1:12
+> y
+> z <- c(1:3, y)
+> z
+> x <- rep(3, 14)
+> x
+> rep(seq(1, 4), 3)
+> mixed_vector <- c(character_vector, numeric_vector)
+> mixed_vector
+> class(mixed_vector)
+> x <- c(integer_vector, numeric_vector)
+> x
+> class(x)
+> ls()
+> environB <- new.env()
+> ls(environB)
+> assign("y", c(1, 5, 9), envir=environB)
+> ls(environB)
+> environB$z <- "purple"
+> ls(environB)
+> get('y', envir=environB)
+> get('z', envir=environB)
+> environB$y
+> str(character_vector)
+> str(integer_vector)
+> str(logical_vector)
+> length(integer_vector)
+> character_vector[5]
+> numeric_vector[2]
+> x <- c(1, 4, 6)
+> x[2]
+> x <- c(1, 3, 5, 10)
+> x * 2
+> x + y
+> x
+> z <- c(1,3, 4, 6, 10) 
+> x + z #1 was recycled to complete the operation.
+> x %% 2
+> x %/% 5
+> simple_list <- list(1:4, rep(3, 5), "cat")
+> str(simple_list)
+> other_list <- list(1:4, "I prefer pears", logical_vector, x, simple_list)
+> str(other_list)
+> new_list <- c(list(1, 2, simple_list), c(3, 4), seq(5, 6))
+> new_list
+> str(new_list)
+> x_as_list <- as.list(x)
+> str(x_as_list)
+> simple_list
+> simple_list[3]
+> str(simple_list[3])
+> str(simple_list[[3]])
+> str(simple_list[[1]])
+> animal <- simple_list[[3]]
+> animal
+> num_vector <- simple_list[[1]]
+> num_vector
+> simple_list[[1]][4]
+> simple_list[1][4] #Note this format does not return the element
+> simple_list[1][[1]][4]
+> attr(x_as_list, "new_attribute") <- "This list contains the number of apples eaten for 3 different days"
+> attr(x_as_list, "new_attribute")
+> str(x_as_list)
+> structure(as.integer(1:7), added_attribute = "This vector contains integers.")
+> class(simple_list)
+> y <- c(first =1, second =2, third=4, fourth=4)
+> y
+> element_names <- c("first", "second", "third", "fourth")
+> y <- c(1, 2, 4, 4)
+> names(y) <- element_names 
+> y
+> setNames(y, c("alpha", "beta,", "omega", "psi"))
+> y <- setNames(y, c("alpha", "beta", "psi"))
+> names(y)
+> x <- 1:12
+> x <- 1:12
+> names(x)
+> unname(y)
+> names(y) <- NULL
+> names(y) 
+> drug_response <- c("placebo", "treatment", "placebo", "treatment")
+> drug_response <-  factor(drug_response)
+> drug_response
+> as.integer(drug_response)
+> drug_response[4] <- "refused treatment"
+> drug_response <- factor(drug_response, levels = c(levels(drug_response), "refused treatment"))
+> drug_response[4] <- "refused treatment"
+> drug_response
+> as.integer(drug_response)
+> coordinates <- array(1:16, dim=c(2, 8, 2))
+> coordinates
+> values <- seq(1, 12, by=2)
+> values
+> dim(values) <- c(2,3)
+> values
+> dim(values) <- c(3,2)
+> values
+> coordinates[1, 2, 2]
+> values_matrix <- matrix(values, ncol=3, nrow=2)
+> values_matrix
+> x <- c(1,5,9)
+> y <- c(3,7,11)
+> m1  <- rbind(x, y)
+> m1
+> m2 <- cbind(x,y)
+> m2
+> values_matrix[2,2]
+> values_matrix[4]
+> coordinates[3]
+> length(coordinates)
+> ncol(values_matrix)
+> colnames(values_matrix) <- c("Column_A", "Column_B", "Column_C") 
+> values_matrix
+> dim(coordinates)
+> dimnames(coordinates) <- list(c("alpha", "beta"), c("a", "b", "c", "d", "e", "f", "g", "h"), c("X", "Y"))
+> coordinates
+> x <- c(1, 6, 12) 
+> str(x)
+> str(matrix(x, ncol=1))
+> str(matrix(x, nrow=1))
+> str(array(x, 3)) 
+> students <- c("John", "Mary", "Ethan", "Dora") 
+> test.results <- c(76, 82, 84, 67)
+> test.grade <- c("B", "A", "A", "C")
+> thirdgrade.class.df <- data.frame(students, test.results, test.grade)
+> thirdgrade.class.df
+> values_matrix.df  <- as.data.frame(values_matrix)
+> values_matrix.df  
+>  rownames(values_matrix.df) <- c("Row_1", "Row_2")
+> values_matrix.df
+> student_ID <- c("012571", "056280", "096493", "032567")
+> thirdgrade.class.df <- cbind(thirdgrade.class.df, student_ID)
+> thirdgrade.class.df
+> thirdgrade.class <- cbind(students, test.results, test.grade, student_ID)
+> thirdgrade.class
+> class(thirdgrade.class)
+> thirdgrade.class.df <- data.frame(students, test.results, test.grade, student_ID, stringsAsFactors=FALSE)
+> str(thirdgrade.class.df)
+> modified.df <- transform(thirdgrade.class.df, test.grade  = as.factor(test.grade))
+> str(modified.df)
+> modified.df[3, 4]
+> modified.df[, 1]
+> str(modified.df[,1])
+> modified.df[1:2,]
+> str(modified.df[1:2,])
+> modified.df$test.results
+> install.packages(pkgname.tar.gz, repos = NULL, type = "source" ) 
+> getwd()
+> setwd("/Users/johnsonR/myDirectory")
+> setwd("C:/myDirectory") 
+> myData.df <- read.table("myData.txt", header=TRUE, sep="\t")
+> myData.df 
+> read.delim("myData.txt", header=TRUE)
+> myData2.df <-read.csv("myData.csv", header=FALSE)
+> myData2.df
+> str(myData2.df)
+> myData2.df <-read.csv("myData.csv", header=FALSE, stringsAsFactors=FALSE)
+> str(myData2.df)
+> library(gdata)
+> myData.df <- read.xls("myData.xlsx", sheet=1) #also uploads .xls files and returns a data frame
+> library(XLConnect) 
+> myData.workbook <- loadWorkbook("myData.xlsx")
+> myData3.df <- readWorksheet(myData.workbook, sheet="Sheet1")
+> myData4.df <- read.spss("myfile.spss", to.data.frame=TRUE) 
+> write.table(myData.df, file="savedata_file.txt", quote = FALSE, sep = "\t", row.names=TRUE, col.names=TRUE, append=FALSE) 
+> write.table(myData.df, file="savedata_file.txt", quote = FALSE, sep = "\t",col.names = NA, row.names = TRUE, append=FALSE)
+> write.csv(myData.df, file = "savedata_file.csv") #same output as above
+> library(WriteXLS)
+> dfs.tosave <- c("df1", "df2")
+> sheets.tosave <- c("df1_results ", "df2_results")
+> WriteXLS(dfs.tosave, ExcelFileName = "combined_dfs_workbook.xls", SheetNames = sheets.tosave)
+> dump("myData.df", "myData.R")
+> #Or if you would like to save all objects in your session:
+> dump(list=objects(), "all_objects.R")
+> source("mydata.R")
+> save(myData.df, file="myData.R")
+> load("myData.R")
+> saveRDS(myData.df, "myData.rds")
+> myData2 <- readRDS("myData.rds")
+> sink("data_session1.txt")
+> x<-c(1,2,3)
+> y <-c(4,5,6)
+> #This is a comment
+> x+y #Note the sum of x+y is redirected to data_session1.txt
+> sink()
+> 3+4
+> x <- c(5, 7, 12, 15, 35, 9, 5, 17, 24, 27, 16, 32)
+> hist(x) 
+> x <- seq(2, 25, by=1)
+> y <- x^2 +3
+> plot(x, y)
+> par(mfrow=c(1,2))  
+> curve(expr=cos(x), from=0, to=8*pi) 
+> curve(expr=x^2, from=0, to=32) 
+> plot(iris$Sepal.Length, iris$Sepal.Width, main="Iris sepal length vs width measurements", xlab="Length", ylab="Width") 
+> VADeaths
+> barplot(VADeaths, beside=TRUE, legend=TRUE, ylim=c(0, 100), ylab="Deaths per 1000 population", main="Death rate in VA") #Requires that the data to plot be a vector or a matrix.
+> geneExpdata.wide <- read.table(header=TRUE, text='
+> geneExpdata.long <- read.table(header=TRUE, text='
+> library(reshape2)
+> geneExpdata.long<- melt(geneExpdata.wide, id.vars=c("cell_line","gene"), measure.vars=c("control", "drug1", "drug2" ), variable.name="condition", value.name="gene_expr_value") 
+> library(ggplot2)
+> ggplot(geneExpdata.long, aes(x=gene, y= gene_expr_value)) + geom_bar(aes(fill=condition), colour="black", position=position_dodge(), stat="identity") 
+> geneExpdata.summary <- read.table(header=TRUE, text='
+> #Note the plot is stored in the p object 
+> p<- ggplot(geneExpdata.summary, aes(x=gene, y= gene_expr_value, fill=condition)) + geom_bar(aes(fill=condition), colour="black", position=position_dodge(), stat="identity")
+> #Define the upper and lower limits for the error bars
+> limits <- aes(ymax = gene_expr_value + se, ymin= gene_expr_value - se)
+> #Add error bars to plot
+> p + geom_errorbar(limits, position=position_dodge(0.9), size=.3, width=.2) 
+> dotchart(VADeaths,xlim=c(0, 75), xlab=Deaths per 1000, main=”Death rates in VA”) 
+> labels <- c("grp_A", "grp_B", "grp_C")
+> pie_groups <- c(12, 26, 62) 
+> pie(pie_groups, labels, col=c("white", "black", "grey")) #Fig. 3B
+> boxplot(value ~ variable, data= geneExpdata.long, subset=gene == "MYC", ylab="expression value", main="MYC Expression by Condition", cex.lab=1.5, cex.main=1.5)
+> boxplot(Petal.Width ~ Species, data=iris, ylab="petal width", cex.lab=1.5, cex.main=1.5)
+> # First we create a numeric vector with 15 elements to store the data generated. 
+> Fibonacci <- numeric(15)
+> Fibonacci
+> Fibonacci[1:2] <- c(1,1) 
+> for(i in 3:length(Fibonacci)){Fibonacci[i] <- Fibonacci[i-2] + Fibonacci[i-1]} 
+> Fibonacci
+> Fibonacci_terms <- seq(3, 15, by=1)
+> for(i in Fibonacci_terms){Fibonacci[i] <- Fibonacci[i-2] + Fibonacci[i-1]}
+> fruits <- c("apple", "pear", "grapes")
+> other_fruits <- c("banana", "lemon")
+> for (i in fruits){other_fruits <-c(other_fruits, i)} #appends fruits to other_fruits vector
+> other_fruits
+> m1 <-matrix(1:12, nrow=3)
+> m1
+> meanByrow <- apply(m1, 1,  mean)
+> meanByrow
+> m1plus3 <- apply(m1, c(1,2), function(x) x+3)
+> m1plus3
+> z <- c( 1, 4, 5, NA, 9,8, 3, NA)
+> m2 <- matrix(z, nrow=4)
+> m2
+> meanByColumn <- apply(m2, 2, mean, na.rm=TRUE)
+> meanByColumn
+> x <- 4
+> # we indent our code to make it more legible
+> if(x < 10) { 
+x <-x+4 
+print(x)
+}
+> x <- 1
+> if(x == 2) {
+	x <- x+4
+	print("X is equal to 2, so I added 4 to it.")
+} else if (x > 2) {
+	print("X is greater than 2, so I did nothing to it.")
+} else {
+	x <- x -4
+	print("X is not greater than or equal to 2, so I subtracted 4 from it.")
+}
+> num1 <- 1
+> num2 <- 1 
+> Fibonacci <- c(num1, num2) 
+> count <- 2 #set count to start from 2
+>  while(count < 15) { 
+> Fibonacci
+> num1 <- 1 
+> num2 <- 1 
+> count <- 2
+> repeat { 
+> x <- c(2, 6, 7, 12)
+> mean(x)
+> help(mean)
+> ?mean #Returns the same output as above
+> ??mean 
+> x <- c(2, 6, 7, 12, NA, NA)
+> mean(x)
+> mean(x, na.rm=TRUE)
+> #notice “,” are used to specify unchanged missing arguments in the order they appear in the function definition on the help page
+> mean(x, ,TRUE) 
+> vectorContains <- function(v1, value.to.check=3){
+> vectorContains(x)
+> y <- c(1, 4, 6, 8, 3, 12, 15)
+> vectorContains(y)
+> vectorContains(y, 6) 
+> vectorContains(y, value.to.check=17) 
+> source("/PathToFile/vectorfunction.R")
+> source("someOtherfunctions.R")  
+> traceback()
+> x <- c(2, 6, 7, 12, NA, NA) 
+> browser()
+> x
+>  debug(vectorContains)
+> x <- c(1, 2, 3, 9)
+> vectorContains(x)
+> undebug(vectorContains)
+> vectorContains(x)
