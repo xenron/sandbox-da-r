@@ -1,0 +1,52 @@
+# ====================================================================
+# R in a Nutshell (1. Aufl., Dez. 2010)
+# Kapitel 23 -- Zeitreihenanalyse
+# ***  R-Code  ***
+# 
+# Zeichenkodierung: UTF-8
+# Schnappschuss   : 2011-01-25 20:11:53 h
+# angelegt von    : Jörg Beyer
+# ====================================================================
+
+library(nutshellDE)
+data(ZR.Truthahnpreise)
+
+acf(ZR.Truthahnpreise, plot = FALSE)
+
+
+pacf(ZR.Truthahnpreise, plot = FALSE)
+
+
+
+# --------------------------------------------------------------------
+
+data(ZR.Schinkenpreise)
+ccf(ZR.Truthahnpreise, ZR.Schinkenpreise, plot = FALSE)
+
+
+
+# --------------------------------------------------------------------
+
+library(nutshellDE)
+data(ZR.Truthahnpreise)
+
+(ZR.Truthahnpreise.ar <- ar(ZR.Truthahnpreise))
+
+
+
+# --------------------------------------------------------------------
+
+predict(ZR.Truthahnpreise.ar, n.ahead = 24)
+
+
+
+# --------------------------------------------------------------------
+
+ts.plot(ZR.Truthahnpreise, 
+        predict(ZR.Truthahnpreise.ar, n.ahead = 24)$pred, 
+        xlab = "Zeit", ylab = "Truthahnpreise ($)", 
+        lty = c(1:2))
+
+
+
+# ====================================================================

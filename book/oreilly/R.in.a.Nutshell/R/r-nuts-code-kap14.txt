@@ -1,0 +1,487 @@
+# ====================================================================
+# R in a Nutshell (1. Aufl., Dez. 2010)
+# Kapitel 14 -- Grafik
+# ***  R-Code  ***
+# 
+# Zeichenkodierung: UTF-8
+# Schnappschuss   : 2011-01-25 20:11:53 h
+# angelegt von    : Jörg Beyer
+# ====================================================================
+
+library(nutshellDE)
+data(Toxine.und.Krebs)
+
+
+
+# --------------------------------------------------------------------
+
+# Den Datenrahmen hängen wir mit "attach()" in den Suchpfad ein, 
+# dann sparen wir uns, ständig seinen Namen tippen zu müssen 
+attach(Toxine.und.Krebs)
+plot(x = Toxine.gesamt/Fläche, y = Krebstote.gesamt/Population)
+
+
+
+# --------------------------------------------------------------------
+
+plot(x = Luft.vor.Ort/Fläche, y = Krebstote.Lunge/Population)
+
+
+
+# --------------------------------------------------------------------
+
+locator(1)
+
+
+
+# --------------------------------------------------------------------
+
+identify(x = Luft.vor.Ort/Fläche, y = Krebstote.Lunge/Population, 
+         labels = BStaat)
+
+
+
+# --------------------------------------------------------------------
+
+plot(x = Luft.vor.Ort/Fläche, y = Krebstote.Lunge/Population, 
+     xlab = "Luftemission chemisch-toxischer Stoffe", 
+     ylab = "Mortalität/Lungenkrebs (pro Kopf)")
+
+text(x = Luft.vor.Ort/Fläche, y = Krebstote.Lunge/Population, 
+     labels = BStaat, 
+     cex = 0.5, 
+     adj = c(0, -1))
+
+detach(Toxine.und.Krebs)
+
+
+
+# --------------------------------------------------------------------
+
+library(nutshellDE)
+data(Batting.2008)
+
+Zeilenfilter  <- Batting.2008$AB > 100
+Spaltenfilter <- c("H", "R", "SO", "BB", "HR")
+pairs(Batting.2008[Zeilenfilter, Spaltenfilter])
+
+
+
+# --------------------------------------------------------------------
+
+library(nutshellDE)
+data(ZR.Truthahnpreise)
+
+plot(ZR.Truthahnpreise, 
+     xlab = "Zeit", ylab = "Truthahnpreise ($)")
+
+
+
+# --------------------------------------------------------------------
+
+acf(ZR.Truthahnpreise, main = "Truthahnpreise ($)", 
+    xlab = "Periode", ylab = "Autokorrelation")
+
+
+
+# --------------------------------------------------------------------
+
+Doktortitel <- data.frame ( 
+  Jahr          = c( 2001,  2002,  2003,  2004,  2005,  2006), 
+  Ingenieursw.  = c( 5323,  5511,  5079,  5280,  5777,  6425), 
+  Naturw.       = c(20643, 20017, 19529, 20001, 20498, 21564), 
+  Erziehungsw.  = c( 6436,  6349,  6503,  6643,  6635,  6226), 
+  Gesundheitsw. = c( 1591,  1541,  1654,  1633,  1720,  1785), 
+  Humanw.       = c( 5213,  5178,  5051,  5020,  5013,  4949), 
+  Sonstige      = c( 2159,  2141,  2209,  2180,  2480,  2436)
+)
+
+
+
+# --------------------------------------------------------------------
+
+library(nutshellDE)
+data(Doktortitel)
+
+
+
+# --------------------------------------------------------------------
+
+# Datenrahmen in Matrix überführen (Spalte 1 fällt weg):
+Doktortitel.m <- as.matrix(Doktortitel[2:7])
+rownames(Doktortitel.m) <- Doktortitel[, 1]
+Doktortitel.m
+
+
+
+# --------------------------------------------------------------------
+
+barplot(Doktortitel.m[1, ])
+
+
+
+# --------------------------------------------------------------------
+
+Rand.alt <- par("mar")
+barplot(Doktortitel.m, beside = TRUE, horiz = TRUE, legend.text = TRUE, 
+        names.arg = sub("w\\.$", "-\nwissenschaften", colnames(Doktortitel.m)), 
+        cex.names = .75, las = 1, mar = par("mar" =  Rand.alt + c(0, 2, 0, 0)))
+
+
+
+# --------------------------------------------------------------------
+
+barplot(t(Doktortitel.m), ylim = c(0, 66000), 
+        legend.text = TRUE, args.legend = list(ncol = 2))
+
+
+
+# --------------------------------------------------------------------
+
+# Fischereidaten des Jahres 2006: 
+# http://www.census.gov/compendia/statab/2009/cats/natural_resources/
+#        fisheries_aquaculture.html (Tabelle 852)
+# (Grundeinheit: Fanggewicht in Millionen Pfund)
+Fangertrag.2006 <- c(7752, 1166, 463, 108)
+names(Fangertrag.2006) <- c("Frisch und gefroren", 
+                            "Als Mehl, Öl etc.", 
+                            "Konserven", 
+                            "Geräuchert")
+# Anmerkung: 
+# "cex = 0.6" verkleinert den Text für die Label um 40% 
+pie(Fangertrag.2006, init.angle = 0, cex = 0.6)
+
+
+
+# --------------------------------------------------------------------
+
+library(nutshellDE)
+data(Batting.2008)
+Batting.2008 <- transform(Batting.2008, 
+       AVG        = H / AB, 
+       Schlaghand = factor(Schlaghand, levels = c("R", "L", "B")), 
+       Wurfhand   = factor(Wurfhand,   levels = c("R", "L"     )))
+
+cdplot(Schlaghand ~ AVG, data = Batting.2008, 
+       subset = (Batting.2008$AB > 100), 
+       main = "Batting 2008", 
+       xlab = "Batting-Average (AVG)", 
+       ylab = "Schlaghand")
+
+
+
+# --------------------------------------------------------------------
+
+mosaicplot(Schlaghand ~ Wurfhand, data = Batting.2008, 
+           main = "Batting 2008", 
+           xlab = "Schlaghand", 
+           ylab = "Wurfhand", 
+           color = TRUE)
+
+
+
+# --------------------------------------------------------------------
+
+spineplot(Schlaghand ~ Wurfhand, data = Batting.2008, 
+          main = "Batting 2008", 
+          xlab = "Wurfhand", 
+          ylab = "Schlaghand")
+
+
+
+# --------------------------------------------------------------------
+
+assocplot(table(Batting.2008$Schlaghand, Batting.2008$Wurfhand), 
+          main = "Batting 2008", 
+          xlab = "Schlaghand", 
+          ylab = "Wurfhand")
+
+
+
+# --------------------------------------------------------------------
+
+Yosemite <- readBin( 
+  "~/Dokumente/Buch/Daten/NED_09216343/ned_09216343.flt", 
+  what = "numeric", n = 562*253, size = 4, endian = "little")
+
+length(Yosemite) == 562 * 253
+sum(Yosemite == -9999)
+
+
+
+# --------------------------------------------------------------------
+
+Yosemite <- matrix(Yosemite, byrow = TRUE, 
+                   nrow = 253, ncol = 562)
+dim(Yosemite)
+
+
+
+# --------------------------------------------------------------------
+
+# Daten laden und Dimensionen checken: 
+library(nutshellDE)
+data(Yosemite)
+dim(Yosemite)
+
+# Rechte Spaltenindizes für quadratischen Ausschnitt bestimmen 
+Spalten.rechts <- seq(from = (ncol(Yosemite) - nrow(Yosemite) + 1), 
+                      to   =  ncol(Yosemite))
+
+# (Kontrolle: Anzeige des ersten und letzten Spaltenindex) 
+cat(sep = "", length(Spalten.rechts), " Elemente: Spalten ", 
+    paste(collapse = " bis ", range(Spalten.rechts)))
+
+# Rechte/östlich gelegene Yosemite-Daten mit Half Dome auswählen 
+Yosemite.Osten <- Yosemite[, Spalten.rechts]
+
+
+
+# --------------------------------------------------------------------
+
+# Unser Versuchsobjekt  (genau wie die 
+# Oberflächendaten zeilenweise aufgebaut) 
+(original <- matrix(1:6, nrow = 2, byrow = TRUE))
+
+# So sieht die transponierte Ausgangsmatrix aus 
+# (ein Schritt in die richtige Richtung, aber noch nicht 
+#  genug -- drehen Sie sie in Gedanken auf die Seite...) 
+t(original)
+
+# Hilfsvektor mit den umgekehrten Zeilenindizes anlegen 
+(z.kopfunter <- seq(from = nrow(original), 
+                    to   = 1, by = -1))
+
+# In einem Aufruf Zeilen umkehren und Matrix transponieren 
+# (das Ergebnis müssen Sie sich anschließend um 90 Grad 
+#  gegen den Uhrzeigersinn auf die Seite gedreht vor-
+#  stellen -- so landen die Daten dann im Plot.) 
+t( original[ z.kopfunter, ] )
+
+
+
+# --------------------------------------------------------------------
+
+# Hilfsvektor mit den umgekehrten Zeilenindizes anlegen 
+Zeilen.kopfunter <- seq(from = nrow(Yosemite), to = 1, by = -1)
+
+# (Kontrolle: Anzeige des ersten und letzten Zeilenindex) 
+Zeilen.kopfunter[c(1, length(Zeilen.kopfunter))]
+
+# In einem Aufruf Matrixzeilen in die umgekehrte Reihenfolge 
+# bringen, dann Matrix transponieren 
+Yosemite.plotfähig <- t(Yosemite[Zeilen.kopfunter, ])
+
+
+
+# --------------------------------------------------------------------
+
+# Rechte/östlich gelegene Yosemite-Daten mit Half Dome auswählen 
+HalfDome <- Yosemite[, Spalten.rechts]
+
+# Half-Dome-Daten transformieren und plotten 
+persp(x = t(HalfDome[Zeilen.kopfunter, ]), 
+      xlab = "Half Dome", 
+      col = gray(0.25), border = NA, 
+      theta  = 225, phi  = 20, expand = 0.15, 
+      ltheta =  45, lphi = 20, shade  = 0.75)
+
+
+
+# --------------------------------------------------------------------
+
+image(x = t(Yosemite[Zeilen.kopfunter, ]), 
+      asp = nrow(Yosemite)/ncol(Yosemite), 
+      col = sapply((0:32)/32, gray))
+
+
+
+# --------------------------------------------------------------------
+
+contour(x = t(Yosemite[Zeilen.kopfunter, ]), 
+        asp = nrow(Yosemite)/ncol(Yosemite))
+
+
+
+# --------------------------------------------------------------------
+
+library(nutshellDE)
+data(Batting.2008)
+
+
+
+# --------------------------------------------------------------------
+
+# Plate-Appearances = 
+# At-Bats + Base-on-Balls + Hit-by-Pitch + 
+# Sacrifice-Hits + Sacrifice-Flies
+Batting.2008 <- transform(Batting.2008, 
+     PA = (AB + BB + HBP + SH + SF))
+
+hist(Batting.2008$PA, 
+     main = "Batting 2008\nPlate-Appearances", cex.main = 1.0, 
+     xlab = "Plate-Appearances (PA)", 
+     ylab = "Häufigkeit")
+
+
+
+# --------------------------------------------------------------------
+
+hist(Batting.2008[Batting.2008$PA > 25, "PA"], 
+     breaks = 50, 
+     main = "Batting 2008\nPlate-Appearances > 25", cex.main = 1.0, 
+     xlab = "Plate-Appearances (PA)", 
+     ylab = "Häufigkeit")
+
+
+
+# --------------------------------------------------------------------
+
+Dichte <- density(Batting.2008[Batting.2008$PA > 25, "PA"], 
+                  na.rm = TRUE)
+plot(Dichte, 
+     main = "Batting 2008\nPlate-Appearances > 25", cex.main = 1.0, 
+     xlab = "Plate-Appearances (PA)", 
+     ylab = "Dichte")
+
+
+
+# --------------------------------------------------------------------
+
+rug(Batting.2008[Batting.2008$PA > 25, "PA"])
+
+
+
+# --------------------------------------------------------------------
+
+qqnorm(Batting.2008$AB, 
+       main = "Batting 2008\nAt-Bats-Verteilung", 
+       xlab = "Quantile Normalverteilung", 
+       ylab = "Quantile At-Bats-Scores")
+
+
+
+# --------------------------------------------------------------------
+
+# On-Base-Percentage = 
+# (Hits + Base-on-Balls + Hit-by-Pitch) / 
+# (At-Bats + Base-on-Balls + Hit-by-Pitch + Sacrifice-Flies)
+Batting.2008 <- transform(Batting.2008, 
+        OBP = (H + BB + HBP) / (AB + BB + HBP + SF))
+
+Zeilenfilter <- Batting.2008$LigaID == "AL" & Batting.2008$PA > 100
+boxplot(OBP ~ TeamID, data = Batting.2008[Zeilenfilter, ], 
+        main = "Batting 2008\nOn-Base-Percentage", 
+        cex.axis = 0.5)
+
+
+
+# --------------------------------------------------------------------
+
+library(nutshellDE)
+data(Toxine.und.Krebs)
+
+pdf("~/Dokumente/Buch/Diagramme/Streudiagramm.1.pdf", 
+    width = 4.3, height = 4.3, pointsize = 12, colormodel = "gray")
+attach(Toxine.und.Krebs)
+plot(x = Toxine.gesamt/Fläche, y = Krebstote.gesamt/Population)
+detach(Toxine.und.Krebs)
+dev.off()
+
+
+
+# --------------------------------------------------------------------
+
+Grafikparameter.setzen <- function () { 
+  alter.Zustand <- par(no.readonly = TRUE);
+  par(Param.1 = Wert.1, Param.2 = Wert.2, Param.3 = Wert.3, ....);
+  return(alter.Zustand);
+}
+
+
+
+# --------------------------------------------------------------------
+
+par("bg"); barplot(1:10)
+
+
+
+# --------------------------------------------------------------------
+
+par(bg = "lemonchiffon"); barplot(1:10)
+par("bg")
+
+
+
+# --------------------------------------------------------------------
+
+par(mfcol = c(3, 2))
+
+
+
+# --------------------------------------------------------------------
+
+dev.new(width = 5.0, height = 7.5)
+par(mfcol = c(3, 2))
+
+pie(c(5, 4, 3))
+plot(x = c(1, 2, 3, 4, 5), y = c(1.1, 1.9, 3, 3.9, 6))
+barplot(c(1, 2, 3, 4, 5))
+barplot(c(1, 2, 3, 4, 5), horiz = TRUE)
+pie(c(5, 4, 3, 2, 1))
+plot(c(1, 2, 3, 4, 5, 6), c(4, 3, 6, 2, 1, 1))
+
+
+
+# --------------------------------------------------------------------
+
+print.par.defaults <- function() {
+  for (n in names(par())) {
+    p <- par(n);
+    if (class(p) == "character") p <- sprintf("\"%s\"", p);
+    
+    if (length(p) == 1) {
+      print(paste(n, p, sep = " = "));
+    } else {
+      print(paste(n, " = c(", paste(p, collapse = ", "), ")", sep = ""));
+    }
+  }
+}
+
+
+
+# --------------------------------------------------------------------
+
+# Einfaches Koordinatensystem einrichten (ohne Daten)
+par(mfcol = c(1, 1))
+plot(x = c(0, 10), y = c(0, 10), type = "n")
+
+# Horizontale Linie bei y = 4 einzeichnen
+abline(h = 4)
+
+# Vertikale Linie bei x = 3 einzeichnen
+abline(v = 3)
+
+# Linie mit y-Achsenabschnitt und Steigung von je 1
+abline(a = 1, b = 1)
+
+# Linie mit y-Achsenabschnitt von 10 und Steigung von -1
+# diesmal über das "coef"-Argument:
+abline(coef = c(10, -1))
+
+
+
+# --------------------------------------------------------------------
+
+# (Horizontale und vertikale) Gitterlinien zwischen 0 und 10:
+abline(h = 0:10, v = 0:10)
+
+
+
+# --------------------------------------------------------------------
+
+polygon(x = c(2, 2, 4, 4), y = c(2, 4, 4, 2))
+
+
+
+# ====================================================================

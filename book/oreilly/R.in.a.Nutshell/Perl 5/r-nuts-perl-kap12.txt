@@ -1,0 +1,77 @@
+# ====================================================================
+# R in a Nutshell (1. Aufl., Dez. 2010)
+# Kapitel 12 -- Daten speichern, laden und bearbeiten
+# ***  Perl 5-Code  ***
+# 
+# Zeichenkodierung: UTF-8
+# Schnappschuss   : 2011-01-25 20:11:53 h
+# angelegt von    : Jörg Beyer
+# ====================================================================
+
+#!/usr/bin/perl
+# 
+# Skript zum Aufbereiten (und Filtern) der US-Sterbestatistik 2006 
+# 
+use strict; 
+my $leer           = qr/^ +$/; 
+
+my $spaltenTrenner = ";"; 
+my $spaltenLayout  = join('', qw( 
+            a19 a1 a40   a2 a1 a1 a2 a2 a1  a4 a1 a2 a2 a2 a2 
+            a1  a1  a1  a16 a4 a1 a1 a1 a1 a34 a1 a1 a4 a3 a1 
+            a3  a3  a2 a283 a2 a1 a1 a1 a1 a33 a3 a1 a1 )); 
+
+# Spaltennamen im CSV-Format montieren und ausgeben 
+print join($spaltenTrenner, qw( 
+            EinwohnerStatus Bildung.KL1989 Bildung.KL2003 BildungsCode 
+            Tod.Monat Geschlecht Alter.exakt Alter.ersetzt Alter.Kl52 
+            Alter.Kl27 Alter.Kl12 Alter.Kinder.Kl22 TodesOrt 
+            Zivilstand Tod.Wochentag Datensatz.Jahr ArbeitsUnfall 
+            TodesUrsache BestattungsArt Autopsie TätigkeitsArt 
+            UnfallOrt ICD.Code Ursache.Kl358 Ursache.Kl113 
+            Ursache.Kl130 Ursache.Kl39 Ethnizität Ethn.synchr 
+            Ethn.Imputation Ethn.Kl3 Ethn.Kl5 Ethn.LatAm 
+            Ethn.LatAm.Kl )) . "\n"; 
+
+# Schleife über die Datenzeilen 
+while(<>) { 
+    # Zeile/Datensatz in Spalten aufbrechen 
+    my ($X0, $EinwohnerStatus, $X1, $BildungKL1989, $BildungKL2003, 
+            $BildungsCode, $TodMonat, $X5, $Geschlecht, $AlterExakt, 
+            $AlterErsetzt, $AlterKl52, $AlterKl27, $AlterKl12, 
+            $AlterKinderKl22, $TodesOrt, $Zivilstand, $TodWochentag, 
+            $X15, $DatensatzJahr, $ArbeitsUnfall, $TodesUrsache, 
+            $BestattungsArt, $Autopsie, $X20, $TaetigkeitsArt, $UnfallOrt, 
+            $ICDCode, $UrsacheKl358, $X24, $UrsacheKl113, $UrsacheKl130, 
+            $UrsacheKl39, $X27, $Ethnizitaet, $EthnSynchr, $EthnImputation, 
+            $EthnKl3, $EthnKl5, $X32, $EthnLatAm, $X33, $EthnLatAmKl) 
+            = unpack( $spaltenLayout, $_ ); 
+    
+    # "Leercodes" in den Daten rekodieren, um falsche NAs zu vermeiden 
+    $BildungKL2003      =  '0' if ($BildungKL2003   =~ m/$leer/); 
+    $AlterErsetzt       =  '0' if ($AlterErsetzt    =~ m/$leer/); 
+    $AlterKinderKl22    = '99' if ($AlterKinderKl22 =~ m/$leer/); 
+    
+    $TodesUrsache       =  '9' if ($TodesUrsache    =~ m/$leer/); 
+    $TaetigkeitsArt     = '99' if ($TaetigkeitsArt  =~ m/$leer/); 
+    $UnfallOrt          = '99' if ($UnfallOrt       =~ m/$leer/); 
+    
+    $EthnSynchr         =  '0' if ($EthnSynchr      =~ m/$leer/); 
+    $EthnImputation     =  '0' if ($EthnImputation  =~ m/$leer/); 
+    
+    # Datensatz im CSV-Format montieren und ausgeben 
+    print join($spaltenTrenner, 
+            $EinwohnerStatus, $BildungKL1989, $BildungKL2003, 
+            $BildungsCode, $TodMonat, $Geschlecht, $AlterExakt, 
+            $AlterErsetzt, $AlterKl52, $AlterKl27, $AlterKl12, 
+            $AlterKinderKl22, $TodesOrt, $Zivilstand, $TodWochentag, 
+            $DatensatzJahr, $ArbeitsUnfall, $TodesUrsache, 
+            $BestattungsArt, $Autopsie, $TaetigkeitsArt, $UnfallOrt, 
+            $ICDCode, $UrsacheKl358, $UrsacheKl113, $UrsacheKl130, 
+            $UrsacheKl39, $Ethnizitaet, $EthnSynchr, $EthnImputation, 
+            $EthnKl3, $EthnKl5, $EthnLatAm, $EthnLatAmKl) . "\n"; 
+} 
+
+
+
+# ====================================================================

@@ -1,0 +1,230 @@
+# ====================================================================
+# R in a Nutshell (1. Aufl., Dez. 2010)
+# Kapitel 16 -- Datenexploration
+# ***  R-Code  ***
+# 
+# Zeichenkodierung: UTF-8
+# Schnappschuss   : 2011-02-02 19:50:44 h
+# angelegt von    : Jörg Beyer
+# ====================================================================
+
+library(nutshellDE)
+data(Dow.Jones); dim(DJ)
+
+mean(DJ$Eröffnung)
+
+min(DJ$Eröffnung)
+max(DJ$Eröffnung)
+
+
+
+# --------------------------------------------------------------------
+
+mean(c(1, 2, 3, 4, 5, NA))
+mean(c(1, 2, 3, 4, 5, NA), na.rm = TRUE)
+
+
+
+# --------------------------------------------------------------------
+
+mean(c(-1, 1:100, 2000))
+mean(c(-1, 1:100, 2000), trim = 0.1)
+
+
+
+# --------------------------------------------------------------------
+
+mean(1:100)
+weighted.mean(1:100, w = c(rep(1, 50), rep(3, 50)))
+
+
+
+# --------------------------------------------------------------------
+
+# Minimum und Maximum in einem Aufruf ermitteln
+# Achtung: in R ist "range" != Spannweite
+range(DJ$Eröffnung)
+
+# Differenz zwischen Minimum und Maximum = Spannweite 
+diff(range(DJ$Eröffnung))
+
+
+
+# --------------------------------------------------------------------
+
+# Per Voreinstellung: Minimum, Quartile und Maximum
+quantile(DJ$Eröffnung)
+
+# Vielleicht wollen wir _nur_ die Quartile...
+quantile(DJ$Eröffnung, probs = seq(0.25, 0.75, by = 0.25))
+
+
+
+# --------------------------------------------------------------------
+
+fivenum(DJ$Eröffnung)
+
+
+
+# --------------------------------------------------------------------
+
+IQR(DJ$Eröffnung)
+
+
+
+# --------------------------------------------------------------------
+
+summary(DJ)
+
+
+
+# --------------------------------------------------------------------
+
+data(Field.Goals)
+stem(subset(Field.Goals, 
+            subset = (Spielzug == "FG verfehlt"), 
+            select = "Yards", drop = TRUE))
+
+
+
+# --------------------------------------------------------------------
+
+data(Geburtenstatistik.2006.Stp)
+Geburten.2006.Gewicht <- subset(Geburten.2006, 
+                                subset = (AnzahlSäuglinge == "Ein Säugling" & 
+                                          Schwangerschaft  > 37), 
+                                select = c("Mutter.Zunahme", "Geburtsgewicht"))
+dim(Geburten.2006.Gewicht)
+
+
+
+# --------------------------------------------------------------------
+
+library(lattice)
+xyplot(Geburtsgewicht ~ Mutter.Zunahme, 
+       data = Geburten.2006.Gewicht, 
+       panel = panel.smoothScatter, 
+       xlab = "Gewichtszunahme der Mutter (Pfd.)", 
+       ylab = "Geburtsgewicht des Säuglings (g)")
+
+
+
+# --------------------------------------------------------------------
+
+cor(Geburten.2006.Gewicht$Mutter.Zunahme, 
+    Geburten.2006.Gewicht$Geburtsgewicht, 
+    use = "complete.obs")
+
+# Gegenprobe der Pearson-Formel: 
+# Rechnet R mit den biaskorrigierten Kennwerten?
+Geburten.2006.Gewicht.ohneNAs <- na.omit(Geburten.2006.Gewicht)
+
+sd.x   <-  sd(Geburten.2006.Gewicht.ohneNAs$Mutter.Zunahme)
+sd.y   <-  sd(Geburten.2006.Gewicht.ohneNAs$Geburtsgewicht)
+cov.xy <- cov(Geburten.2006.Gewicht.ohneNAs$Mutter.Zunahme, 
+              Geburten.2006.Gewicht.ohneNAs$Geburtsgewicht)
+
+cov.xy / (sd.x * sd.y)
+
+
+
+# --------------------------------------------------------------------
+
+cor(Geburten.2006.Gewicht$Mutter.Zunahme, 
+    Geburten.2006.Gewicht$Geburtsgewicht, 
+    use = "complete.obs", 
+    method = "spearman")
+
+
+
+# --------------------------------------------------------------------
+
+library(RSQLite)
+Trb  <- dbDriver("SQLite")
+BBDB <- dbConnect(Trb, 
+  dbname = system.file("extdata", "BBDB.sqlite", package = "nutshellDE"))
+
+Team.Batting.sql <- 
+  'SELECT  TeamID, 
+           JahrID, 
+           R                    AS "Runs", 
+           H - `2B` - `3B` - HR AS "Singles", 
+           `2B`                 AS "Doubles", 
+           `3B`                 AS "Triples", 
+           HR                   AS "Homeruns", 
+           BB                   AS "Walks", 
+           SB                   AS "Stolen.Bases", 
+           CS                   AS "Caught.Stealings", 
+           SF                   AS "Sacrifice.Flies", 
+           HBP                  AS "Hit.by.Pitch", 
+           AB                   AS "At.Bats" 
+     FROM  Teams 
+     WHERE JahrID BETWEEN 2000 AND 2008 
+     ORDER BY TeamID;'
+
+Team.Batting.00bis08 <- dbGetQuery(BBDB, 
+                                   statement = Team.Batting.sql)
+dim(Team.Batting.00bis08)
+
+dbDisconnect(BBDB); dbUnloadDriver(Trb)
+
+
+
+# --------------------------------------------------------------------
+
+Team.Batting.PCA <- prcomp(~ Singles + Doubles + Triples + 
+  Homeruns + Walks + Stolen.Bases + Caught.Stealings + 
+  Sacrifice.Flies + Hit.by.Pitch, 
+  data = Team.Batting.00bis08, 
+  retx = TRUE, center = TRUE, scale. = TRUE)
+
+
+
+# --------------------------------------------------------------------
+
+summary(Team.Batting.PCA)
+
+
+
+# --------------------------------------------------------------------
+
+Team.Batting.PCA
+
+
+
+# --------------------------------------------------------------------
+
+Team.Batting.PCA$sdev^2
+
+
+
+# --------------------------------------------------------------------
+
+screeplot(Team.Batting.PCA, type = "lines", 
+          main = "Team-Batting (PCA)")
+
+
+
+# --------------------------------------------------------------------
+
+biplot(Team.Batting.PCA, 
+       cex = c(0.5, 0.8), 
+       col = c("gray50", "black"))
+
+
+
+# --------------------------------------------------------------------
+
+library(boot)
+data(SanFrancisco.Immobilien.Preise)
+SF.Juni2008 <- SF.Immo[SF.Immo$JahrMonat == "2008-06", ]
+
+(SF.Juni2008.Preis <- boot(data = SF.Juni2008$Preis, 
+  statistic = function(Daten, Stp) { 
+                median(Daten[Stp], na.rm = TRUE) 
+              }, 
+  R = 1000))
+
+
+
+# ====================================================================

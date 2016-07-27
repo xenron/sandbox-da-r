@@ -1,0 +1,342 @@
+# ====================================================================
+# R in a Nutshell (1. Aufl., Dez. 2010)
+# Kapitel 12 -- Daten speichern, laden und bearbeiten
+# ***  R-Code  ***
+# 
+# Zeichenkodierung: UTF-8
+# Schnappschuss   : 2011-02-02 19:50:44 h
+# angelegt von    : Jörg Beyer
+# ====================================================================
+
+Gehalt <- c(18700000, 14626720, 14137500, 13980000, 12916666)
+Position <- c("QB", "QB", "DE", "QB", "QB")
+Team <- c("Colts", "Patriots", "Panthers", "Bengals", "Giants")
+Nachname <- c("Manning", "Brady", "Pepper", "Palmer", "Manning")
+Vorname <- c("Peyton", "Tom", "Julius", "Carson", "Eli")
+
+
+
+# --------------------------------------------------------------------
+
+(Top.5.Gehälter <- data.frame(Nachname, Vorname, Team, Position, Gehalt))
+
+
+
+# --------------------------------------------------------------------
+
+is.factor(Top.5.Gehälter$Position); levels(Top.5.Gehälter$Position)
+
+is.character(Top.5.Gehälter$Nachname); levels(Top.5.Gehälter$Nachname)
+
+
+
+# --------------------------------------------------------------------
+
+Top.5.Gehälter <- edit(Top.5.Gehälter)
+
+
+
+# --------------------------------------------------------------------
+
+fix(Top.5.Gehälter)
+
+
+
+# --------------------------------------------------------------------
+
+save(Top.5.Gehälter, file = "~/Desktop/Top.5.Gehälter.rda")
+
+
+
+# --------------------------------------------------------------------
+
+load("~/Desktop/Top.5.Gehälter.rda")
+
+
+
+# --------------------------------------------------------------------
+
+Top.5.Gehälter <- read.table("~/Desktop/Top.5.Gehälter.csv", 
+                             header = TRUE, 
+                             sep = ";", 
+                             quote = '"')
+
+
+
+# --------------------------------------------------------------------
+
+DAX.ab.Apr2000 <- read.csv(paste("http://ichart.finance.yahoo.com/table.csv?", 
+  "s=%5EGDAXI&a=03&b=1&c=2000&d=03&e=1&f=2010&g=m&ignore=.csv", sep = ""), 
+  col.names = c("Datum", "Eröffnung", "Hoch", "Tief", 
+                "Schluss", "Volumen", "Adj.Schluss"))
+
+# Die ersten 5 Zeilen anzeigen lassen 
+head(DAX.ab.Apr2000, n = 5)
+
+
+
+# --------------------------------------------------------------------
+
+## Statistik US-Todesfälle manuell herunterladen und entpacken: 
+## ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/
+##   DVS/mortality/mort2006us.zip
+
+# Sterbestatistik in R einlesen
+Sterbefälle.2006 <- read.fwf("~/Desktop/MORT06.DUSMCPUB", 
+  widths = c(19, 1,40, 2, 1, 1, 2, 2, 1, 4, 1, 2, 2, 2, 2, 
+              1, 1, 1,16, 4, 1, 1, 1, 1,34, 1, 1, 4, 3, 1, 
+              3, 3, 2,283,2, 1, 1, 1, 1,33, 3, 1, 1), 
+  col.names = c("X0", "EinwohnerStatus", "X1", "Bildung.KL1989", 
+              "Bildung.KL2003", "BildungsCode", "Tod.Monat", "X5", 
+              "Geschlecht", "Alter.exakt", "Alter.ersetzt", 
+              "Alter.Kl52", "Alter.Kl27", "Alter.Kl12", 
+              "Alter.Kinder.Kl22", "TodesOrt", "Zivilstand", 
+              "Tod.Wochentag", "X15", "Datensatz.Jahr", 
+              "ArbeitsUnfall", "TodesUrsache", "BestattungsArt", 
+              "Autopsie", "X20", "TätigkeitsArt", "UnfallOrt", 
+              "ICD.Code", "Ursache.Kl358", "X24", "Ursache.Kl113", 
+              "Ursache.Kl130", "Ursache.Kl39", "X27", "Ethnizität", 
+              "Ethn.synchr", "Ethn.Imputation", "Ethn.Kl3", "Ethn.Kl5", 
+              "X32", "Ethn.LatAm", "X33", "Ethn.LatAm.Kl"), 
+  n = 100)
+
+
+
+# --------------------------------------------------------------------
+
+Sterbefälle.2006 <- read.csv("~/Dokumente/Buch/Daten/Sterbestatistik.2006.csv", 
+                             sep = ";", as.is = TRUE, strip.white = TRUE)
+
+
+
+# --------------------------------------------------------------------
+
+install.packages("RODBC")
+
+
+
+# --------------------------------------------------------------------
+
+library(RODBC)
+
+
+
+# --------------------------------------------------------------------
+
+library(RODBC)
+BBDB <- odbcConnect("BBDB")
+odbcGetInfo(BBDB)
+
+
+
+# --------------------------------------------------------------------
+
+library(RODBC)
+BBDB <- odbcConnect("BBDB")
+odbcGetInfo(BBDB)
+
+
+
+# --------------------------------------------------------------------
+
+library(RODBC)
+BBDB <- odbcConnect("BBDB")
+
+
+
+# --------------------------------------------------------------------
+
+sqlTables(BBDB)
+
+
+
+# --------------------------------------------------------------------
+
+sqlColumns(BBDB, sqtable = "AllStar")
+
+
+
+# --------------------------------------------------------------------
+
+Teams.DR <- sqlFetch(BBDB, sqtable = "Teams")
+colnames(Teams.DR)
+
+dim(Teams.DR)
+
+
+
+# --------------------------------------------------------------------
+
+# Siege ("W") und Niederlagen ("L") der Teams der American League 2008
+subset(Teams.DR, 
+       subset = (JahrID == 2008 & LigaID == "AL"), 
+       select = c("TeamID", "W", "L"))
+
+
+
+# --------------------------------------------------------------------
+
+# Siege ("W") und Niederlagen ("L") der Teams der American League 2008
+# hier mit einer SQL-Abfrage angefordert
+sqlQuery(BBDB, 
+         query = "SELECT  TeamID, W, L 
+                    FROM  Teams 
+                    WHERE JahrID = 2008 
+                      AND LigaID = 'AL'")
+
+
+
+# --------------------------------------------------------------------
+
+odbcClose(BBDB)
+
+
+
+# --------------------------------------------------------------------
+
+install.packages("RSQLite")
+
+
+
+# --------------------------------------------------------------------
+
+library(RSQLite)
+
+
+
+# --------------------------------------------------------------------
+
+Trb <- dbDriver("SQLite")
+
+
+
+# --------------------------------------------------------------------
+
+BBDB <- dbConnect(Trb, 
+  dbname = system.file("extdata", "BBDB.sqlite", package = "nutshellDE"))
+
+
+
+# --------------------------------------------------------------------
+
+BBDB <- dbConnect("SQLite", 
+  dbname = system.file("extdata", "BBDB.sqlite", package = "nutshellDE"))
+
+
+
+# --------------------------------------------------------------------
+
+class(Trb)
+
+class(BBDB)
+
+
+
+# --------------------------------------------------------------------
+
+dbListConnections(Trb)
+
+
+
+# --------------------------------------------------------------------
+
+dbListConnections(Trb)
+
+
+
+# --------------------------------------------------------------------
+
+dbGetInfo(BBDB)
+
+
+
+# --------------------------------------------------------------------
+
+dbListTables(BBDB)
+
+
+
+# --------------------------------------------------------------------
+
+dbListFields(BBDB, name = "AllStar")
+
+
+
+# --------------------------------------------------------------------
+
+Teams.sql <- "SELECT  TeamID, W, L 
+                FROM  Teams 
+                WHERE JahrID = 2008 
+                  AND LigaID = 'AL'"
+Bilanz.AL.2008 <- dbGetQuery(BBDB, statement = Teams.sql)
+
+
+
+# --------------------------------------------------------------------
+
+Batting.2008.sql <- "SELECT  m.Nachname, m.Vorname, 
+                             m.GeburtsJahr, m.Debut, 
+                             m.Größe, m.Gewicht, 
+                             m.Schlaghand, m.Wurfhand, 
+                             b.* 
+                       FROM  Master m 
+                       INNER JOIN Batting b 
+                         ON  b.SpielerID = m.SpielerID 
+                       WHERE b.JahrID = 2008 
+                       ORDER BY m.SpielerID" 
+Batting.2008 <- dbGetQuery(BBDB, statement = Batting.2008.sql)
+
+colnames(Batting.2008)
+
+dim(Batting.2008)
+
+
+
+# --------------------------------------------------------------------
+
+Emenge <- dbSendQuery(BBDB, statement = Teams.sql)
+Bilanz.AL.2008 <- fetch(Emenge)
+
+
+
+# --------------------------------------------------------------------
+
+# Abfrage, die eine MASSE Datensätze zurückgibt 
+Emenge <- dbSendQuery(BBDB, statement = "SELECT * FROM Master")
+
+# Aufruf zum Verwerfen der nicht abgeholten Datensätze 
+dbClearResult(Emenge)
+
+
+
+# --------------------------------------------------------------------
+
+# Die folgende SQL-Anweisung wird einen Fehler auslösen.
+# Beachten Sie, dass sofort eine Fehlermeldung ausgegeben wird.
+Emenge <- dbSendQuery(BBDB, statement = "SELECT * FROM PhantomTabelle")
+
+# Und jetzt holen Sie sich das Fehlerobjekt von Hand ab
+dbGetException(BBDB)
+
+
+
+# --------------------------------------------------------------------
+
+Batting.komplett <- dbReadTable(BBDB, "Batting")
+dim(Batting.komplett)
+
+
+
+# --------------------------------------------------------------------
+
+dbDisconnect(BBDB)
+
+
+
+# --------------------------------------------------------------------
+
+dbUnloadDriver(Trb)
+
+
+
+# ====================================================================

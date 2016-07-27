@@ -1,0 +1,309 @@
+# ====================================================================
+# R in a Nutshell (1. Aufl., Dez. 2010)
+# Kapitel 10 -- Objektorientierte Programmierung
+# ***  R-Code  ***
+# 
+# Zeichenkodierung: UTF-8
+# Schnappschuss   : 2011-01-25 20:11:53 h
+# angelegt von    : Jörg Beyer
+# ====================================================================
+
+setClass("Zeitreihe", 
+  representation(
+    Daten = "numeric", 
+    Start = "POSIXct", 
+    Ende = "POSIXct"
+  )
+)
+
+
+
+# --------------------------------------------------------------------
+
+eine.Zeitreihe <- new("Zeitreihe", 
+  Daten = c(1, 2, 3, 4, 5, 6), 
+  Start = as.POSIXct("10.10.2010 0:00:00", 
+                    format = "%d.%m.%Y %H:%M:%S"), 
+  Ende = as.POSIXct("10.10.2010 0:05:00", 
+                    format = "%d.%m.%Y %H:%M:%S")
+)
+
+
+
+# --------------------------------------------------------------------
+
+eine.Zeitreihe
+
+
+
+# --------------------------------------------------------------------
+
+setValidity("Zeitreihe", 
+  function(object) {
+    object@Start <= object@Ende &&
+    length(object@Start) == 1 &&
+    length(object@Ende) == 1
+  }
+)
+
+
+
+# --------------------------------------------------------------------
+
+validObject(eine.Zeitreihe)
+
+
+
+# --------------------------------------------------------------------
+
+schöne.Zeitreihe <- new("Zeitreihe", 
+  Daten = c(7, 8, 9, 10, 11, 12), 
+  Start = as.POSIXct("10.10.2010 0:06:00", 
+                    format = "%d.%m.%Y %H:%M:%S"), 
+  Ende = as.POSIXct("10.10.2010 0:11:00",  
+                    format = "%d.%m.%Y %H:%M:%S")
+)
+
+blöde.Zeitreihe <- new("Zeitreihe", 
+  Daten = c(7, 8, 9, 10, 11, 12), 
+  Start = as.POSIXct("10.10.2010 0:06:00", 
+                    format = "%d.%m.%Y %H:%M:%S"), 
+  Ende = as.POSIXct("01.07.1999 0:11:00",  
+                    format = "%d.%m.%Y %H:%M:%S")
+)
+
+
+
+# --------------------------------------------------------------------
+
+Intervall.Zeitreihe <- function(object) {
+  if (length(object@Daten) > 1) {
+    (object@Ende - object@Start) / (length(object@Daten) - 1)
+  } else {
+    Inf
+  }
+}
+
+
+
+# --------------------------------------------------------------------
+
+Zeitreihendaten <- function(object) {object@Daten}
+
+setGeneric("Zeitreihendaten")
+
+Zeitreihendaten(eine.Zeitreihe)
+
+
+
+# --------------------------------------------------------------------
+
+Zeitreihendaten
+
+showMethods("Zeitreihendaten")
+
+
+
+# --------------------------------------------------------------------
+
+# spätere Standardmethode  (für x-beliebige ZR-Klassen)
+Intervall <- function(object) {object@Intervall} 
+
+# neue generische Funktion
+# (holt sich die eben definierte Funktion "Intervall()" 
+#  automatisch als Standardmethode!)
+setGeneric("Intervall")
+
+# Methode für unsere eigene Klasse "Zeitreihe"
+setMethod("Intervall", 
+  signature(object = "Zeitreihe"), 
+  definition = Intervall.Zeitreihe)
+
+# Voila, unsere Methodenliste
+showMethods("Intervall")
+
+
+
+# --------------------------------------------------------------------
+
+Intervall(eine.Zeitreihe)
+
+
+
+# --------------------------------------------------------------------
+
+setMethod("summary", 
+  signature(object = "Zeitreihe"), 
+  definition = function(object, ...) {
+    cat(paste("Zeitraum: von  ", object@Start, 
+              "  bis  ", object@Ende, "\n", 
+              "Daten: ", 
+              sep = "", collapse = ""))
+    cat(paste(object@Daten, sep = "", collapse = ", "))
+  }
+)
+
+summary(eine.Zeitreihe)
+
+
+
+# --------------------------------------------------------------------
+
+setMethod("[", 
+  signature(x = "Zeitreihe", i = "numeric"), 
+  definition = function(x, i, j, ..., drop) {
+    x@Daten[i]
+  }
+)
+
+eine.Zeitreihe[3]
+
+
+
+# --------------------------------------------------------------------
+
+setClass("Gewichtsprotokoll", 
+  representation(
+    Name = "character", 
+    Größe = "numeric"
+  ), 
+  contains = "Zeitreihe"
+)
+
+
+
+# --------------------------------------------------------------------
+
+Hänschen.Klein <- new("Gewichtsprotokoll", 
+  Name = "Hänschen Klein", 
+  Größe = 182, 
+  Daten = c(170, 169, 171, 168, 170, 169, 168), 
+  Start = as.POSIXct("14.02.2010 0:00:00",  
+                    format = "%d.%m.%Y %H:%M:%S"), 
+  Ende = as.POSIXct("28.03.2010 0:00:00",  
+                    format = "%d.%m.%Y %H:%M:%S"))
+Hänschen.Klein
+
+
+
+# --------------------------------------------------------------------
+
+setClass("Person", 
+  representation(
+    Name = "character", 
+    Größe = "numeric"
+  )
+)
+
+
+
+# --------------------------------------------------------------------
+
+setClass("Gewichtsprotokoll_v2", 
+  contains = c("Zeitreihe", "Person")
+)
+
+
+
+# --------------------------------------------------------------------
+
+setClass("Katze",
+  representation(
+    Name = "character",
+    Rasse = "character"
+  )
+)
+
+
+
+# --------------------------------------------------------------------
+
+setClassUnion("Lebewesen mit Namen",
+  c("Person", "Katze")
+)
+
+
+
+# --------------------------------------------------------------------
+
+Hilde.Klein <- new("Gewichtsprotokoll_v2", 
+  Name = "Hilde Klein", 
+  Größe = 170, 
+  Daten = c(130, 129, 131, 128, 130, 129, 128), 
+  Start = as.POSIXct("14.02.2010 0:00:00", 
+                    format = "%d.%m.%Y %H:%M:%S"), 
+  Ende = as.POSIXct("28.03.2010 0:00:00", 
+                    format = "%d.%m.%Y %H:%M:%S"))
+
+is(Hilde.Klein, "Lebewesen mit Namen")
+is(Hilde.Klein, "Person")
+is(Hilde.Klein, "Zeitreihe")
+
+
+
+# --------------------------------------------------------------------
+
+Geburtstag@Monat <- "Oktober"
+
+
+
+# --------------------------------------------------------------------
+
+slot(Geburtstag, "Monat") <- "Oktober"
+
+
+
+# --------------------------------------------------------------------
+
+slot(Geburtstag, "Monat", check = FALSE) <- "Septober"
+
+
+
+# --------------------------------------------------------------------
+
+ZR <- ts(data = c(1, 2, 3, 4, 5), start = c(2009, 2), frequency = 12)
+ZR
+
+attributes(ZR)
+
+typeof(ZR)
+
+unclass(ZR)
+
+
+
+# --------------------------------------------------------------------
+
+ZR@tsp
+
+
+
+# --------------------------------------------------------------------
+
+plot
+
+
+
+# --------------------------------------------------------------------
+
+plot.Zeitreihe <- function(object, ...) {
+  plot(object@Daten, ...)
+}
+
+
+
+# --------------------------------------------------------------------
+
+plot(eine.Zeitreihe)
+
+
+
+# --------------------------------------------------------------------
+
+methods(histogram)
+
+histogram.factor()
+
+
+
+# ====================================================================

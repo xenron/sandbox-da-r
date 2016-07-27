@@ -1,0 +1,279 @@
+# ====================================================================
+# R in a Nutshell (1. Aufl., Dez. 2010)
+# Kapitel 24 -- Bioconductor
+# ***  R-Code  ***
+# 
+# Zeichenkodierung: UTF-8
+# Schnappschuss   : 2011-01-25 20:11:53 h
+# angelegt von    : Jörg Beyer
+# ====================================================================
+
+library(affy)
+
+setwd("~/GSE2034/CEL")
+GSE2034 <- ReadAffy()
+
+
+
+# --------------------------------------------------------------------
+
+library(sampling)
+
+# Patientendaten einlesen
+library(nutshellDE)
+data(GSE2034)
+
+# Kurz orientieren
+head(GSE2034[, 1:5], n = 3)
+
+# Stratifizierte Zufallsstichprobe ziehen (n = 2 * 50)
+GSE2034.Stp <- strata(GSE2034, 
+                      stratanames = "Rückfall", 
+                      size = c(50, 50), 
+                      method = "srswor")
+
+# Namen der CEL-Dateien montieren
+GSE2034.CEL <- paste(GSE2034$GEO.Zugangscode[GSE2034.Stp$ID_unit], 
+                     ".CEL", sep = "")
+
+# CEL-Daten einlesen
+setwd("~/Dokumente/Buch/Daten/GSE2034/CEL")
+GSE2034.Stp.CEL <- ReadAffy(filenames = GSE2034.CEL)
+
+
+
+# --------------------------------------------------------------------
+
+GSE2034.Stp.CEL
+
+
+
+# --------------------------------------------------------------------
+
+# Stichprobennamen im AffyBatch mit den CEL-Daten 
+head(sampleNames(GSE2034.Stp.CEL), n = 10)
+
+
+
+# --------------------------------------------------------------------
+
+sampleNames(GSE2034.Stp.CEL) <- sub("\\.CEL$", "", 
+                                    sampleNames(GSE2034.Stp.CEL))
+
+# bereinigte Stichprobennamen aus dem AffyBatch 
+head(sampleNames(GSE2034.Stp.CEL), n = 10)
+
+
+
+# --------------------------------------------------------------------
+
+library(simpleaffy)
+
+GSE2034.CEL.qc <- qc(GSE2034.Stp.CEL[, 1:20])
+plot(GSE2034.CEL.qc, 
+     main = "Qualitätskontrolle", cex = 0.7)
+
+
+
+# --------------------------------------------------------------------
+
+library(vsn)
+
+GSE2034.Stp.CEL.vsnrma <- vsnrma(GSE2034.Stp.CEL[,1:50])
+
+
+
+# --------------------------------------------------------------------
+
+meanSdPlot(GSE2034.Stp.CEL.vsnrma, 
+           xlab = "Mittelwert (Ränge)", 
+           ylab = "Standardabweichung")
+
+
+
+# --------------------------------------------------------------------
+
+library(GEOquery)
+
+GSE2034.geo <- getGEO("GSE2034")
+
+
+
+# --------------------------------------------------------------------
+
+class(GSE2034.geo)
+
+class(GSE2034.geo[[1]])
+
+GSE2034.geo
+
+
+
+# --------------------------------------------------------------------
+
+GSE2034.geo1 <- GSE2034.geo[[1]]
+
+
+
+# --------------------------------------------------------------------
+
+# Zeilenindizes der klinischen Falldaten zusammensuchen 
+Phäno.Fälle <- match(sampleNames(GSE2034.Stp.CEL), 
+                     GSE2034$GEO.Zugangscode)
+
+# Gegenprobe: 
+# Haben wir die korrekten GEO-Codes (in der richtigen Reihenfolge)?
+identical(sampleNames(GSE2034.Stp.CEL), 
+                     GSE2034$GEO.Zugangscode[Phäno.Fälle])
+
+# Phänotyp-Daten zu den CEL-Daten hinzufügen
+phenoData(GSE2034.Stp.CEL) <- new("AnnotatedDataFrame", 
+                     data = GSE2034[Phäno.Fälle, ])
+
+
+
+# --------------------------------------------------------------------
+
+# Spalte "GEO.Zugangscode" in den klinischen Daten umbenennen
+names(GSE2034)[names(GSE2034) == "GEO.Zugangscode"] <- "geo_accession"
+
+# Phänotyp- und Variablen-Metadaten montieren
+GSE2034.pdata <- merge(pData(GSE2034.geo1), GSE2034[, 2:7], 
+                       by = "geo_accession", sort = FALSE)
+
+GSE2034.VarMeta <- rbind(varMetadata(GSE2034.geo1), 
+                       data.frame(labelDescription = rep(NA, length(3:7)), 
+                                  row.names = names(GSE2034)[3:7]))
+
+# Phänotyp- und Variablen-Metadaten zu den Expressionsdaten hinzufügen
+pData(GSE2034.geo1) <- GSE2034.pdata
+varMetadata(GSE2034.geo1) <- GSE2034.VarMeta
+
+
+
+# --------------------------------------------------------------------
+
+# An ein "GPL96"-Annotationspaket ist nicht leicht heranzukommen, 
+# also benutzen wir stattdessen das gleichwertige "affy hgu133a" 
+annotation(GSE2034.geo1)
+annotation(GSE2034.geo1) <- "hgu133a"
+
+library(genefilter)
+GSE2034.geo1.f <- nsFilter(GSE2034.geo1, var.cutoff = 0.5)
+
+
+
+# --------------------------------------------------------------------
+
+GSE2034.geo1.tt <- rowttests(GSE2034.geo1.f$eset, 
+                             fac = "Rückfall")
+
+
+
+# --------------------------------------------------------------------
+
+plot(GSE2034.geo1.tt$dm, -log10(GSE2034.geo1.tt$p.value), 
+     xlab = "Gruppen-Differenzen \"Rückfall\" (log)", 
+     ylab = expression(-log[10] ~ p), 
+     pch  = ".")
+
+
+
+# --------------------------------------------------------------------
+
+library(rbsurv)
+
+GSE2034.rbsurv <- rbsurv(
+  time    = pData(GSE2034.geo1.f$eset)$Rückfall.oder.FollowUp, 
+  status  = pData(GSE2034.geo1.f$eset)$Rückfall, 
+  x       = assayData(GSE2034.geo1.f$eset)$exprs, 
+  gene.ID = row.names(assayData(GSE2034.geo1.f$eset)$exprs), 
+  max.n.genes = 75, n.fold = 3, n.iter = 6)
+
+
+
+# --------------------------------------------------------------------
+
+typeof(GSE2034.rbsurv)
+names(GSE2034.rbsurv)
+
+
+
+# --------------------------------------------------------------------
+
+head(GSE2034.rbsurv$model, n = 20)
+
+
+
+# --------------------------------------------------------------------
+
+annotation(GSE2034.geo1.f)
+
+
+
+# --------------------------------------------------------------------
+
+library(annotate)
+
+getSYMBOL(GSE2034.rbsurv$gene.list, 
+          annotation(GSE2034.geo1.f))
+
+
+
+# --------------------------------------------------------------------
+
+library(annaffy)
+
+aaf.handler()
+
+
+
+# --------------------------------------------------------------------
+
+GSE2034.annotation <- aafTableAnn(
+  probeid = GSE2034.rbsurv$gene.list, 
+  chip = "hgu133a.db", 
+  colnames = c("Probe", "Symbol", "Description", "PubMed", 
+               "Gene Ontology", "Pathway"))
+
+saveHTML(GSE2034.annotation, filename = "~/GSE2034.html")
+
+
+
+# --------------------------------------------------------------------
+
+library(sampling)
+
+GSE2034.dummy <- data.frame(
+  Rückfall  = GSE2034.geo1.f[["eset"]][["Rückfall"     ]], 
+  row.names = GSE2034.geo1.f[["eset"]][["geo_accession"]])
+
+GSE2034.Stp.heatmap <- strata(GSE2034.dummy, 
+  stratanames = c("Rückfall"), 
+  size = c(25, 25), 
+  method = "srswor")
+
+remove(GSE2034.dummy)
+
+
+
+# --------------------------------------------------------------------
+
+GSE2034.heatmap <- assayData(GSE2034.geo1.f$eset)$exprs
+heatmap(GSE2034.heatmap[GSE2034.rbsurv$gene.list, 
+                        GSE2034.Stp.heatmap$ID_unit], 
+        Colv = GSE2034.Stp.heatmap$Rückfall, 
+        cexRow = 0.45, cexCol = 0.45)
+
+
+
+# --------------------------------------------------------------------
+
+library(Biobase)
+library(affy)
+
+vignette(all = FALSE)
+
+
+
+# ====================================================================

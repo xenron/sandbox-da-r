@@ -1,0 +1,43 @@
+# ====================================================================
+# R in a Nutshell (1. Aufl., Dez. 2010)
+# Kapitel 12 -- Daten speichern, laden und bearbeiten
+# ***  Shell (Kommandozeilenbefehle)  ***
+# 
+# Zeichenkodierung: UTF-8
+# Schnappschuss   : 2011-01-25 20:11:53 h
+# angelegt von    : Jörg Beyer
+# ====================================================================
+
+% cd ~/Dokumente/Buch/Daten/
+% perl ./Sterbestatistik.pl < ./MORT06.DUSMCPUB > ./Sterbestatistik.2006.csv
+
+
+
+# --------------------------------------------------------------------
+
+% cd ~/Downloads 
+% curl http://www.ch-werner.de/sqliteodbc/sqliteodbc-0.86.tar.gz \
+
+
+
+# --------------------------------------------------------------------
+
+% tar xvfz ./sqliteodbc-0.86.tar.gz
+
+
+
+# --------------------------------------------------------------------
+
+% cd ./sqliteodbc-0.86
+
+
+
+# --------------------------------------------------------------------
+
+% ./configure
+% make
+% sudo make install
+
+
+
+# ====================================================================

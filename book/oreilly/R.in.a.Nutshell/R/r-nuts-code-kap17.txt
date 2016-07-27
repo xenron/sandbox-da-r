@@ -1,0 +1,69 @@
+# ====================================================================
+# R in a Nutshell (1. Aufl., Dez. 2010)
+# Kapitel 17 -- Wahrscheinlichkeitsverteilungen
+# ***  R-Code  ***
+# 
+# Zeichenkodierung: UTF-8
+# Schnappschuss   : 2011-01-25 20:11:53 h
+# angelegt von    : Jörg Beyer
+# ====================================================================
+
+# Dichte der Standardnormalverteilung an drei Punkten 
+dnorm(x = c(-4, 0, 4))  ## ... mean = 0, sd = 1 ...
+
+# Plot der Standardnormalverteilung 
+plot(dnorm, from = -4, to = 4, 
+     main = "Standardnormalverteilung")
+
+
+
+# --------------------------------------------------------------------
+
+# Der Mittelwert der Standardnormalverteilung ist 0, 
+# die Verteilung ist symmetrisch, also müsste die 
+# Wahrscheinlichkeit P(x <= 0) 0,5 sein. Ist sie das? 
+pnorm(0)
+
+# Wie groß ist die Wahrscheinlichkeit, dass ein beliebiger 
+# Wert kleiner ist als der Mittelwert der Verteilung minus 
+# einer Standardabweichung, P(x <= 0 - 1)? 
+pnorm(-1)
+
+# Wie groß ist die Wahrscheinlichkeit, dass ein Wert außerhalb 
+# des Intervalls von +/- 1.96 Standardabweichungen liegt? 
+pnorm(-1.96, lower.tail = TRUE) + pnorm(1.96, lower.tail = FALSE)
+
+
+
+# --------------------------------------------------------------------
+
+curve(pnorm(x), from = -4, to = 4, 
+      main = "Kumulative Standardnormalverteilung")
+
+
+
+# --------------------------------------------------------------------
+
+# Bei welchem Wert liegt der Median der Standardnormalverteilung?
+qnorm(0.5)
+
+qnorm(log(0.5), log.p = TRUE)
+
+# qnorm() ist die Umkehrfunktion von pnorm(), der nächste 
+# Aufruf müsste also das Argument zurückgeben. 
+qnorm(pnorm(-1))
+
+# Untere und obere Grenze des 95%-Konfidenzintervalls 
+qnorm(c(.025, .975))
+
+
+
+# --------------------------------------------------------------------
+
+hist(rnorm(10000), breaks = 50, 
+     main = "Standardnormalverteilte Zufallswerte\n(N = 10.000)", 
+     xlab = "x", ylab = "Häufigkeit")
+
+
+
+# ====================================================================

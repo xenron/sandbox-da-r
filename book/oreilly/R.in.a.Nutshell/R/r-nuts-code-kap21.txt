@@ -1,0 +1,399 @@
+# ====================================================================
+# R in a Nutshell (1. Aufl., Dez. 2010)
+# Kapitel 21 -- Klassifikationsmodelle
+# ***  R-Code  ***
+# 
+# Zeichenkodierung: UTF-8
+# Schnappschuss   : 2011-01-25 20:11:53 h
+# angelegt von    : Jörg Beyer
+# ====================================================================
+
+library(nutshellDE)
+data(Field.Goals)
+
+levels(Field.Goals$Spielzug)
+
+Field.Goals.Klasse <- transform(Field.Goals, 
+  FG.Ausgang = factor(
+    ifelse(Spielzug == "FG erzielt", "FG +", "FG –"), 
+    levels = c("FG –", "FG +")))
+
+
+
+# --------------------------------------------------------------------
+
+(Field.Goals.XTab <- xtabs(~ FG.Ausgang + Yards, 
+                           data = Field.Goals.Klasse))
+
+
+
+# --------------------------------------------------------------------
+
+plot(colnames(Field.Goals.XTab), 
+     (Field.Goals.XTab["FG +",] / colSums(Field.Goals.XTab) * 100), 
+     xlab = "Entfernung (Yards)", 
+     ylab = "Erfolg (Prozent)", 
+     xaxp = c(20, 60, 8))
+
+
+
+# --------------------------------------------------------------------
+
+Field.Goals.glm <- glm(FG.Ausgang ~ Yards, 
+  data = Field.Goals.Klasse, 
+  family = "binomial")
+
+
+
+# --------------------------------------------------------------------
+
+Field.Goals.glm
+
+
+
+# --------------------------------------------------------------------
+
+summary(Field.Goals.glm)
+
+
+
+# --------------------------------------------------------------------
+
+plot(colnames(Field.Goals.XTab), 
+     (Field.Goals.XTab["FG +",] / colSums(Field.Goals.XTab) * 100), 
+     xlab = "Entfernung (Yards)", 
+     ylab = "Erfolg (Prozent)", 
+     xaxp = c(20, 60, 8))
+
+
+
+# --------------------------------------------------------------------
+
+FG.Prognose <- function(modell, x) {
+  Koeff  <- coefficients(modell)
+  eta    <- Koeff["(Intercept)"] + Koeff["Yards"] * x
+  y.Dach <- 1 / (1 + exp(-eta))
+}
+
+x <- 15:65
+lines(x, FG.Prognose(Field.Goals.glm, x = x) * 100, 
+      new = TRUE)
+
+
+
+# --------------------------------------------------------------------
+
+# Daten laden 
+SpamBase <- read.csv("~/Dokumente/Buch/Daten/spambase.data", 
+  header = FALSE, sep = ",", dec = ".")
+
+# Spaltennamen ergänzen 
+names(SpamBase) <- 
+c("Hf.W.make", "Hf.W.address", "Hf.W.all", "Hf.W.3d", "Hf.W.our", 
+  "Hf.W.over", "Hf.W.remove", "Hf.W.internet", "Hf.W.order", 
+  "Hf.W.mail", "Hf.W.receive", "Hf.W.will", "Hf.W.people", 
+  "Hf.W.report", "Hf.W.addresses", "Hf.W.free", "Hf.W.business", 
+  "Hf.W.email", "Hf.W.you", "Hf.W.credit", "Hf.W.your", 
+  "Hf.W.font", "Hf.W.000", "Hf.W.money", "Hf.W.hp", "Hf.W.hpl", 
+  "Hf.W.george", "Hf.W.650", "Hf.W.lab", "Hf.W.labs", 
+  "Hf.W.telnet", "Hf.W.857", "Hf.W.data", "Hf.W.415", 
+  "Hf.W.85", "Hf.W.technology", "Hf.W.1999", "Hf.W.parts", 
+  "Hf.W.pm", "Hf.W.direct", "Hf.W.cs", "Hf.W.meeting", 
+  "Hf.W.original", "Hf.W.project", "Hf.W.re", "Hf.W.edu", 
+  "Hf.W.table", "Hf.W.conference", "Hf.Z.Semikolon", 
+  "Hf.Z.Klammer.rund.links", "Hf.Z.Klammer.eckig.links", 
+  "Hf.Z.Ausrufezeichen", "Hf.Z.Dollar", "Hf.Z.Gatter", 
+  "Majuskeln.Durchschnitt", "Majuskeln.max", "Majuskeln.gesamt", 
+  "ist.Spam")
+
+# Spalte mit Spam-Kriterium faktorisieren 
+SpamBase$ist.Spam <- factor(SpamBase$ist.Spam, 
+                            levels = c(1, 0), 
+                            labels = c("Ja", "Nein")))
+
+
+
+# --------------------------------------------------------------------
+
+library(nutshellDE)
+data(SpamBase)
+dim(SpamBase)
+
+
+
+# --------------------------------------------------------------------
+
+# Spam versus Nicht-Spam im Datensatz: Auszählung und Spam-Quoten
+Spam.XTab     <- table(SpamBase$ist.Spam)
+Spam.Quoten   <- prop.table(Spam.XTab)
+
+# 70% Trainingsdaten, stratifiziert: Auszählung und Schicht-Quoten
+# (die "Schicht-Quoten" entsprechen dem Verhältnis 
+#  Schicht in der Stichprobe : Schicht im Datensatz)
+Spam.Stp.XTab <- floor(nrow(SpamBase) * 0.7 * Spam.Quoten)
+Strata.Quoten <- Spam.Stp.XTab / Spam.XTab
+
+# Kontrolle: Überblick über Datensatz, 70%-Stichprobe und Quoten
+(data.frame(Datensatz     = as.integer(addmargins(Spam.XTab    )), 
+            Training      = as.integer(addmargins(Spam.Stp.XTab)), 
+            Spam.Quoten   = c(round(as.numeric(Spam.Quoten),   2), 
+                              sum(Spam.Quoten)), 
+            Strata.Quoten = c(round(as.numeric(Strata.Quoten), 2), 
+                              NA), 
+            row.names     = c(levels(SpamBase$ist.Spam), "Summe")))
+
+
+
+# --------------------------------------------------------------------
+
+# stratifizierte Zufallsstichprobe mit Fallindizes ziehen 
+library(sampling)
+
+SpamBase.Strata <- strata(SpamBase, 
+                          stratanames = c("ist.Spam"), 
+                          size = Spam.Stp.XTab, 
+                          method = "srswor")
+
+names(SpamBase.Strata)
+
+# Gegenprobe: stimmt die Zusammensetzung der Stichprobe? 
+addmargins(table(SpamBase.Strata$ist.Spam))
+
+
+
+# --------------------------------------------------------------------
+
+Trainingsfälle <- 1:nrow(SpamBase) %in% SpamBase.Strata$ID_unit
+SpamBase.Training <- SpamBase[ Trainingsfälle, ]
+SpamBase.Test     <- SpamBase[!Trainingsfälle, ]
+
+# Gegenprobe: sind die Daten korrekt verteilt?
+c("Training" = .d1 <- nrow(SpamBase.Training), 
+  "Test"     = .d2 <- nrow(SpamBase.Test), 
+  "Summe"    = .d1 + .d2)
+
+
+
+# --------------------------------------------------------------------
+
+library(MASS)
+
+Spam.qda <- qda(ist.Spam ~ ., data = SpamBase.Training)
+summary(Spam.qda)
+
+# Treffer in den Trainingsdaten
+table(Tatsächlich  = SpamBase.Training$ist.Spam, 
+      Vorhergesagt = predict(Spam.qda, 
+                             newdata = SpamBase.Training)$class)
+
+# Treffer in den Testdaten
+table(Tatsächlich  = SpamBase.Test$ist.Spam, 
+      Vorhergesagt = predict(Spam.qda, 
+                             newdata = SpamBase.Test)$class)
+
+
+
+# --------------------------------------------------------------------
+
+library(mda)
+
+Spam.fda <- fda(ist.Spam ~ ., data = SpamBase.Training)
+
+# Treffer in den Testdaten
+table(Tatsächlich  = SpamBase.Test$ist.Spam, 
+      Vorhergesagt = predict(Spam.fda, 
+                             newdata = SpamBase.Test, 
+                             type    = "class"))
+
+
+
+# --------------------------------------------------------------------
+
+Spam.mda <- mda(ist.Spam ~ ., data = SpamBase.Training)
+
+# Treffer in den Testdaten
+table(Tatsächlich  = SpamBase.Test$ist.Spam, 
+      Vorhergesagt = predict(Spam.mda, 
+                             newdata = SpamBase.Test, 
+                             type    = "class"))
+
+
+
+# --------------------------------------------------------------------
+
+library(class)
+
+Prädiktoren <- setdiff(colnames(SpamBase), "ist.Spam")
+Spam.knn <- knn(train = SpamBase.Training[Prädiktoren], 
+                test  = SpamBase.Test[Prädiktoren], 
+                cl    = SpamBase.Training$ist.Spam)
+summary(Spam.knn)
+
+
+
+# --------------------------------------------------------------------
+
+# Treffer in den Testdaten
+table(Tatsächlich  = SpamBase.Test$ist.Spam, 
+      Vorhergesagt = Spam.knn)
+
+
+
+# --------------------------------------------------------------------
+
+Spam.knn5 <- knn(train = SpamBase.Training[Prädiktoren], 
+                test  = SpamBase.Test[Prädiktoren], 
+                cl    = SpamBase.Training$ist.Spam, 
+                k     = 5)
+summary(Spam.knn5)
+
+# Treffer in den Testdaten
+table(Tatsächlich  = SpamBase.Test$ist.Spam, 
+      Vorhergesagt = Spam.knn5)
+
+
+
+# --------------------------------------------------------------------
+
+library(rpart)
+
+Spam.rpart <- rpart(ist.Spam ~ ., data = SpamBase.Training)
+print(Spam.rpart, digits = 4)
+
+
+
+# --------------------------------------------------------------------
+
+printcp(Spam.rpart)
+
+
+
+# --------------------------------------------------------------------
+
+plot(Spam.rpart, uniform = TRUE, compress = TRUE, 
+     branch = 0.7, lty = 3)
+text(Spam.rpart, all = TRUE, pretty = NULL, digits = 7, 
+     splits = TRUE, use.n = TRUE, xpd = TRUE, cex = 0.5)
+
+
+
+# --------------------------------------------------------------------
+
+library(maptree)
+
+draw.tree(Spam.rpart, nodeinfo = TRUE, 
+          col = gray(0:8 / 8), cex = 0.5)
+
+
+
+# --------------------------------------------------------------------
+
+# Treffer in den Testdaten
+table(Tatsächlich  = SpamBase.Test$ist.Spam, 
+      Vorhergesagt = predict(Spam.rpart, 
+                             newdata = SpamBase.Test, 
+                             type    = "class"))
+
+
+
+# --------------------------------------------------------------------
+
+library(adabag)
+
+Spam.bag <- bagging(ist.Spam ~ ., data = SpamBase.Training)
+summary(Spam.bag)
+
+# Treffer in den Trainingsdaten
+table(Tatsächlich  = SpamBase.Training$ist.Spam, 
+      Vorhergesagt = predict(Spam.bag, 
+                             newdata = SpamBase.Training)$class)
+
+# Treffer in den Testdaten
+table(Tatsächlich  = SpamBase.Test$ist.Spam, 
+      Vorhergesagt = predict(Spam.bag, 
+                             newdata = SpamBase.Test)$class)
+
+
+
+# --------------------------------------------------------------------
+
+library(ada)
+
+(Spam.ada <- ada(ist.Spam ~ ., data = SpamBase.Training, 
+                 loss = "logistic"))
+
+
+
+# --------------------------------------------------------------------
+
+# Treffer in den Trainingsdaten
+table(Tatsächlich  = SpamBase.Training$ist.Spam, 
+      Vorhergesagt = predict(Spam.ada, 
+                             newdata = SpamBase.Training))
+
+# Treffer in den Testdaten
+table(Tatsächlich  = SpamBase.Test$ist.Spam, 
+      Vorhergesagt = predict(Spam.ada, 
+                             newdata = SpamBase.Test))
+
+
+
+# --------------------------------------------------------------------
+
+library(randomForest)
+
+(Spam.randfor <- randomForest(ist.Spam ~ ., data = SpamBase.Training))
+
+
+
+# --------------------------------------------------------------------
+
+# Treffer in den Testdaten
+table(Tatsächlich  = SpamBase.Test$ist.Spam, 
+      Vorhergesagt = predict(Spam.randfor, 
+                             newdata = SpamBase.Test, 
+                             type    = "class"))
+
+
+
+# --------------------------------------------------------------------
+
+library(nnet)
+
+Spam.nnet <- nnet(ist.Spam ~ ., data = SpamBase.Training, 
+                  size = 10, decay = 0.1)
+# weights:  591
+
+
+
+# --------------------------------------------------------------------
+
+# Treffer in den Trainingsdaten
+table(Tatsächlich  = SpamBase.Training$ist.Spam, 
+      Vorhergesagt = predict(Spam.nnet, 
+                             newdata = SpamBase.Training, 
+                             type    = "class"))
+
+# Treffer in den Testdaten
+table(Tatsächlich  = SpamBase.Test$ist.Spam, 
+      Vorhergesagt = predict(Spam.nnet, 
+                             newdata = SpamBase.Test, 
+                             type    = "class"))
+
+
+
+# --------------------------------------------------------------------
+
+library(e1071)
+
+(Spam.svm <- svm(ist.Spam ~ ., data = SpamBase.Training))
+
+# Treffer in den Testdaten
+table(Tatsächlich  = SpamBase.Test$ist.Spam, 
+      Vorhergesagt = predict(Spam.svm, 
+                             newdata = SpamBase.Test, 
+                             type    = "class"))
+
+
+
+# ====================================================================

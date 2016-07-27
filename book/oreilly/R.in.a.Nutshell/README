@@ -1,0 +1,41 @@
+Dieser Ordner enthält den Beispielcode aus 
+
+  Joseph Adler (Dez. 2010), R in a Nutshell [deutsche Ausgabe]. 
+  O'Reilly Verlag GmbH & Co. KG, Köln. ISBN 978-3-89721-649-5, 
+  http://www.oreilly.de/catalog/rinanutger/index.html. 
+
+sortiert nach Sprache (R, Perl 5, Shell-Code) und kapitelweise getrennt. 
+Der Shell-Code bezieht sich auf die Bash. 
+
+Sämtliche Textdateien sind UTF-8-kodiert, Zeilenenden sind nach Unix-Konvention 
+gesetzt. Sollte Ihr Text- oder Code-Editor keine UTF-8-kodierten Dateien 
+unterstützen, empfiehlt es sich, einen besser ausgestatteten zu installieren. 
+
+R-Code kann direkt aus den Dateien in die R-Konsole kopiert und mit Enter oder 
+Return ausgeführt werden. Voraussetzung für den Erfolg ist, dass sämtliche in 
+einem Codeblock angeforderten Erweiterungspakete bereits installiert sind und 
+von R geladen werden können. 
+
+
+
+WARNUNG 
+
+Führen Sie Code niemals blind und unkritisch aus, insbesondere Shell-Code nicht! 
+
+
+
+ERRATA
+
+Bedingt durch eine notwendige Änderung an der Struktur des Pakets nutshellDE 
+nach Drucklegung des Buchs hat sich die Bestimmung des Pfads der SQLite-Datenbank 
+"BBDB" geringfügig geändert. Der Pfad muss jetzt mit 
+
+  system.file("extdata", "BBDB.sqlite", package = "nutshellDE")
+
+statt mit 
+
+  system.file("data", "BBDB.sqlite", package = "nutshellDE")
+
+bestimmt werden. Der Beispielcode wurde angepasst und weicht an insgesamt 
+10 Stellen vom Buch ab (Kap. 12 (7x), 13 (1x), 16 (1x), 20 (1x)). 
+

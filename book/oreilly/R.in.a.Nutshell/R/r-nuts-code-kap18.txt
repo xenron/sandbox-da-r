@@ -1,0 +1,500 @@
+# ====================================================================
+# R in a Nutshell (1. Aufl., Dez. 2010)
+# Kapitel 18 -- Statistische Signifikanztests
+# ***  R-Code  ***
+# 
+# Zeichenkodierung: UTF-8
+# Schnappschuss   : 2011-01-25 20:11:53 h
+# angelegt von    : Jörg Beyer
+# ====================================================================
+
+library(nutshellDE)
+data(Reifen.Schnelllauf)
+
+
+
+# --------------------------------------------------------------------
+
+Defekt.Zeit.Typ.H <- subset(Reifen.Schnelllauf, 
+  subset = (Reifentyp == "H" & 
+            Defekt.Geschwindigkeit == 160), 
+  select = "Defekt.Zeit", 
+  drop   = TRUE)
+
+Defekt.Zeit.Typ.H
+mean(Defekt.Zeit.Typ.H)
+
+
+
+# --------------------------------------------------------------------
+
+t.test(Defekt.Zeit.Typ.H, mu = 9)
+
+
+
+# --------------------------------------------------------------------
+
+Defekt.Zeit.Typ.E <- subset(Reifen.Schnelllauf, 
+  subset = (Reifentyp == "E" & 
+            Defekt.Geschwindigkeit == 180), 
+  select = "Defekt.Zeit", 
+  drop   = TRUE)
+
+Defekt.Zeit.Typ.D <- subset(Reifen.Schnelllauf, 
+  subset = (Reifentyp == "D" & 
+            Defekt.Geschwindigkeit == 180), 
+  select = "Defekt.Zeit", 
+  drop   = TRUE)
+
+Defekt.Zeit.Typ.B <- subset(Reifen.Schnelllauf, 
+  subset = (Reifentyp == "B" & 
+            Defekt.Geschwindigkeit == 180), 
+  select = "Defekt.Zeit", 
+  drop   = TRUE)
+
+
+
+# --------------------------------------------------------------------
+
+t.test(Defekt.Zeit.Typ.E, Defekt.Zeit.Typ.D)
+
+
+
+# --------------------------------------------------------------------
+
+t.test(Defekt.Zeit.Typ.E, Defekt.Zeit.Typ.B)
+
+
+
+# --------------------------------------------------------------------
+
+library(nutshellDE)
+data(Field.Goals)
+
+Spaltenauswahl <- c("Yards",  "Stadion")
+Stadion.Typen  <- c("Freiluft", "Halle")
+
+FG.erzielt  <- subset(Field.Goals, 
+  subset = (Spielzug ==  "FG erzielt"  & 
+            Stadion %in% Stadion.Typen), 
+  select = Spaltenauswahl)
+
+FG.verfehlt <- subset(Field.Goals, 
+  subset = (Spielzug ==  "FG verfehlt" & 
+            Stadion %in% Stadion.Typen), 
+  select = Spaltenauswahl)
+
+
+
+# --------------------------------------------------------------------
+
+t.test(Yards ~ Stadion[, drop = TRUE], data = FG.erzielt)
+
+
+
+# --------------------------------------------------------------------
+
+t.test(Yards ~ Stadion[, drop = TRUE], data = FG.verfehlt)
+
+
+
+# --------------------------------------------------------------------
+
+FG.egal <- subset(Field.Goals, 
+  subset = (Stadion %in% Stadion.Typen), 
+  select = Spaltenauswahl)
+
+t.test(Yards ~ Stadion[, drop = TRUE], data = FG.egal)
+
+
+
+# --------------------------------------------------------------------
+
+library(nutshellDE)
+data(SPECint2006)
+
+# Analysedaten zusammenstellen 
+SPECint2006.1x2 <- subset(SPECint2006, 
+       subset = (Chips == 1 & Kerne == 2), 
+       select = c("Baseline", "Ergebnis"))
+nrow(SPECint2006.1x2)
+
+# Ein paar deskriptive Maße zur Orientierung 
+summary(SPECint2006.1x2)
+
+# Jetzt der t-Test: Baseline vs. Optimierung 
+t.test(SPECint2006.1x2$Baseline, 
+       SPECint2006.1x2$Ergebnis, 
+       paired = TRUE, 
+       alternative = "less")
+
+
+
+# --------------------------------------------------------------------
+
+library(nutshellDE)
+data(Sterbestatistik.2006.Stp)
+dim(Sterbefälle.2006)
+
+tapply(Sterbefälle.2006$Alter, 
+       INDEX = list(Sterbefälle.2006$Ursache), 
+       FUN = summary)
+
+
+
+# --------------------------------------------------------------------
+
+(Alter.Todesursache <- 
+   aov(Alter ~ Ursache, data = Sterbefälle.2006))
+
+
+
+# --------------------------------------------------------------------
+
+anova(Alter.Todesursache)
+
+
+
+# --------------------------------------------------------------------
+
+model.tables(Alter.Todesursache)
+
+
+
+# --------------------------------------------------------------------
+
+library(nutshellDE)
+data(Geburtenstatistik.2006.Stp)
+nrow(Geburten.2006)
+
+(Mütter.Zunahme.nach.Monat <- 
+  tapply(Geburten.2006$Mutter.Zunahme, 
+         INDEX = Geburten.2006$Geburt.Monat, 
+         FUN = mean, na.rm = TRUE))
+
+diff(range(Mütter.Zunahme.nach.Monat))
+
+
+
+# --------------------------------------------------------------------
+
+anova(aov(Mutter.Zunahme ~ Geburt.Monat, Geburten.2006))
+
+
+
+# --------------------------------------------------------------------
+
+Alter.Todesursache.LM <- 
+  lm(Alter ~ Ursache, data = Sterbefälle.2006)
+
+anova(Alter.Todesursache.LM)
+
+
+
+# --------------------------------------------------------------------
+
+pairwise.t.test(Reifen.Schnelllauf$Defekt.Zeit, 
+                g = Reifen.Schnelllauf$Reifentyp)
+
+
+
+# --------------------------------------------------------------------
+
+var.test(Yards ~ Stadion[, drop = TRUE], data = FG.egal)
+
+
+
+# --------------------------------------------------------------------
+
+bartlett.test(Yards ~ Stadion[, drop = TRUE], data = FG.egal)
+
+
+
+# --------------------------------------------------------------------
+
+par(mfcol = c(1, 2), ps = 10, cex.main = 1, cex.axis = 0.8)
+
+hist(Field.Goals$Yards, breaks = 25, 
+  main = "Histogramm\nField-Goal-Distanzen", 
+  xlab = "Field-Goal-Distanzen (yd)", 
+  ylab = "Häufigkeit")
+
+qqnorm(Field.Goals$Yards, pch = ".", 
+  main = "Q-Q-Plot\nField-Goal-Distanzen", 
+  xlab = "Quantile Normalverteilung", 
+  ylab = "Quantile Distanzen (yd)")
+
+
+
+# --------------------------------------------------------------------
+
+shapiro.test(Field.Goals$Yards)
+
+
+
+# --------------------------------------------------------------------
+
+ks.test(Field.Goals$Yards, y = pnorm)
+
+
+
+# --------------------------------------------------------------------
+
+library(nutshellDE)
+data(SPECint2006)
+
+SPECint2006.1x2 <- subset(SPECint2006, 
+       subset = (Chips == 1 & Kerne == 2), 
+       select = c("Baseline", "Ergebnis"))
+
+ks.test(jitter(SPECint2006.1x2$Baseline), 
+        jitter(SPECint2006.1x2$Ergebnis))
+
+
+
+# --------------------------------------------------------------------
+
+cor.test(c(1, 2, 3, 4, 5,  6,  7,  8), 
+         c(0, 2, 4, 6, 8, 10, 11, 14))
+
+
+
+# --------------------------------------------------------------------
+
+cor.test(c(1, 2, 3, 4, 5, 6, 7, 8),
+         c(5, 3, 8, 1, 7, 0, 0, 3))
+
+
+
+# --------------------------------------------------------------------
+
+library(nutshellDE)
+data(Toxine.und.Krebs)
+
+cor.test(~ I(Luft.vor.Ort/Fläche) + I(Krebstote.Lunge/Population), 
+         data = Toxine.und.Krebs)
+
+
+
+# --------------------------------------------------------------------
+
+Defekt.Zeit.Typ.E <- subset(Reifen.Schnelllauf, 
+  subset = (Reifentyp == "E" & 
+            Defekt.Geschwindigkeit == 180), 
+  select = "Defekt.Zeit", 
+  drop   = TRUE)
+
+Defekt.Zeit.Typ.D <- subset(Reifen.Schnelllauf, 
+  subset = (Reifentyp == "D" & 
+            Defekt.Geschwindigkeit == 180), 
+  select = "Defekt.Zeit", 
+  drop   = TRUE)
+
+wilcox.test(Defekt.Zeit.Typ.E, Defekt.Zeit.Typ.D)
+
+
+
+# --------------------------------------------------------------------
+
+rank(sort(c(Defekt.Zeit.Typ.E, Defekt.Zeit.Typ.D)))
+
+
+
+# --------------------------------------------------------------------
+
+Spaltenauswahl <- c("Yards",  "Stadion")
+Stadion.Typen  <- c("Freiluft", "Halle")
+
+FG.erzielt  <- subset(Field.Goals, 
+  subset = (Spielzug ==  "FG erzielt"  & 
+            Stadion %in% Stadion.Typen), 
+  select = Spaltenauswahl)
+
+wilcox.test(Yards ~ Stadion[, drop = TRUE], 
+            data = FG.erzielt, 
+            conf.int = TRUE)
+
+
+
+# --------------------------------------------------------------------
+
+SPECint2006.1x2 <- subset(SPECint2006, 
+            subset = (Chips == 1 & Kerne == 2), 
+            select = c("Baseline", "Ergebnis"))
+
+wilcox.test(SPECint2006.1x2$Baseline, 
+            SPECint2006.1x2$Ergebnis, 
+            conf.int = TRUE, 
+            paired = TRUE, alternative = "less")
+
+
+
+# --------------------------------------------------------------------
+
+SPECint2006.1x2 <- subset(SPECint2006, 
+            subset = (Chips == 1 & Kerne == 2), 
+            select = c("Baseline", "Ergebnis"))
+
+kruskal.test(Alter ~ Ursache, data = Sterbefälle.2006)
+
+
+
+# --------------------------------------------------------------------
+
+friedman.test(as.matrix(SPECint2006.1x2))
+
+
+
+# --------------------------------------------------------------------
+
+Spaltenauswahl <- c("Yards",  "Stadion")
+Stadion.Typen  <- c("Freiluft", "Halle")
+
+FG.egal <- subset(Field.Goals, 
+  subset = (Stadion %in% Stadion.Typen), 
+  select = Spaltenauswahl)
+
+ansari.test(Yards ~ Stadion[, drop = TRUE], data = FG.egal)
+
+
+
+# --------------------------------------------------------------------
+
+fligner.test(Alter ~ Ursache, data = Sterbefälle.2006)
+
+
+
+# --------------------------------------------------------------------
+
+library(nutshellDE)
+data(Batting.2008)
+
+# Batting-Statistik von David Ortiz abfragen 
+Batting.2008[(Batting.2008$Nachname == "Ortiz" & 
+              Batting.2008$Vorname  == "David" ), 
+             c("Nachname", "Vorname", "AB", "H")]
+
+# Batting-Average prüfen (mindestens 30%-Hitter?)
+binom.test(x = 110, n = 416, p = 0.3, 
+           alternative = "less")
+
+
+
+# --------------------------------------------------------------------
+
+addmargins(FG.Kreuztabelle <- xtabs(~ Spielzug + Stadion, 
+                                    data = Field.Goals), 
+           margin = 2)
+
+
+
+# --------------------------------------------------------------------
+
+(FG.Kreuztabelle <- xtabs(~ Stadion + Spielzug, 
+   data = Field.Goals, 
+   subset = (Spielzug %in% c("FG erzielt", "FG verfehlt")), 
+   drop.unused.levels = TRUE))
+
+
+
+# --------------------------------------------------------------------
+
+prop.test(FG.Kreuztabelle)
+
+
+
+# --------------------------------------------------------------------
+
+library(nutshellDE)
+data(Geburtenstatistik.2006.Stp)
+nrow(Geburten.2006)
+
+(GeschlechtEntbindung.Juli06 <- 
+   xtabs(~ Geschlecht + Entbindung, 
+         data   = Geburten.2006, 
+         subset = (Geburt.Monat == 7 & 
+                   Entbindung != "Unbekannt"), 
+         drop.unused.levels = TRUE))
+
+sum(GeschlechtEntbindung.Juli06)
+
+
+
+# --------------------------------------------------------------------
+
+addmargins(prop.table(GeschlechtEntbindung.Juli06, margin = 2), 
+           margin = 1)
+
+
+
+# --------------------------------------------------------------------
+
+fisher.test(GeschlechtEntbindung.Juli06)
+
+
+
+# --------------------------------------------------------------------
+
+(GeschlechtEntbindung.Zwillinge <- 
+   xtabs(~ Geschlecht + Entbindung, 
+         data   = Geburten.2006, 
+         subset = (AnzahlSäuglinge == "Zwillinge" & 
+                   Entbindung != "Unbekannt"), 
+         drop.unused.levels = TRUE))
+
+
+
+# --------------------------------------------------------------------
+
+fisher.test(GeschlechtEntbindung.Zwillinge)
+
+
+
+# --------------------------------------------------------------------
+
+chisq.test(GeschlechtEntbindung.Zwillinge)
+
+
+
+# --------------------------------------------------------------------
+
+Fallauswahl <- Geburten.2006$AnzahlSäuglinge == "Zwillinge" & 
+               Geburten.2006$Entbindung      != "unbekannt" 
+
+chisq.test(Geburten.2006$Geschlecht[Fallauswahl], 
+           Geburten.2006$Entbindung[Fallauswahl, drop = TRUE ])
+
+
+
+# --------------------------------------------------------------------
+
+(Geburten.2006.Wtag <- xtabs(~ Geburt.Wtag, 
+                             data = Geburten.2006))
+
+
+
+# --------------------------------------------------------------------
+
+chisq.test(Geburten.2006.Wtag)
+
+
+
+# --------------------------------------------------------------------
+
+(Geburten.2006.WtagMonat <- 
+   xtabs(~ Geburt.Wtag + Geburt.Monat, 
+         data   = Geburten.2006, 
+         subset = (as.integer(Geburt.Wtag) <= 5), 
+         drop.unused.levels = TRUE))
+
+range(Geburten.2006.WtagMonat)
+
+
+
+# --------------------------------------------------------------------
+
+chisq.test(Geburten.2006.WtagMonat)
+
+
+
+# ====================================================================

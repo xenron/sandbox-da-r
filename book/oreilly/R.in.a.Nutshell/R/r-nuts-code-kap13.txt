@@ -1,0 +1,738 @@
+# ====================================================================
+# R in a Nutshell (1. Aufl., Dez. 2010)
+# Kapitel 13 -- Datenaufbereitung
+# ***  R-Code  ***
+# 
+# Zeichenkodierung: UTF-8
+# Schnappschuss   : 2011-02-02 19:50:44 h
+# angelegt von    : Jörg Beyer
+# ====================================================================
+
+x <- c("a", "b", "c", "d", "e")
+y <- c("A", "B", "C", "D", "E")
+paste(x, y)
+
+
+
+# --------------------------------------------------------------------
+
+paste(x, y, sep = "-")
+
+
+
+# --------------------------------------------------------------------
+
+paste(x, y, sep = "-", collapse = "#")
+
+
+
+# --------------------------------------------------------------------
+
+Top.5.Gehälter
+
+
+
+# --------------------------------------------------------------------
+
+Jahr <- rep(2008, 5)
+Rang <- c(1:5)
+paar.Spalten.mehr <- data.frame(Jahr, Rang)
+paar.Spalten.mehr
+
+
+
+# --------------------------------------------------------------------
+
+cbind(paar.Spalten.mehr, Top.5.Gehälter)
+
+
+
+# --------------------------------------------------------------------
+
+Top.5.Gehälter
+
+die.nächsten.drei
+
+
+
+# --------------------------------------------------------------------
+
+rbind(Top.5.Gehälter, die.nächsten.drei)
+
+
+
+# --------------------------------------------------------------------
+
+Kurse.abfragen <- function(ticker, 
+  von = if (missing(bis)) (Sys.Date() - 365) else (bis - 365), 
+  bis = if (missing(von))  Sys.Date()        else (von + 365), 
+  intervall = "d") 
+{ 
+  if (von > bis) { 
+    Spanne <- c(von, bis); von <- Spanne[2]; bis <- Spanne[1]; 
+  }; 
+  
+  # URL-Bausteine definieren 
+  URL.Basis     <- "http://ichart.finance.yahoo.com/table.csv?";
+  TickerCode    <- paste(sep = "", "s=", ticker);
+  
+  # !!! Monate müssen von '00' bis '11' durchnummeriert sein, 
+  #     also auf die korrekte Formatierung achten !!! 
+  von.MM        <- paste(sep = "", "&a=", 
+    formatC((as.integer(format(von, "%m")) - 1), width = 2, flag = "0"));
+  von.TT        <- paste(sep = "", "&b=", format(von, "%d"));
+  von.JJJJ      <- paste(sep = "", "&c=", format(von, "%Y"));
+  
+  bis.MM        <- paste(sep = "", "&d=", 
+    formatC((as.integer(format(bis, "%m")) - 1), width = 2, flag = "0"));
+  bis.TT        <- paste(sep = "", "&e=", format(bis, "%d"));
+  bis.JJJJ      <- paste(sep = "", "&f=", format(bis, "%Y"));
+  
+  Intervall     <- paste(sep = "", "&g=", intervall);
+  URL.Rest      <- "&ignore=.csv";
+  
+  # URL zusammensetzen 
+  URL           <- URLencode(paste(sep = "", 
+                                   URL.Basis, TickerCode, 
+                                   von.MM, von.TT, von.JJJJ, 
+                                   bis.MM, bis.TT, bis.JJJJ, 
+                                   Intervall, URL.Rest));
+  
+  # Daten bei Yahoo!-Finanzen abholen 
+  dumm.gelaufen <- function(Error) { 
+    cat("Warnmeldung:\n", 
+        Error[[1]], "\n", 
+        "Ticker \"", ticker, "\" wurde nicht gefunden (", URL, ")\n\n", 
+        sep = "");
+    NULL;
+  } 
+  Yahoo <- tryCatch(read.csv(URL), warning = dumm.gelaufen);
+  
+  # Ticker-Kürzel hinzufügen (und Spaltennamen übersetzen) 
+  if (! is.null(Yahoo)) { 
+    Yahoo   <- cbind(Ticker = ticker, Yahoo);
+    colnames(Yahoo) <- c("Ticker", "Datum", "Eröffnung", "Hoch", "Tief", 
+                         "Schluss", "Volumen", "Adj.Schluss");
+  } 
+  return(Yahoo);
+} 
+
+
+
+# --------------------------------------------------------------------
+
+Wertpapiere.abfragen <- function(ticker, 
+  von = if (missing(bis)) (Sys.Date() - 365) else (bis - 365), 
+  bis = if (missing(von))  Sys.Date()        else (von + 365), 
+  intervall = "d") 
+{ 
+  Yahoo <- NULL; 
+  for (tkr in ticker) { 
+    if (is.null(Yahoo)) { 
+      Yahoo <- Kurse.abfragen(tkr, von, bis, intervall);
+    } else { 
+      Yahoo <- rbind(Yahoo, 
+               Kurse.abfragen(tkr, von, bis, intervall));
+    } 
+  } 
+  return(Yahoo);
+} 
+
+
+
+# --------------------------------------------------------------------
+
+DJ.Notierungen <- c("MMM", "AA", "AXP", "T", "BAC", "BA", "CAT", "CVX", "C", 
+                    "KO", "DIS", "DD", "XOM", "GE", "HPQ", "HD", "IBM", "INTC", 
+                    "JNJ", "JPM", "KFT", "MCD", "MRK", "MSFT", "PFE", "PG", 
+                    "TRV", "UTX", "VZ", "WMT")
+
+# Bis zu diesem Datum möchte ich die Kurse haben 
+Ende <- as.Date("2010-07-02")
+DJ <- Wertpapiere.abfragen(DJ.Notierungen, bis = Ende)
+head(DJ, n = 5)
+
+
+
+# --------------------------------------------------------------------
+
+library(RSQLite)
+Trb <- dbDriver("SQLite")
+BBDB <- dbConnect(Trb, 
+  dbname = system.file("extdata", "BBDB.sqlite", package = "nutshellDE"))
+
+dbListFields(BBDB, name = "Master")
+
+
+
+# --------------------------------------------------------------------
+
+dbListFields(BBDB, name = "Batting")
+
+
+
+# --------------------------------------------------------------------
+
+Spieler.komplett <- dbGetQuery(BBDB, statement = "SELECT * FROM Master" )
+Batting.komplett <- dbGetQuery(BBDB, statement = "SELECT * FROM Batting")
+Batting.plus.Namen <- merge(Spieler.komplett, Batting.komplett)
+
+
+
+# --------------------------------------------------------------------
+
+intersect(colnames(Spieler.komplett), colnames(Batting.komplett))
+
+
+
+# --------------------------------------------------------------------
+
+class(DJ$Datum)
+
+
+
+# --------------------------------------------------------------------
+
+DJ$Datum <- as.Date(DJ$Datum)
+class(DJ$Datum)
+
+
+
+# --------------------------------------------------------------------
+
+DJ$MW <- (DJ$Hoch + DJ$Tief) / 2
+colnames(DJ)
+
+
+
+# --------------------------------------------------------------------
+
+DJ.Klon <- DJ 
+DJ.Klon$Datum <- as.character(DJ.Klon$Datum); DJ.Klon$MW <- NULL
+identical(DJ, DJ.Klon)
+
+DJ.Klon <- transform(DJ.Klon, 
+                     Datum = as.Date(Datum), 
+                     MW = (Hoch + Tief) / 2)
+colnames(DJ.Klon)
+
+class(DJ.Klon$Datum)
+
+identical(DJ, DJ.Klon)
+
+
+
+# --------------------------------------------------------------------
+
+(mtx <- matrix(1:20, nrow = 5, ncol = 4))
+
+
+
+# --------------------------------------------------------------------
+
+apply(mtx, MARGIN = 1, FUN = max)
+
+
+
+# --------------------------------------------------------------------
+
+apply(mtx, MARGIN = 2, FUN = max)
+
+
+
+# --------------------------------------------------------------------
+
+(arr <- array(1:27, dim = c(3, 3, 3)))
+
+
+
+# --------------------------------------------------------------------
+
+apply(arr, MARGIN = 1, FUN = paste, collapse = ", ")
+
+apply(arr, MARGIN = 2, FUN = paste, collapse = ", ")
+
+apply(arr, MARGIN = 3, FUN = paste, collapse = ", ")
+
+
+
+# --------------------------------------------------------------------
+
+apply(arr, MARGIN = c(1, 2), FUN = paste, collapse = ", ")
+
+
+
+# --------------------------------------------------------------------
+
+lst <- as.list(1:5)
+lapply(lst, FUN = function(x) 2^x)
+
+
+
+# --------------------------------------------------------------------
+
+dr <- data.frame(x = 1:5, y = 6:10)
+dr
+
+lapply(dr, FUN = function(x) 2^x)
+
+lapply(dr, FUN = max)
+
+
+
+# --------------------------------------------------------------------
+
+sapply(dr, FUN = function(x) 2^x)
+
+
+
+# --------------------------------------------------------------------
+
+mapply(paste, 
+       c( 1,   2,   3,   4,   5 ), 
+       c("a", "b", "c", "d", "e"), 
+       c("A", "B", "C", "D", "E"), 
+       MoreArgs = list(sep = "-"))
+
+
+
+# --------------------------------------------------------------------
+
+# Beispieldaten laden: 
+library(nutshellDE)
+data(Batting.2008)
+
+# Erst Rohdaten um Batting-Average ("AVG") ergänzen 
+Batting.2008 <- transform(Batting.2008, AVG = H / AB)
+
+# Dann Gruppe der Spieler auswählen, deren "At-Bats"-Wert > 100 ist 
+# (höhere statistische Aussagekraft): 
+Batting.2008.AB.über.100 <- subset(Batting.2008, subset = (AB > 100))
+
+# Abschließend Ergebnisse in 10 Intervalle aufteilen und auszählen: 
+Batting.2008.AVG.Kl <- cut(Batting.2008.AB.über.100$AVG, breaks = 10)
+table(Batting.2008.AVG.Kl)
+
+
+
+# --------------------------------------------------------------------
+
+HutGrößen   <- seq(from = 6.25, to = 7.75, by = 0.25)
+HosenGrößen <- c(30, 31, 32, 33, 34, 36, 38, 40)
+SchuhGrößen <- seq(from = 7, to = 12)
+
+make.groups(HutGrößen, HosenGrößen, SchuhGrößen)
+
+
+
+# --------------------------------------------------------------------
+
+Zeilenfilter <- Batting.plus.Namen$JahrID == 2008
+Batting.plus.Namen.2008 <- Batting.plus.Namen[Zeilenfilter, ]
+
+summary(Batting.plus.Namen.2008$JahrID)
+
+
+
+# --------------------------------------------------------------------
+
+Spaltenfilter <- c("Vorname", "Nachname", "AB", "H", "BB")
+Batting.plus.Namen.2008.II <- 
+  Batting.plus.Namen[Zeilenfilter, Spaltenfilter]
+
+
+
+# --------------------------------------------------------------------
+
+Batting.plus.Namen.2008    <- subset(Batting.plus.Namen, 
+                                     subset = (JahrID == 2008))
+Batting.plus.Namen.2008.II <- subset(Batting.plus.Namen, 
+                                     subset = (JahrID == 2008), 
+                                     select = Spaltenfilter)
+
+
+
+# --------------------------------------------------------------------
+
+Batting.2008[sample(1:nrow(Batting.2008), 5), ]
+
+
+
+# --------------------------------------------------------------------
+
+Batting.2008$TeamID <- factor(Batting.2008$TeamID)
+levels(Batting.2008$TeamID)
+
+# Kurze Demonstration, was "sample()" hier machen soll
+sample(levels(Batting.2008$TeamID), 3)
+
+# Anwendungsbeispiel (bedenken Sie, dass hier eine andere 
+# Zufallsstrichprobe aus den Teams gezogen wird)
+Batting.2008.3Teams <- subset(Batting.2008, 
+                              subset = TeamID %in% sample(levels(TeamID), 3))
+
+# Kontrollieren, ob in der Stichprobe wirklich nur drei Teams sind 
+# (Unbenutzte Faktorstufen schließen wir mit "drop = TRUE" aus) 
+summary(Batting.2008.3Teams$TeamID[, drop = TRUE])
+
+
+
+# --------------------------------------------------------------------
+
+tapply(Batting.2008$HR, 
+       INDEX = list(Batting.2008$TeamID), 
+       FUN = sum, na.rm = TRUE)
+
+
+
+# --------------------------------------------------------------------
+
+tapply((Batting.2008$H / Batting.2008$AB), 
+       INDEX = list(Batting.2008$LigaID), 
+       FUN = fivenum, na.rm = TRUE)
+
+
+
+# --------------------------------------------------------------------
+
+Batting.2008$Schlaghand <- factor(Batting.2008$Schlaghand, 
+       levels = c("R", "L", "B"))
+Batting.2008$Wurfhand   <- factor(Batting.2008$Wurfhand, 
+       levels = c("R", "L"     ))
+
+tapply(Batting.2008$HR, 
+       INDEX = list(Batting.2008$LigaID, 
+                    Batting.2008$Schlaghand), 
+       FUN = mean, na.rm = TRUE)
+
+
+
+# --------------------------------------------------------------------
+
+# Mit dieser Art der Spaltenauswahl sichern wir uns ab, falls R 
+# irgendwann die Spaltennamen "2B" und "3B" geändert haben sollte: 
+(Hit.Stats <- match(c("H", "2B", "3B", "X2B", "X3B", "HR"), 
+                    colnames(Batting.2008), nomatch = 0))
+
+# Jetzt die Auswertung: 
+by(Batting.2008[, Hit.Stats], 
+   INDICES = list(Batting.2008$LigaID, 
+                  Batting.2008$Schlaghand), 
+   FUN = mean, na.rm = TRUE)
+
+
+
+# --------------------------------------------------------------------
+
+(Bats.u.Hits <- match(c("AB", "H", "BB", "2B", "3B", "X2B", "X3B", "HR"), 
+                      colnames(Batting.2008), nomatch = 0))
+
+aggregate(Batting.2008[, Bats.u.Hits], 
+          by = list(Team = Batting.2008$TeamID), 
+          FUN = sum, na.rm = TRUE)
+
+
+
+# --------------------------------------------------------------------
+
+rowsum(Batting.2008[, Bats.u.Hits], 
+       group = Batting.2008$TeamID, na.rm = TRUE)
+
+
+
+# --------------------------------------------------------------------
+
+# Erst faktorisieren, dann "tabulate()" anwenden:
+Team.Faktor <- factor(Batting.2008$TeamID)
+Spieler.pro.Team <- tabulate(Team.Faktor)
+
+# "tabulate()" labelt die Ergebnisse nicht, also machen wir's selbst:
+names(Spieler.pro.Team) <- levels(Team.Faktor)
+Spieler.pro.Team
+
+
+
+# --------------------------------------------------------------------
+
+# Erst faktorisieren, dann "tabulate()" anwenden:
+HR.Faktor <- factor(Batting.2008$HR, 
+                    levels = 0:max(Batting.2008$HR, na.rm = TRUE))
+HR.Bilanz <- tabulate(HR.Faktor)
+
+# "tabulate()" labelt die Ergebnisse nicht, also machen wir's selbst:
+names(HR.Bilanz) <- paste(sep = "", "HR:", levels(HR.Faktor))
+HR.Bilanz
+
+
+
+# --------------------------------------------------------------------
+
+table(Batting.2008$Schlaghand)
+
+
+
+# --------------------------------------------------------------------
+
+Spaltenfilter <- c("Schlaghand", "Wurfhand") 
+Dim.Namen <- Spaltenfilter 
+table(Batting.2008[, Spaltenfilter], dnn = Dim.Namen)
+
+
+
+# --------------------------------------------------------------------
+
+Spaltenfilter <- c("Schlaghand", "Wurfhand", "LigaID") 
+Dim.Namen <- c(Spaltenfilter[1:2], "Liga") 
+table(Batting.2008[, Spaltenfilter], dnn = Dim.Namen) 
+
+
+
+# --------------------------------------------------------------------
+
+xtabs(~ Schlaghand + LigaID, data = Batting.2008)
+
+
+
+# --------------------------------------------------------------------
+
+# Erst Rohdaten um Batting-Average ("AVG") ergänzen: 
+Batting.2008 <- transform(Batting.2008, AVG = H / AB)
+
+# Dann Gruppe der Spieler auswählen, deren "At-Bats"-Wert > 100 ist 
+# (höhere statistische Aussagekraft): 
+Batting.2008.AB.über.100 <- subset(Batting.2008, subset = (AB > 100))
+
+# Abschließend Ergebnisse in 10 Intervalle aufteilen und auszählen: 
+Batting.2008.AVG.Kl <- cut(Batting.2008.AB.über.100$AVG, breaks = 10)
+table(Batting.2008.AVG.Kl)
+
+
+
+# --------------------------------------------------------------------
+
+(mtx <- matrix(1:10, nrow = 5))
+
+(mtx.t <- t(mtx))
+
+
+
+# --------------------------------------------------------------------
+
+(vkt <- 1:10)
+
+(vkt.t <- t(vkt))
+
+cat(paste(c("Zeilen:", "Spalten:"), dim(vkt.t), collapse = ";  "))
+
+
+
+# --------------------------------------------------------------------
+
+(dr <- data.frame(x = seq(10, 50, by = 10), 
+                  y = 1:5))
+
+(dr.t <- t(dr)); class(dr.t); mode(dr.t)
+
+
+
+# --------------------------------------------------------------------
+
+(dr <- data.frame(x = seq(10, 50, by = 10), 
+                  y = as.character(as.roman(1:5))))
+
+(dr.t <- t(dr)); class(dr.t); mode(dr.t)
+
+
+
+# --------------------------------------------------------------------
+
+ein.paar.Ticker <- c("GE", "GOOG", "AAPL", "AXP", "GS")
+einige.Kurse    <- Wertpapiere.abfragen(ein.paar.Ticker, 
+                                        von = as.Date("2010-01-01"), 
+                                        bis = as.Date("2010-03-31"), 
+                                        intervall = "m")
+einige.Kurse
+
+
+
+# --------------------------------------------------------------------
+
+Spaltenfilter <- c("Ticker", "Datum", "Schluss")
+(Kurse.Schluss <- einige.Kurse[, Spaltenfilter])
+
+
+
+# --------------------------------------------------------------------
+
+(expandierte.Kurse <- unstack(Kurse.Schluss, 
+                              form = Schluss ~ Ticker))
+
+
+
+# --------------------------------------------------------------------
+
+stack(expandierte.Kurse)
+
+
+
+# --------------------------------------------------------------------
+
+Kurse.nach.Datum <- reshape(Kurse.Schluss, idvar = "Datum", 
+                            timevar = "Ticker", direction = "wide")
+Kurse.nach.Datum
+
+
+
+# --------------------------------------------------------------------
+
+attributes(Kurse.nach.Datum)
+
+
+
+# --------------------------------------------------------------------
+
+Kurse.nach.Ticker <- reshape(Kurse.Schluss, idvar = "Ticker", 
+                             timevar = "Datum", direction = "wide")
+Kurse.nach.Ticker
+
+
+
+# --------------------------------------------------------------------
+
+reshape(Kurse.nach.Datum)
+
+
+
+# --------------------------------------------------------------------
+
+Spaltenfilter <- c("Ticker", "Datum", "Eröffnung", "Schluss")
+Kurse.EröffnungSchluss <- einige.Kurse[, Spaltenfilter]
+Kurse.EröffnungSchluss
+
+# Jetzt ändern wir das Layout des Datenrahmens:
+reshape(Kurse.EröffnungSchluss, idvar = "Ticker", 
+        timevar = "Datum", direction = "wide")
+
+
+
+# --------------------------------------------------------------------
+
+dusselige.Ticker <- c("GE", "GOOG", "AAPL", "AXP", "GS", "GE")
+dusselige.Kurse  <- Wertpapiere.abfragen(dusselige.Ticker, 
+                                         von = as.Date("2010-01-01"), 
+                                         bis = as.Date("2010-03-31"), 
+                                         intervall = "m")
+
+
+
+# --------------------------------------------------------------------
+
+duplicated(dusselige.Kurse)
+
+
+
+# --------------------------------------------------------------------
+
+eindeutige.Kurse <- dusselige.Kurse[!duplicated(dusselige.Kurse), ]
+duplicated(eindeutige.Kurse)
+
+
+
+# --------------------------------------------------------------------
+
+eindeutige.Kurse <- unique(dusselige.Kurse)
+sum(duplicated(eindeutige.Kurse))
+
+
+
+# --------------------------------------------------------------------
+
+Durcheinander <- c(5, 4, 7, 2, 7, 1)
+sort(Durcheinander)
+
+
+
+# --------------------------------------------------------------------
+
+sort(Durcheinander, decreasing = TRUE)
+
+
+
+# --------------------------------------------------------------------
+
+# Vektor verlängern 
+length(Durcheinander)
+length(Durcheinander) <- 7; Durcheinander
+
+# Beachten Sie, dass NAs per Voreinstellung aus dem Objekt 
+# entfernt werden ("NA.last = NA")! 
+sort(Durcheinander)
+
+# mit "NA.last = TRUE" kommen NAs in der Sortierung zuletzt 
+sort(Durcheinander, na.last = TRUE)
+
+# mit "NA.last = FALSE" stehen NAs nach Sortierung am Anfang 
+sort(Durcheinander, na.last = FALSE)
+
+
+
+# --------------------------------------------------------------------
+
+Unsortiert <- c(11, 12, 13, 15, 14)
+
+
+
+# --------------------------------------------------------------------
+
+order(Unsortiert)
+
+
+
+# --------------------------------------------------------------------
+
+Unsortiert[order(Unsortiert)]
+
+
+
+# --------------------------------------------------------------------
+
+Haustiere <- c("Hund", "Katze", "Maus", "Harpyie", "Elefant")
+(dr <- data.frame(Unsortiert, Haustiere))
+
+
+
+# --------------------------------------------------------------------
+
+dr[order(dr$Unsortiert), ]
+
+
+
+# --------------------------------------------------------------------
+
+einige.Kurse[order(einige.Kurse$Schluss), ]
+
+
+
+# --------------------------------------------------------------------
+
+Sortierung <- order(einige.Kurse$Ticker, einige.Kurse$Schluss)
+einige.Kurse[Sortierung, ]
+
+
+
+# --------------------------------------------------------------------
+
+# Folgendes passiert, wenn "order()" direkt auf "einige.Kurse" 
+# aufgerufen wird: der Datenrahmen wird als Vektor interpretiert 
+order(einige.Kurse)
+
+# Wenn wir mit "do.call()" arbeiten, bekommen wir Folgendes: 
+do.call(order, einige.Kurse)
+
+# Jetzt geben wir den Datenrahmen in der Permutation zurück, 
+# die von "do.call()" hergestellt wird:
+einige.Kurse[do.call(order, einige.Kurse), ]
+
+
+
+# ====================================================================

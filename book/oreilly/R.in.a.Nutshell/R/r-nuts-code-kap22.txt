@@ -1,0 +1,119 @@
+# ====================================================================
+# R in a Nutshell (1. Aufl., Dez. 2010)
+# Kapitel 22 -- Maschinelles Lernen
+# ***  R-Code  ***
+# 
+# Zeichenkodierung: UTF-8
+# Schnappschuss   : 2011-01-25 20:11:53 h
+# angelegt von    : Jörg Beyer
+# ====================================================================
+
+library(arules)
+
+Audioscrobbler <- read.transactions(
+  file = "~/Dokumente/Buch/Daten/Audioscrobbler/Transaktionen.csv", 
+  format = "single", sep = "\t", cols = c(1, 2))
+
+
+
+# --------------------------------------------------------------------
+
+library(arules)
+library(nutshellDE)
+data(Audioscrobbler)
+
+Audioscrobbler.apriori <- apriori(
+  data = Audioscrobbler, 
+  parameter = new("APparameter", 
+                  support = 0.0645, confidence = 0.8))
+
+
+
+# --------------------------------------------------------------------
+
+summary(Audioscrobbler.apriori)
+
+
+
+# --------------------------------------------------------------------
+
+inspect(Audioscrobbler.apriori)
+
+
+
+# --------------------------------------------------------------------
+
+Audioscrobbler.eclat <- eclat(
+     data = Audioscrobbler, 
+     parameter = new("ECparameter", 
+                     support = 0.129, minlen = 2))
+
+
+
+# --------------------------------------------------------------------
+
+summary(Audioscrobbler.eclat)
+
+
+
+# --------------------------------------------------------------------
+
+inspect(Audioscrobbler.eclat)
+
+
+
+# --------------------------------------------------------------------
+
+library(cluster)
+library(nutshellDE)
+data(SanFrancisco.Immobilien.Preise)
+
+Spaltenauswahl <- c("Preis", "GeoBreite", "GeoLänge", 
+                    "Baujahr", "Schlafzimmer", 
+                    "Grundfläche", "Grundstück")
+
+SF.Immo.dist <- daisy(na.omit(SF.Immo[, Spaltenauswahl]), 
+  metric = "euclidean", stand = TRUE)
+
+summary(SF.Immo.dist)
+
+
+
+# --------------------------------------------------------------------
+
+SF.Immo.kmeans <- kmeans(SF.Immo.dist, centers = 6)
+
+data.frame("Clustergröße" = SF.Immo.kmeans$size, 
+           "QS.innerhalb" = SF.Immo.kmeans$withinss)
+
+
+
+# --------------------------------------------------------------------
+
+is.na(SF.Immo$Cluster) <- TRUE
+SF.Immo[names(SF.Immo.kmeans$cluster), 
+         "Cluster"] <- SF.Immo.kmeans$cluster
+
+
+
+# --------------------------------------------------------------------
+
+by(SF.Immo[, Spaltenauswahl], 
+   INDICES = SF.Immo$Cluster, 
+   FUN = mean)
+
+
+
+# --------------------------------------------------------------------
+
+SF.Immo.pam <- pam(SF.Immo.dist, k = 6)
+
+
+
+# --------------------------------------------------------------------
+
+plot(SF.Immo.pam)
+
+
+
+# ====================================================================

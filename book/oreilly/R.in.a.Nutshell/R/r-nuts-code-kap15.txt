@@ -1,0 +1,645 @@
+# ====================================================================
+# R in a Nutshell (1. Aufl., Dez. 2010)
+# Kapitel 15 -- Trellis-Grafik mit Lattice
+# ***  R-Code  ***
+# 
+# Zeichenkodierung: UTF-8
+# Schnappschuss   : 2011-01-25 20:11:53 h
+# angelegt von    : Jörg Beyer
+# ====================================================================
+
+dr <- data.frame(x = c(0:9), 
+                 y = c(1:10), 
+                 z = c(rep(c("a", "b"), times = 5)))
+dr
+
+
+
+# --------------------------------------------------------------------
+
+library(lattice)
+xyplot(y ~ x, data = dr)
+
+
+
+# --------------------------------------------------------------------
+
+xyplot(y ~ x | z, data = dr)
+
+
+
+# --------------------------------------------------------------------
+
+xyplot(y ~ x, groups = z, data = dr)
+
+
+
+# --------------------------------------------------------------------
+
+# Daten einlesen und 10%-Zufallsstichprobe ziehen
+Geburten.2006.roh <- read.csv("~/Dokumente/Buch/Daten/Geburtenstatistik.2006.csv", 
+                              sep = ";", as.is = TRUE, strip.white = TRUE)
+
+Geburten.2006.inx <- sample(1:nrow(Geburten.2006.roh), 
+                            size = round(nrow(Geburten.2006.roh)/10, 0))
+Geburten.2006 <- Geburten.2006.roh[Geburten.2006.inx, ]
+dim(Geburten.2006)
+
+
+
+# --------------------------------------------------------------------
+
+# Hilfsfunktion zum Umwandeln von Missing-Codes in NAs 
+auf.NA.setzen <- function(x, na.codes, drop.unused.levels = FALSE) {
+  if (is.logical(na.codes)) {
+    is.na(x)[        na.codes ] <- TRUE;
+  } else {
+    is.na(x)[ x %in% na.codes ] <- TRUE;
+  }
+  
+  if (drop.unused.levels == TRUE && is.factor(x)) { 
+    x <- x[, drop = TRUE];
+  }
+  return(x);
+}
+
+# Hilfsfunktion zum Faktorisieren von Variablen
+faktorisieren <- function(x, codes, ordered = FALSE, exclude = NA) {
+  
+  if (class(codes) == "list") { codes <- unlist(codes) };
+  if (! is.null(exclude)) {
+    if (any(is.na(exclude))) {
+      codes <- codes[! is.na(codes)];
+    }
+    codes <- codes[! codes %in% exclude];
+  }
+  
+  x <- factor(x, levels = codes, labels = names(codes), 
+              ordered = ordered, exclude = exclude);
+  return(x);
+}
+
+
+# Kodierungsschlüssel zum Faktorisieren verschiedener Quellvariablen 
+# Liste mit Paaren der Form "<neuer Code> = <alter Code>" 
+codes.DMEDUC <- list( 
+  "Ohne formale Schulbildung" =  0, 
+  "1 Jahr Elementary School"  =  1, 
+  "2 Jahre Elementary School" =  2, 
+  "3 Jahre Elementary School" =  3, 
+  "4 Jahre Elementary School" =  4, 
+  "5 Jahre Elementary School" =  5, 
+  "6 Jahre Elementary School" =  6, 
+  "7 Jahre Elementary School" =  7, 
+  "8 Jahre Elementary School" =  8, 
+  "1 Jahr High School"        =  9, 
+  "2 Jahre High School"       = 10, 
+  "3 Jahre High School"       = 11, 
+  "4 Jahre High School"       = 12, 
+  "1 Jahr College"            = 13, 
+  "2 Jahre College"           = 14, 
+  "3 Jahre College"           = 15, 
+  "4 Jahre College"           = 16, 
+  "5 Jahre College oder mehr" = 17, 
+  "k. Nachweis"               = 98, 
+  "k. Angabe" = 99); ## daraus machen wir später NAs 
+
+codes.DOB_WK <- list(
+  "Mo." = 2,  "Di." = 3,  "Mi." = 4,  
+  "Do." = 5,  "Fr." = 6,  
+  "Sa." = 7,  "So." = 1);
+
+codes.SEX <- list('m' = 'M',  'w' = 'F');
+
+codes.DMETH_REC <- list( 
+  "Vaginal"   = 1,   "Kaiserschnitt" = 2, 
+  "unbekannt" = 9);  ##  daraus machen wir später NAs 
+
+codes.DPLURAL <- list( "Ein Säugling" = 1, 
+  "Zwillinge" = 2,   "Drillinge"    = 3, 
+  "Vierlinge" = 4,   "Fünflinge o. mehr" = 5, 
+  "unbekannt" = 9);  ##  daraus machen wir später NAs 
+
+
+# Daten faktorisieren
+Geburten.2006 <- transform(Geburten.2006, 
+  Geburt.Wtag     = faktorisieren(Geburt.Wtag,     codes = codes.DOB_WK), 
+  Geschlecht      = faktorisieren(Geschlecht,      codes = codes.SEX), 
+  Mutter.Bildung  = faktorisieren(Mutter.Bildung,  codes = codes.DMEDUC), 
+  Entbindung      = faktorisieren(Entbindung,      codes = codes.DMETH_REC), 
+  AnzahlSäuglinge = faktorisieren(AnzahlSäuglinge, codes = codes.DPLURAL) 
+  );
+
+# Missing-Codes auf NA setzen
+Geburten.2006 <- transform(Geburten.2006, 
+  Mutter.Bildung  = auf.NA.setzen(Mutter.Bildung,  na.codes = "k. Angabe"), 
+  Entbindung      = auf.NA.setzen(Entbindung,      na.codes = "unbekannt"), 
+  AnzahlSäuglinge = auf.NA.setzen(AnzahlSäuglinge, na.codes = "unbekannt"), 
+  Geburten.gesamt = auf.NA.setzen(Geburten.gesamt, na.codes =    9), 
+  Mutter.Zunahme  = auf.NA.setzen(Mutter.Zunahme,  na.codes =   99), 
+  Apgar5          = auf.NA.setzen(Apgar5,          na.codes =   99), 
+  PränatalDiagn   = auf.NA.setzen(PränatalDiagn,   na.codes =   99), 
+  Schwangerschaft = auf.NA.setzen(Schwangerschaft, na.codes =   99), 
+  Geburtsgewicht  = auf.NA.setzen(Geburtsgewicht,  na.codes = 9999) 
+  );
+
+# Fertig. Jetzt noch speichern. 
+# (Nur zur Demonstration, damit Sie den Ablauf bis zum Schluss verfolgen können.)
+##save(Geburten.2006, Geburten.2006.inx, 
+##     file = "~/Dokumente/Buch/Daten/Geburtenstatistik.2006.Stp.rda", 
+##     compress = TRUE );
+
+
+
+# --------------------------------------------------------------------
+
+library(lattice)
+library(nutshellDE)
+data(Geburtenstatistik.2006.Stp)
+
+Geb.Wtag <- table(Geburten.2006$Geburt.Wtag)
+barchart(Geb.Wtag, 
+         xlab = "Häufigkeit", 
+         ylab = "Wochentag")
+
+
+
+# --------------------------------------------------------------------
+
+Geb.WtagMeth <- table(
+  Wochentag  = Geburten.2006$Geburt.Wtag, 
+  Entbindung = Geburten.2006$Entbindung[, drop = TRUE])
+
+
+
+# --------------------------------------------------------------------
+
+barchart(Geb.WtagMeth, 
+         xlab = "Häufigkeit", 
+         ylab = "Wochentag")
+
+
+
+# --------------------------------------------------------------------
+
+barchart(Geb.WtagMeth, 
+         stack = FALSE, auto.key = TRUE, 
+         xlab = "Häufigkeit", 
+         ylab = "Wochentag")
+
+
+
+# --------------------------------------------------------------------
+
+barchart(Geb.WtagMeth, 
+         horizontal = FALSE, groups = FALSE, 
+         xlab = "Häufigkeit", 
+         ylab = "Wochentag")
+
+
+
+# --------------------------------------------------------------------
+
+Geb.WtagMonatMeth <- table(
+  Wochentag  = Geburten.2006$Geburt.Wtag, 
+  Monat      = Geburten.2006$Geburt.Monat, 
+  Entbindung = Geburten.2006$Entbindung[, drop = TRUE])
+
+
+
+# --------------------------------------------------------------------
+
+dotplot(Geb.WtagMonatMeth, 
+        groups = TRUE, stack = FALSE, auto.key = TRUE, 
+        xlab = "Häufigkeit", 
+        ylab = "Wochentag")
+
+
+
+# --------------------------------------------------------------------
+
+library(nutshellDE)
+data(Reifen.Schnelllauf)
+
+dotplot(factor(Defekt.Geschwindigkeit) ~ Defekt.Zeit | Reifentyp, 
+  data = Reifen.Schnelllauf, 
+  xlab = "Zeit bis zum Defekt (Std.)", 
+  ylab = "Geschwindigkeit (km/h)")
+
+
+
+# --------------------------------------------------------------------
+
+histogram(~ Geburtsgewicht | AnzahlSäuglinge, 
+  data = Geburten.2006)
+
+
+
+# --------------------------------------------------------------------
+
+histogram(~ Geburtsgewicht | AnzahlSäuglinge, 
+  data = Geburten.2006, 
+  layout = c(1, 5))
+
+
+
+# --------------------------------------------------------------------
+
+densityplot(~ Geburtsgewicht | AnzahlSäuglinge, 
+  data = Geburten.2006, 
+  layout = c(1, 5), 
+  plot.points = FALSE)
+
+
+
+# --------------------------------------------------------------------
+
+densityplot(~ Geburtsgewicht, 
+  groups = AnzahlSäuglinge[, drop = TRUE], 
+  data = Geburten.2006, 
+  plot.points = FALSE, auto.key = TRUE)
+
+
+
+# --------------------------------------------------------------------
+
+stripplot(~ Geburtsgewicht, 
+  data = Geburten.2006, 
+  subset = (AnzahlSäuglinge == "Vierlinge" | 
+            AnzahlSäuglinge == "Fünflinge o. mehr"), 
+  jitter.data = TRUE)
+
+
+
+# --------------------------------------------------------------------
+
+qqmath(rnorm(100000), aspect = 1)
+
+
+
+# --------------------------------------------------------------------
+
+qqmath(~ Geburtsgewicht | AnzahlSäuglinge, 
+  data = Geburten.2006[sample(1:nrow(Geburten.2006), 100000), ], 
+  aspect = 1, pch = 19, cex = 0.5, 
+  subset = (AnzahlSäuglinge != "Fünflinge o. mehr"))
+
+
+
+# --------------------------------------------------------------------
+
+library(nutshellDE)
+data(SanFrancisco.Immobilien.Preise)
+
+
+
+# --------------------------------------------------------------------
+
+qqmath(~ Preis, 
+  data = SF.Immo, aspect = 1)
+
+
+
+# --------------------------------------------------------------------
+
+qqmath(~ log(Preis), 
+  data = SF.Immo, aspect = 1)
+
+
+
+# --------------------------------------------------------------------
+
+qqmath(~ log(Preis), groups = Schlafzimmer, 
+  data = subset(SF.Immo, subset = Schlafzimmer >= 1 & 
+                                  Schlafzimmer <= 6), 
+  auto.key = list(title = "Schlafzimmer", cex.title = 1.0, 
+                  lines = TRUE, points= FALSE, columns = 2), 
+  type = "smooth")
+
+
+
+# --------------------------------------------------------------------
+
+library(Hmisc)
+qqmath(~ log(Preis), groups = cut2(Grundfläche, g = 6), 
+  data = SF.Immo, 
+  auto.key = list(title = "Grundfläche", cex.title = 1.0, 
+                  lines = TRUE, points= FALSE, columns = 2), 
+  type = "smooth")
+
+
+
+# --------------------------------------------------------------------
+
+colnames(SF.Immo)
+
+
+
+# --------------------------------------------------------------------
+
+# Pakete laden
+library(sp)
+library(maptools)
+
+# Hilfsfunktionen zum Zuordnen von geografischen Koordinaten 
+# im Shapefile-Format (ein Geo-Daten-Format, Endung ".shp") 
+Wohngegend.ermitteln <- function(sh, g.breite, g.länge) {
+  Shape.Namen <- sh$NAME;
+  for (ShN in Shape.Namen) {
+    g.breiten <- sh[sh$NAME == ShN, ]@polygons[[1]]@Polygons[[1]]@coords[, 1];
+    g.längen  <- sh[sh$NAME == ShN, ]@polygons[[1]]@Polygons[[1]]@coords[, 2];
+    
+    drin.oder.nicht  <- point.in.polygon(point.x = g.breite, point.y = g.länge, 
+                                         pol.x  = g.breiten, pol.y =  g.längen);
+    if (drin.oder.nicht == 1) {
+      return(ShN);
+      }
+  }
+  return(NA);
+}
+
+Wohngegend.zuordnen <- function(sh, g.breiten, g.längen) {
+  Wohngegenden <- rep(NA, length(g.breiten));
+  for (i in 1:length(g.breiten)) {
+    Wohngegenden[i] <- Wohngegend.ermitteln(sh = sh, 
+                                            g.breite = g.breiten[i], 
+                                            g.länge  = g.längen[ i]);
+  }
+  return(Wohngegenden);
+}
+
+# Shapefile für Kalifornien einlesen; Koordinaten von San Francisco extrahieren 
+CA.Wohngegenden.Shapes <- readShapePoly("Zillow-Wohngegenden-CA.shp");
+SF.Wohngegenden.Shapes <-
+  CA.Wohngegenden.Shapes[CA.Wohngegenden.Shapes$CITY == "San Francisco", ];
+
+# Immobiliendaten San Francisco (inkl. Koordinaten) einlesen
+importKlassen <- c("integer", rep("character", 8), 
+                   rep("numeric", 2), "integer", 
+                   "character", rep("integer", 4));
+SF.Immo.roh <- read.csv("SanFrancisco.Immobilien.Preise.plus.GeoDaten.csv", 
+                   colClasses = importKlassen, strip.white = TRUE);
+
+# "JahrMonat" aus "Datum" ableiten 
+# "Datum" rekodieren (von "character" nach "Date") 
+# Flächen von Quadratfuß in Quadratmeter umrechnen 
+SF.Immo.rev  <- transform(SF.Immo.roh, 
+  JahrMonat   = sub("-\\d+$", "", 
+                    as.character(as.Date(Datum, format = "%m/%d/%Y"))), 
+  Datum       = as.Date(Datum, format = "%m/%d/%Y"), 
+  
+  Grundfläche = as.integer(round(Grundfläche * 0.3048^2, 0)), 
+  Grundstück  = as.integer(round(Grundstück  * 0.3048^2, 0)) 
+  );
+
+# Koordinaten außerhalb von San Francisco auf NA setzen 
+# Grundstücke oberhalb 1400 qm (15000 sq ft) auf NA setzen 
+SF.Immo.rev  <- transform(SF.Immo.rev, 
+  GeoBreite  = auf.NA.setzen(GeoBreite, 
+                             na.codes = (GeoBreite <= 37.7 | GeoBreite >= 37.85)), 
+  GeoLänge   = auf.NA.setzen(GeoLänge,  
+                             na.codes = (GeoLänge <= -122.5 | GeoLänge >= -122.37)), 
+  Grundstück = auf.NA.setzen(Grundstück, na.codes = (Grundstück >= 1400)) 
+  );
+
+# Angaben zur Wohngegend ermitteln und einfügen 
+SF.Immo.rev  <- transform(SF.Immo.rev, 
+  Wohngegend  = Wohngegend.zuordnen(SF.Wohngegenden.Shapes, 
+                                    g.breiten = GeoLänge, 
+                                    g.längen  = GeoBreite) 
+  );
+
+# Zum Schluss verschiedene Faktoren einrichten. 
+ZIP.Indexe <- match(sort(unique(SF.Immo.rev$ZIP)), SF.Immo.rev$ZIP); 
+SF.Immo      <- transform(SF.Immo.rev, 
+  Wohngegend       = factor(Wohngegend), 
+  ZIP              = factor(ZIP, 
+                            levels = ZIP[ ZIP.Indexe ]), 
+  ZIP.Wohngegend   = factor(ZIP.Wohngegend, 
+                            levels = ZIP.Wohngegend[ ZIP.Indexe ]), 
+  
+  Eigentumswohnung = factor(Eigentumswohnung, 
+                            levels = c("J", "N")) 
+  ); 
+
+# Fertig. Jetzt noch speichern. 
+# (Nur zur Demonstration, damit Sie den Ablauf bis zum Schluss verfolgen können.)
+##save(SF.Immo, 
+##     file = "~/Dokumente/Buch/Daten/SanFrancisco.Immobilien.Preise.rda", 
+##     compress = TRUE );
+
+
+
+# --------------------------------------------------------------------
+
+xyplot(Preis ~ Grundfläche, data = SF.Immo)
+
+
+
+# --------------------------------------------------------------------
+
+(SF.Immo.ZIPs <- table(subset(SF.Immo, 
+                              subset = !is.na(Grundfläche), 
+                              select = ZIP)))
+
+(Ausschluss.ZIPs <- names( SF.Immo.ZIPs[SF.Immo.ZIPs < 50] ))
+
+
+
+# --------------------------------------------------------------------
+
+# Ein paar Hilfsparameter berechnen 
+max.Preis <- 4000000;  max.Grundfläche <- 600;  Skalen.cex <- 0.625
+
+# Streudiagramm anlegen 
+xyplot(Preis ~ Grundfläche | ZIP, 
+  data = SF.Immo, 
+  subset = ((! ZIP %in% Ausschluss.ZIPs) & 
+            (Preis <= max.Preis) & 
+            (Grundfläche <= max.Grundfläche)), 
+  scales = list(cex = Skalen.cex), 
+  par.strip.text = list(cex = Skalen.cex, 
+                        lines = 1.25), 
+  layout = c(4, NA))
+
+
+
+# --------------------------------------------------------------------
+
+# Ein paar Hilfsparameter berechnen 
+max.Preis <- 4000000;  max.Grundfläche <- 600;  Skalen.cex <- 0.625
+MW.Preis.pro.qm <- mean(SF.Immo$Preis/SF.Immo$Grundfläche, na.rm = TRUE);
+
+# Zeilenumbrüche in die Label der ZIP-Wohngegenden einfügen, 
+# damit sie in die Strips passen (vorher ein Backup anlegen) 
+ZIP.Wohngegend.Backup <- levels(SF.Immo$ZIP.Wohngegend)
+levels(SF.Immo$ZIP.Wohngegend) <- gsub("(?<=,) +| (?=\\([^\\)]+\\)$)", 
+                                       "\n", perl = TRUE, 
+                                       ZIP.Wohngegend.Backup)
+# Erfolgskontrolle (Achten Sie auf Element 2!) 
+head(levels(SF.Immo$ZIP.Wohngegend), 3)
+
+# Streudiagramm anlegen 
+xyplot(Preis ~ Grundfläche | ZIP.Wohngegend, 
+  data = SF.Immo, 
+  subset = ((! ZIP %in% Ausschluss.ZIPs) & 
+            (Preis <= max.Preis) & 
+            (Grundfläche <= max.Grundfläche)), 
+  scales = list(cex = Skalen.cex), 
+  par.strip.text = list(cex = Skalen.cex, 
+                        lines = 3.5, 
+                        lineheight = 1.1), 
+  layout = c(4, NA), 
+  pch = 19, cex = 0.2, 
+  panel = function(...) {
+    panel.abline(a = 0, b = MW.Preis.pro.qm);
+    panel.xyplot(...);
+  }
+)
+
+# Label der ZIP-Wohngegenden in den Ausgangszustand zurückversetzen 
+levels(SF.Immo$ZIP.Wohngegend) <- ZIP.Wohngegend.Backup
+
+
+
+# --------------------------------------------------------------------
+
+table(SF.Immo$JahrMonat)
+
+
+
+# --------------------------------------------------------------------
+
+# Frühestes und spätestes erfasstes Verkaufsdatum:
+range(SF.Immo$Datum)
+
+
+
+# --------------------------------------------------------------------
+
+bwplot(Preis ~ JahrMonat, data = SF.Immo)
+
+
+
+# --------------------------------------------------------------------
+
+bwplot(log(Preis) ~ JahrMonat, 
+  data = SF.Immo, 
+  box.ratio = 2, 
+  scales = list(x = list(rot = 90)), 
+  par.settings = list(box.umbrella = list(lty = 1))) 
+
+
+
+# --------------------------------------------------------------------
+
+Stufen <- 40; Skalen.cex <- 0.5
+SF.Immo.Geo <- table(Länge  = cut(SF.Immo$GeoLänge,  breaks = Stufen), 
+                     Breite = cut(SF.Immo$GeoBreite, breaks = Stufen))
+
+levelplot(SF.Immo.Geo, 
+          scales = list(y = list(cex = Skalen.cex), 
+                        x = list(cex = Skalen.cex, rot = 90)))
+
+
+
+# --------------------------------------------------------------------
+
+Stufen <- 40
+SF.Immo.GeoPreise <- tapply(SF.Immo$Preis, 
+                       INDEX = list(
+                         Länge  = cut(SF.Immo$GeoLänge,  breaks = Stufen), 
+                         Breite = cut(SF.Immo$GeoBreite, breaks = Stufen)), 
+                       FUN = mean)
+
+levelplot(as.table(SF.Immo.GeoPreise), 
+          scales = list(draw = FALSE))
+
+
+
+# --------------------------------------------------------------------
+
+Stufen <- 25; max.Schlaf <- 5
+SF.Immo.GeoSchlaf <- table(Länge  = cut(SF.Immo$GeoLänge,  breaks = Stufen), 
+  Breite = cut(SF.Immo$GeoBreite, breaks = Stufen), 
+  Schlafzimmer = ifelse(SF.Immo$Schlafzimmer < max.Schlaf, 
+                        SF.Immo$Schlafzimmer,  max.Schlaf))
+
+Label.für.Bänder <- paste(
+  c(rep("", length(dimnames(SF.Immo.GeoSchlaf)$Schlafzimmer) - 1), "≥ "), 
+  dimnames(SF.Immo.GeoSchlaf)$Schlafzimmer, 
+  " Schlafz.", sep = "")
+
+dimnames(SF.Immo.GeoSchlaf)$Schlafzimmer <- Label.für.Bänder
+
+levelplot(SF.Immo.GeoSchlaf, 
+          scales = list(draw = FALSE), 
+          layout = c(2, NA))
+
+
+
+# --------------------------------------------------------------------
+
+rfs(Runs.Offense.LM, xlab = "Anpassung", 
+    par.strip.text = list(cex = 0.8))
+
+
+
+# --------------------------------------------------------------------
+
+rfs(Runs.Offense.LM, xlab = "Anpassung", 
+    distribution = qnorm, 
+    par.strip.text = list(cex = 0.8))
+
+
+
+# --------------------------------------------------------------------
+
+par("cex")
+
+
+
+# --------------------------------------------------------------------
+
+length(par())
+
+
+
+# --------------------------------------------------------------------
+
+trellis.par.get("axis.text")
+
+
+
+# --------------------------------------------------------------------
+
+trellis.par.set(list(axis.text = list(cex = 0.5)))
+
+
+
+# --------------------------------------------------------------------
+
+show.settings()
+
+
+
+# --------------------------------------------------------------------
+
+names(trellis.par.get())
+
+
+
+# --------------------------------------------------------------------
+
+# Anzahl der Lattice-Parametergruppen bestimmen
+length(names(unlist(trellis.par.get())))
+
+# Anzahl der eindeutigen Lattice-Parameter bestimmen
+n <- names(trellis.par.get())
+p <- character()
+for (i in 1:length(n)) { p <- c(p, names(trellis.par.get(n[i]))) }
+length(table(p))
+
+
+
+# ====================================================================

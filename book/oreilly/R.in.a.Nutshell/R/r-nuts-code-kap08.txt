@@ -1,0 +1,230 @@
+# ====================================================================
+# R in a Nutshell (1. Aufl., Dez. 2010)
+# Kapitel 08 -- Symbole und Umgebungen
+# ***  R-Code  ***
+# 
+# Zeichenkodierung: UTF-8
+# Schnappschuss   : 2011-01-25 20:11:53 h
+# angelegt von    : Jörg Beyer
+# ====================================================================
+
+x <- 1
+
+
+
+# --------------------------------------------------------------------
+
+x <- 1
+y <- 2
+z <- 3
+v <- c(x, y, z)
+v
+
+# v wurde bereits definiert, eine Änderung 
+# von x wirkt sich also nicht auf v aus
+x <- 10
+v
+
+
+
+# --------------------------------------------------------------------
+
+x <- 1
+y <- 2
+z <- 3
+v <- quote(c(x, y, z))
+
+eval(v)
+
+x <- 5
+eval(v)
+
+
+
+# --------------------------------------------------------------------
+
+x <- 1
+y <- 2
+z <- 3
+
+delayedAssign("v", c(x, y, z))
+x <- 5
+v
+
+
+
+# --------------------------------------------------------------------
+
+x <- 1
+y <- 2
+z <- 3
+objects()
+
+
+
+# --------------------------------------------------------------------
+
+remove(x)
+objects()
+
+
+
+# --------------------------------------------------------------------
+
+x <- .GlobalEnv
+while (environmentName(x) != environmentName(emptyenv())) {
+     print(environmentName(parent.env(x))); x <- parent.env(x)}
+
+
+
+# --------------------------------------------------------------------
+
+Umgebung.zeigen <- function(a, b, c, d) {print(objects())}
+Umgebung.zeigen(1, "LKW", c(1, 2, 3, 4, 5), pi)
+
+
+
+# --------------------------------------------------------------------
+
+stoppen <- function(...) {
+  start.time <- Sys.time();
+  eval(..., sys.frame(sys.parent(sys.parent())));
+  end.time <- Sys.time();
+  print(end.time - start.time);
+}
+
+
+
+# --------------------------------------------------------------------
+
+Einservektor.einrichten <- function(n) {
+  Ergebnisvektor <- NA;
+  for (i in 1:n) {
+     Ergebnisvektor[i] <- 1;
+  }
+  Ergebnisvektor;
+}
+
+# Beachten Sie, dass hier kein "Ergebnisvektor" existiert
+Ergebnisvektor
+
+# Zeit stoppen, wenn die Funktion mit n = 10000 ausgeführt wird
+stoppen(Ergebnisvektor <- Einservektor.einrichten(10000))
+
+# Beachten Sie sowohl, dass die Funktion 1,5 Sekunden gebraucht
+# hat, als auch, dass es jetzt einen "Ergebnisvektor" gibt
+exists("Ergebnisvektor"); length(Ergebnisvektor)
+
+
+
+# --------------------------------------------------------------------
+
+exists("Ergebnisvektor"); length(Ergebnisvektor)
+
+
+
+# --------------------------------------------------------------------
+
+Einservektor.anders.einrichten <- function(n) {
+  Ergebnisvektor <- NA;
+  length(Ergebnisvektor) <- n;
+  for (i in 1:n) {
+     Ergebnisvektor[i] <- 1;
+  }
+  Ergebnisvektor;
+}
+stoppen(Ergebnisvektor <- Einservektor.anders.einrichten(10000))
+
+
+
+# --------------------------------------------------------------------
+
+anders.stoppen <- function(...) {
+  start.time <- Sys.time();
+  eval.parent(...);
+  end.time <- Sys.time();
+  print(end.time - start.time);
+}
+
+
+
+# --------------------------------------------------------------------
+
+Beispielliste <- list(r = 1, s = 2, t = 3)
+r + s + t
+with(Beispielliste, r + s + t)
+
+within(Beispielliste, u <- r + s + t)
+
+
+
+# --------------------------------------------------------------------
+
+12 / "Hut"
+
+
+
+# --------------------------------------------------------------------
+
+if (c(TRUE, FALSE)) TRUE else FALSE
+
+
+
+# --------------------------------------------------------------------
+
+irgendwas.plotten <- function(dateiname) {
+  if(file.exists(dateiname)) {
+    data <- read.delim(dateiname)
+  } else {
+    stop("Konnte folgende Datei nicht öffnen: ", dateiname)
+  }
+}
+
+irgendwas.plotten("/Datei/die/es/nicht/gibt.csv")
+
+
+
+# --------------------------------------------------------------------
+
+irgendwas.plotten <- function(dateiname) {
+  if(file.exists(dateiname)) {
+    data <- read.delim(dateiname)
+  } else {
+    stop("Konnte folgende Datei nicht öffnen: ", dateiname)
+  }
+  if(nrow(data) == 0) {
+    warning("Lah, leh, luh... keine Daten in Datei: ", dateiname)
+  }
+}
+
+irgendwas.plotten("/Datei/die/leer/ist.csv")
+
+
+
+# --------------------------------------------------------------------
+
+Meldung.machen <- function(meldung) {
+  message(meldung)
+}
+
+Meldung.machen("Ich wollte nur mal Hallo sagen!")
+
+
+
+# --------------------------------------------------------------------
+
+Ergebnis <- try({x <- 1}, silent = TRUE)
+Ergebnis
+
+Ergebnis <- try({open("/Datei/die/es/nicht/gibt.csv")}, silent = TRUE)
+Ergebnis
+
+
+
+# --------------------------------------------------------------------
+
+tryCatch(Ausdruck, Handler1, Handler2, ..., finally = Abschluss)
+
+
+
+# ====================================================================

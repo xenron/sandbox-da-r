@@ -1,0 +1,40 @@
+# ====================================================================
+# R in a Nutshell (1. Aufl., Dez. 2010)
+# Kapitel 02 -- Die R-Benutzerschnittstelle
+# ***  R-Code  ***
+# 
+# Zeichenkodierung: UTF-8
+# Schnappschuss   : 2011-01-25 20:11:53 h
+# angelegt von    : Jörg Beyer
+# ====================================================================
+
+17 + 3
+
+
+
+# --------------------------------------------------------------------
+
+1 * 2 * 3 * 4 * 5 *
+6 * 7 * 8 * 9 * 10
+
+
+
+# --------------------------------------------------------------------
+
+# die folgende Anweisung in R installiert den RExcel-Installer
+# sowie weitere für RExcel benötigte Pakete
+install.packages(c("rsproxy", "rcom", "RExcelInstaller"))
+
+# die folgenden Anweisungen konfigurieren das Paket rcom
+# und starten die Installation von RDCOM
+library(rcom)
+installstatconnDCOM()
+dummy <- comRegisterRegistry()
+
+# die folgenden Anweisungen starten die Installation von REXCEL
+library(RExcelInstaller)
+installRExcel()
+
+
+
+# ====================================================================

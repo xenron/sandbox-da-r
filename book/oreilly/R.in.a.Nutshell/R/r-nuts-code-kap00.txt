@@ -1,0 +1,18 @@
+# ====================================================================
+# R in a Nutshell (1. Aufl., Dez. 2010)
+# Kapitel 00 -- Vorwort
+# ***  R-Code  ***
+# 
+# Zeichenkodierung: UTF-8
+# Schnappschuss   : 2011-01-25 20:11:53 h
+# angelegt von    : Jörg Beyer
+# ====================================================================
+
+# Bitte zuerst Datei herunterladen (und ggf. Pfadnamen anpassen)
+# Installation der Begleitdaten zum Buch aus dem Quelltext 
+install.packages("~/Downloads/nutshellDE_1.0-0.tar.gz", 
+                 repos = NULL, type = "source", clean = TRUE)
+
+
+
+# ====================================================================

@@ -1,0 +1,53 @@
+# ====================================================================
+# R in a Nutshell (1. Aufl., Dez. 2010)
+# Kapitel 15 -- Trellis-Grafik mit Lattice
+# ***  Perl 5-Code  ***
+# 
+# Zeichenkodierung: UTF-8
+# Schnappschuss   : 2011-01-25 20:11:53 h
+# angelegt von    : Jörg Beyer
+# ====================================================================
+
+#!/usr/bin/perl 
+# 
+# Skript zum Aufbereiten (und Filtern) der US-Geburtenstatistik 2006 
+# 
+use strict; 
+my $leer           = qr/^ +$/; 
+
+my $spaltenTrenner = ";"; 
+my $spaltenLayout  = join('', qw( 
+            a18  a2  a8  a1 a59  a2 a65  a2 a59  a1 a52  a2  a4  a2 a125 
+             a1 a11  a2  a6  a1 a12  a1  a9  a2 a15  a4 )); 
+
+# Spaltennamen im CSV-Format montieren und ausgeben 
+print join($spaltenTrenner, qw( 
+            Geburt.Monat Geburt.Wtag Mutter.Alter Geburten.gesamt 
+            Mutter.Zunahme Geschlecht Apgar5 Mutter.Bildung 
+            PränatalDiagn Schwangerschaft Entbindung 
+            AnzahlSäuglinge Geburtsgewicht )) . "\n"; 
+
+# Schleife über die Datenzeilen 
+while(<>) { 
+    # Zeile/Datensatz in Spalten aufbrechen 
+    my ($X1, $GeburtMonat, $X2, $GeburtWtag, $X3, $MutterAlter, $X4, 
+            $MutterBildung, $X5, $Geburtengesamt, $X6, $PraenatalDiagn, 
+            $X7, $MutterZunahme, $X8, $Entbindung, $X9, $Apgar5, $X10, 
+            $AnzahlSaeuglinge, $X11, $Geschlecht, $X12, $Schwangerschaft, 
+            $X13, $Geburtsgewicht) 
+            = unpack( $spaltenLayout, $_ ); 
+    
+    # "Leercodes" in den Daten rekodieren, um falsche NAs zu vermeiden 
+    $MutterBildung      = '98' if ($MutterBildung   =~ m/$leer/); 
+    
+    # Datensatz im CSV-Format montieren und ausgeben 
+    print join($spaltenTrenner, 
+            $GeburtMonat, $GeburtWtag, $MutterAlter, $Geburtengesamt, 
+            $MutterZunahme, $Geschlecht, $Apgar5, $MutterBildung, 
+            $PraenatalDiagn, $Schwangerschaft, $Entbindung, 
+            $AnzahlSaeuglinge, $Geburtsgewicht) . "\n"; 
+}
+
+
+
+# ====================================================================

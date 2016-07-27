@@ -1,0 +1,46 @@
+# ====================================================================
+# R in a Nutshell (1. Aufl., Dez. 2010)
+# Kapitel 19 -- Poweranalyse
+# ***  R-Code  ***
+# 
+# Zeichenkodierung: UTF-8
+# Schnappschuss   : 2011-01-25 20:11:53 h
+# angelegt von    : Jörg Beyer
+# ====================================================================
+
+power.t.test(sd = 8.9, n = 50/2, 
+             sig.level = 0.05, power = 0.95, 
+             type = "two.sample", 
+             alternative = "one.sided")
+
+
+
+# --------------------------------------------------------------------
+
+power.t.test(sd = 8.9, n = 50/2 * 2, 
+             sig.level = 0.05, power = 0.95, 
+             type = "two.sample", 
+             alternative = "one.sided")
+
+
+
+# --------------------------------------------------------------------
+
+power.prop.test(p1 = 0.260, p2 = 0.300, 
+                sig.level = 0.05, power = 0.95, 
+                alternative = "one.sided")
+
+
+
+# --------------------------------------------------------------------
+
+power.prop.test(p1 = 0.260, p2 = 0.300, n = 10, 
+                sig.level = NULL, power = 0.95, 
+                alternative = "one.sided")
+power.prop.test(p1 = 0.260, p2 = 0.300, n = 10, 
+                sig.level = 0.05, power = NULL, 
+                alternative = "one.sided")
+
+
+
+# ====================================================================

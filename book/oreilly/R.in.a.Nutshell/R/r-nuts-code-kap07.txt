@@ -1,0 +1,381 @@
+# ====================================================================
+# R in a Nutshell (1. Aufl., Dez. 2010)
+# Kapitel 07 -- R-Objekte
+# ***  R-Code  ***
+# 
+# Zeichenkodierung: UTF-8
+# Schnappschuss   : 2011-01-25 20:11:53 h
+# angelegt von    : Jörg Beyer
+# ====================================================================
+
+# Vektor aus vier Zahlen anlegen
+v <- c(.295, .300, .250, .287, .215)
+v
+
+
+
+# --------------------------------------------------------------------
+
+# Vektor aus vier Zahlen und einem Textwert anlegen
+v <- c(.295, .300, .250, .287, "Hurz")
+v
+
+
+
+# --------------------------------------------------------------------
+
+# Vektor aus vier Zahlen und einer Liste mit 
+# drei weiteren Zahlen anlegen
+v <- c(.295, .300, .250, .287, list(.102, .200, .303), recursive = TRUE)
+v
+
+
+
+# --------------------------------------------------------------------
+
+v <- c(.295, .300, .250, .287, list(.102, .200, .303), recursive = TRUE)
+v
+typeof(v)
+
+v <- c(.295, .300, .250, .287, list(1, 2, 3))
+typeof(v)
+class(v)
+v
+
+
+
+# --------------------------------------------------------------------
+
+1:10
+
+
+
+# --------------------------------------------------------------------
+
+seq(from = 5, to = 25, by = 5)
+
+
+
+# --------------------------------------------------------------------
+
+w <- 1:10
+w
+length(w) <- 5
+w
+
+
+
+# --------------------------------------------------------------------
+
+length(w) <- 10
+w
+
+
+
+# --------------------------------------------------------------------
+
+l <- list(1, 2, 3, 4, 5)
+l[1]
+l[[1]]
+
+
+
+# --------------------------------------------------------------------
+
+Paket <- list(Ziel = "Köln", Maße.LBH = c(22, 30, 5), Porto = 6.9)
+
+
+
+# --------------------------------------------------------------------
+
+Paket$Porto
+
+
+
+# --------------------------------------------------------------------
+
+m <- matrix(data = 1:12, nrow = 4, ncol = 3, byrow = FALSE, 
+            dimnames = list(c("Z1", "Z2", "Z3", "Z4"), 
+                            c("S1", "S2", "S3")))
+m
+
+
+
+# --------------------------------------------------------------------
+
+a <- array(data = 1:24, dim = c(3, 4, 2))
+a
+
+
+
+# --------------------------------------------------------------------
+
+Augenfarbe <- c("braun", "blau", "blau", "grün", 
+                "braun", "braun", "braun")
+
+
+
+# --------------------------------------------------------------------
+
+Augenfarbe <- factor(c("braun", "blau", "blau", "grün", 
+                       "braun", "braun", "braun"))
+
+
+
+# --------------------------------------------------------------------
+
+levels(Augenfarbe)
+
+
+
+# --------------------------------------------------------------------
+
+Augenfarbe
+
+
+
+# --------------------------------------------------------------------
+
+Befragung <- factor(
+  c("stimme nicht zu", "neutral", "stimme absolut nicht zu", 
+    "neutral", "stimme zu", "stimme absolut zu", 
+    "stimme nicht zu", "stimme absolut zu", "neutral", 
+    "stimme absolut nicht zu", "neutral", "stimme zu"), 
+  levels = c("stimme absolut nicht zu", "stimme nicht zu", 
+    "neutral", "stimme zu", "stimme absolut zu"), 
+  ordered = TRUE)
+
+Befragung
+
+
+
+# --------------------------------------------------------------------
+
+# Noch einmal der Faktor mit den Augenfarben von eben
+Augenfarbe
+
+class(Augenfarbe)
+
+# Wir machen einen Vektor daraus, indem wir die Klasse entfernen
+Augenfarbe.Integervektor <- unclass(Augenfarbe)
+Augenfarbe.Integervektor
+
+class(Augenfarbe.Integervektor)
+
+
+
+# --------------------------------------------------------------------
+
+class(Augenfarbe.Integervektor) <- "factor"
+Augenfarbe.Integervektor
+
+class(Augenfarbe.Integervektor)
+
+
+
+# --------------------------------------------------------------------
+
+data.frame(a = c(1, 2, 3, 4, 5), b = c(1, 2, 3, 4))
+
+
+
+# --------------------------------------------------------------------
+
+Google.Suche.nach.Bacon <- data.frame(
+    Stadt = c("Seattle", "Washington", "Chicago", "New York", 
+              "Portland", "St Louis", "Denver", "Boston", 
+              "Minneapolis", "Austin", "Philadelphia", 
+              "San Francisco", "Atlanta", 
+              "Los Angeles", "Richardson"), 
+    Rang = c(100, 96, 94, 93, 93, 92, 90, 90, 
+              89, 87, 85, 84, 82, 80, 80)
+  )
+
+
+
+# --------------------------------------------------------------------
+
+Google.Suche.nach.Bacon
+
+
+
+# --------------------------------------------------------------------
+
+typeof(Google.Suche.nach.Bacon)
+class(Google.Suche.nach.Bacon)
+
+
+
+# --------------------------------------------------------------------
+
+Beispielformel <- as.formula(y ~ x1 + x2 + x3)
+typeof(Beispielformel)
+class(Beispielformel)
+
+
+
+# --------------------------------------------------------------------
+
+ts(1:8, start = c(2008, 2), frequency = 4)
+
+
+
+# --------------------------------------------------------------------
+
+library(nutshellDE)
+data(ZR.Truthahnpreise)
+ZR.Truthahnpreise
+
+
+
+# --------------------------------------------------------------------
+
+start(ZR.Truthahnpreise)
+
+end(ZR.Truthahnpreise)
+
+frequency(ZR.Truthahnpreise)
+
+deltat(ZR.Truthahnpreise)
+
+
+
+# --------------------------------------------------------------------
+
+am.Buch.zu.schreiben.begonnen <- as.Date("13.02.2009","%d.%m.%Y")
+am.Buch.zu.schreiben.begonnen
+
+heute <- Sys.Date()
+heute
+
+heute - am.Buch.zu.schreiben.begonnen
+
+
+
+# --------------------------------------------------------------------
+
+Verzehr.Kanal <- file(description = "~/Desktop/Verzehr.rda", open = "r")
+load(Verzehr.Kanal)
+close(Verzehr.Kanal)
+
+
+
+# --------------------------------------------------------------------
+
+m <- matrix(data = 1:12, nrow = 4, ncol = 3, 
+            dimnames = list(c("Z1", "Z2", "Z3", "Z4"), 
+                            c("S1", "S2", "S3")))
+
+
+
+# --------------------------------------------------------------------
+
+attributes(m)
+
+
+
+# --------------------------------------------------------------------
+
+dim(m)
+
+dimnames(m)
+
+
+
+# --------------------------------------------------------------------
+
+rownames(m)
+
+colnames(m)
+
+
+
+# --------------------------------------------------------------------
+
+dim(m) <- NULL
+m
+typeof(m)
+class(m)
+
+
+
+# --------------------------------------------------------------------
+
+a <- array(1:12, dim = c(3, 4))
+a
+
+
+
+# --------------------------------------------------------------------
+
+b <- 1:12
+b
+
+
+
+# --------------------------------------------------------------------
+
+a[2, 2]
+b[2, 2]
+
+
+
+# --------------------------------------------------------------------
+
+a == b
+
+
+
+# --------------------------------------------------------------------
+
+all.equal(a, b)
+
+
+
+# --------------------------------------------------------------------
+
+identical(a, b)
+
+
+
+# --------------------------------------------------------------------
+
+dim(b) <- c(3, 4)
+b[2, 2]
+all.equal(a, b)
+identical(a, b)
+
+
+
+# --------------------------------------------------------------------
+
+x <- c(1, 2, 3)
+typeof(x)
+class(x)
+
+
+
+# --------------------------------------------------------------------
+
+Augenfarbe.Integervektor <- unclass(Augenfarbe)
+Augenfarbe.Integervektor
+
+
+
+# --------------------------------------------------------------------
+
+v <- as.integer(c(1, 1, 1, 2, 1, 2, 2, 3, 1))
+levels(v) <- c("was", "wer", "warum")
+class(v) <- "factor"
+v
+
+
+
+# --------------------------------------------------------------------
+
+class(quote(x))
+typeof(quote(x))
+
+
+
+# ====================================================================
