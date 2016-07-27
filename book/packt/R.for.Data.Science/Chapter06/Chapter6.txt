@@ -1,0 +1,47 @@
+﻿> data <- read.csv("https://archive.ics.uci.edu/ml/machine-learningdatabases/wine-quality/winequality-white.csv", sep=";")
+> summary(data)
+> plot(data)
+> kmeans(data,5)
+> kmeans(data,10)
+> kmeans(data,15)
+> kmeans(data,20)
+--------------------------------------------------------------------------
+> install.packages("NbClust")
+> library(NbClust)
+> set.seed(2365)
+> nc <- NbClust(data, min.nc=10, max.nc=15, method="kmeans")
+--------------------------------------------------------------------------
+> install.packages("fpc")
+> library(fpc)
+> best <- pamk(data)
+> best
+> library(cluster)
+> plot(pam(data, best$nc))
+--------------------------------------------------------------------------
+> install.packages("vegan")
+> library(vegan)
+> fit <- cascadeKM(scale(data, center=TRUE, scale=TRUE), 10, 15)
+> plot(fit, sortg=TRUE, grmts.plot=TRUE)
+--------------------------------------------------------------------------
+> library(mclust)
+> d <- Mclust(as.matrix(data), G=10:15)
+> plot(d)
+> summary(d)
+--------------------------------------------------------------------------
+> install.packages("apcluster")
+> library(apcluster)
+> neg <- negDistMat(data, r=2)
+> ap <- apcluster(neg)
+> ap
+> summary(ap)
+> length(ap@clusters)
+--------------------------------------------------------------------------
+> library(cluster)
+> clusGap(data, kmeans, 15, B=100, verbose=interactive())
+--------------------------------------------------------------------------
+> install.packages("pvclust")
+> library(pvclust)
+> pv <- pvclust(data)
+> pv
+> plot(pv)
+

@@ -1,0 +1,26 @@
+﻿> data <- read.csv("http://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data")> colnames(data) <- c("sepal_length", "sepal_width", "petal_length", "petal_width", "species")> summary(data)
+> plot(data)
+--------------------------------------------------------
+> cor(data$petal_length,data$petal_width)> fit <- lm(data$petal_length ~ data$petal_width)> fit> par(mfrow=c(2,2))> plot(fit)
+--------------------------------------------------------
+> residuals(fit)> summary(fit)
+--------------------------------------------------------
+> data2<- subset(data, data$species!='Iris-setosa')
+> cor(data2$petal_length,data2$petal_width)> fit <- lm(data2$petal_length ~ data2$petal_width)> summary(fit)
+--------------------------------------------------------
+#http://www.biostat.au.dk/teaching/postreg/AllData.htm> data <- read.csv("obese.csv")> summary(data)
+> model<- lm(data$obese ~ data$sex + data$sbp + data$dbp + data$scl + data$age + data$bmi)> plot(data)
+> summary(model)> resid(model)> fitted(model)> par(mfrow=c(2,2))
+> plot(model)
+--------------------------------------------------------
+> model <- lm(data$obese ~ data$sbp + data$dbp)> summary(model)> plot(model)--------------------------------------------------------
+>install.packages(‘chemometrics’)>library(‘chemometrics’)
+#http://archive.ics.uci.edu/ml/datasets/Auto+MPG
+>data <- read.csv(“auto-mpg.csv”)>summary(data)
+> m <- lm(cbind(data$mpg,data$acceleration,data$horsepower) ~ data$cylinders + data$displacement + data$weight + data$model.year)> summary(m)
+> mm <- manova(m)> mm> summary(mm)--------------------------------------------------------> data$car.name<- NULL> data$horsepower[data$horsepower=='?'] <- NA> data$horsepower<- as.numeric(data$horsepower)> cor(data)> cov(data)
+--------------------------------------------------------
+> prcomp(data)
+> d1<- cooks.distance(m)> d1> r <- stdres(m)> a <- cbind(data, d1, r)> a[d1> 4/398, ]> rlm(data$mpg ~ data$cylinders + data$displacement + data$weight + data$model.year)> m <- rlm(mpg ~ cylinders + displacement + weight + model.year, data)> m
+> m2<- ltsreg(mpg ~ cylinders + displacement + weight + model.year, data)> m2> ltsreg(mpg ~ cylinders + displacement + weight + model.year, data)> ltsreg(mpg ~ cylinders + displacement + weight + model.year, data)
+

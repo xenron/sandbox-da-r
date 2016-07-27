@@ -1,0 +1,689 @@
+
+# CHAPTER 2 CODE  
+
+# Advanced Functions in Base Graphics
+
+ 
+filmrating <- structure(list(View1 = c(68L, 47L, 63L, 38L, 60L, 89L, 42L, 77L, 
+32L, 67L), View2 = c(85L, 44L, 69L, 38L, 83L, 93L, 35L, 79L, 91L, 32L)), .Names = c("View1", "View2"), class = "data.frame", row.names = c(NA, -10L))
+
+
+# Alternatively, you can copy the Filmratings csv file to a folder, match R’s working directory to that folder and use the read.csv() function. The argument h=T ensures that the column headings are read in correctly to the filmrating object.
+
+filmrating <- read.csv(Filmratings.csv, h=T)
+            
+
+# Now we attach the object using the attach() command.  
+
+
+attach(filmrating)
+
+filmrating
+
+
+# Before we perform the regression we plot the two sets of scores. 
+
+plot(View1, View2,pch=16,xlab="First Viewing",ylab="Second Viewing", main="FILM RATINGS", cex = 1.5, cex.lab = 1.5, cex.main = 1.6, xlim=c(0,100), ylim=c(0,100))
+
+
+model <- lm(View2 ~ View1)	
+
+model
+
+
+plot(View1, View2,pch=16,xlab="First Viewing",ylab="Second Viewing", main="FILM RATINGS", cex = 1.5, cex.lab = 1.5, cex.main = 1.6, xlim=c(0,100), ylim=c(0,100))
+
+abline(lm(View2 ~ View1))
+
+
+abline(32.31, 0.56)
+
+
+regmodel <- predict(lm(View2 ~ View1))
+
+regmodel	
+
+
+for(k in 1:10){ lines(c(View1[k], View1[k]), c(View2[k], regmodel[k])) }
+
+
+# Of course, entering of the above code for drawing the residuals is cumbersome, so here I give you a function that I wrote to do this job efficiently.  
+
+
+drawresid <- function(X, Y, col){
+abline(lm(Y ~ X), col = col)
+regressionmodel <- predict(lm(Y ~ X))
+for(k in 1:length(X)){ lines(c(X[k], X[k]), c(Y[k],
+regressionmodel[k]), col = col) } }
+
+
+
+plot(View1, View2,pch=16,xlab="First Viewing",ylab="Second Viewing", main="FILM RATINGS", cex = 1.5, cex.lab = 1.5, cex.main = 1.6, xlim=c(0,100), ylim=c(0,100))
+
+drawresid(View1, View2, "red")
+ 
+
+
+# A medical data set for creating graphs
+ 
+# You can either copy and paste directly from the text file, or save the csv file into a folder and read the data into R using read.csv().
+
+
+T <- structure(list(PATIENT = structure(c(32L, 24L, 11L, 15L, 41L, 
+8L, 14L, 26L, 5L, 2L, 43L, 37L, 42L, 25L, 44L, 3L, 17L, 6L, 4L, 
+23L, 35L, 31L, 39L, 45L, 27L, 9L, 12L, 34L, 10L, 19L, 40L, 7L, 
+38L, 21L, 13L, 1L, 16L, 20L, 28L, 29L, 18L, 22L, 30L, 36L, 33L
+), .Label = c("Adrienne", "Alan", "Andy", "Ann ", "Anne ", "Anton", 
+"Audrey", "Ben", "Bernie", "Beth", "Bob", "Bobby", "Bruce", "Charles", 
+"Dave", "Dianne", "Frida", "Guy", "Henry", "Hugh", "Ian", "Irina", 
+"James", "Jim", "Jo ", "John", "Jonah", "Joseph", "Lesley", "Liz", 
+"Magnus", "Mary", "Max", "Merril", "Mike", "Mikhail", "Nick", 
+"Peter", "Robert", "Robin", "Simon", "Steve", "Stuart", "Sue", 
+"Telu"), class = "factor"), GENDER = structure(c(1L, 2L, 2L, 
+2L, 2L, 2L, 2L, 2L, 1L, 2L, 2L, 2L, 2L, 1L, 1L, 2L, 1L, 2L, 1L, 
+2L, 1L, 2L, 2L, 2L, 2L, 1L, 2L, 1L, 1L, 2L, 1L, 1L, 2L, 2L, 2L, 
+2L, 1L, 2L, 2L, 1L, 2L, 1L, 1L, 2L, 2L), .Label = c("F", "M"), class = "factor"), 
+    ETH = c(1L, 2L, 2L, 1L, 1L, 3L, 3L, 2L, 3L, 2L, 2L, 3L, 1L, 
+    3L, 1L, 3L, 1L, 2L, 3L, 2L, 2L, 1L, 3L, 2L, 2L, 3L, 2L, 2L, 
+    1L, 3L, 2L, 3L, 1L, 2L, 3L, 2L, 3L, 3L, 2L, 2L, 1L, 1L, 1L, 
+    2L, 3L), TREATMENT = structure(c(1L, 2L, 1L, 2L, 3L, 1L, 
+    1L, 3L, 2L, 2L, 1L, 3L, 1L, 2L, 1L, 1L, 2L, 3L, 1L, 2L, 2L, 
+    1L, 3L, 3L, 1L, 2L, 2L, 2L, 3L, 1L, 1L, 2L, 1L, 1L, 2L, 3L, 
+    3L, 2L, 2L, 1L, 3L, 2L, 3L, 3L, 2L), .Label = c("A", "B", 
+    "C"), class = "factor"), AGE = structure(c(3L, 3L, 2L, 2L, 
+    2L, 3L, 1L, 1L, 3L, 3L, 3L, 3L, 1L, 1L, 2L, 2L, 2L, 1L, 2L, 
+    1L, 1L, 1L, 3L, 3L, 1L, 3L, 1L, 2L, 1L, 2L, 3L, 1L, 2L, 3L, 
+    2L, 2L, 1L, 2L, 3L, 3L, 1L, 2L, 2L, 1L, 1L), .Label = c("E", 
+    "M", "Y"), class = "factor"), WEIGHT_1 = c(79.2, 87.5, 65.1, 
+    58.8, 72, 95.9, 76.2, 56.3, 77.1, 104.4, 67.7, 82.8, 59.7, 
+    68.6, 79.6, 125.2, 83.1, 63.9, 57.4, 84.3, 72.2, 68.7, 65.5, 
+    64.2, 87.1, 56.9, 56.5, 75.3, 67.6, 82.5, 59.4, 68.9, 79.1, 
+    125.7, 83.7, 63.3, 67.7, 84.8, 91.4, 68.3, 39.9, 64.7, 65.6, 
+    92, 71.8), WEIGHT_2 = c(76.6, 84.8, 64.6, 59.3, 70.1, 94.5, 
+    74.7, 58.9, 76.1, 99.5, 65.3, 84.3, 57.3, 65.3, 79.8, 117.6, 
+    82.3, 62.2, 56.3, 84.9, 71, 66.8, 65.3, 65.2, 86.5, 55.4, 
+    57.8, 74.3, 67.4, 80.2, 57.1, 66.1, 76.8, 114.3, 82.7, 62.9, 
+    67.7, 83.9, 89.2, 68.6, 41.4, 65.3, 63.2, 87.5, 70.6), HEIGHT = c(169L, 
+    178L, 162L, 161L, 175L, 188L, 176L, 159L, 171L, 193L, 170L, 
+    183L, 149L, 154L, 179L, 194L, 177L, 162L, 149L, 182L, 168L, 
+    175L, 156L, 154L, 180L, 156L, 155L, 173L, 170L, 179L, 163L, 
+    161L, 177L, 190L, 182L, 167L, 165L, 180L, 185L, 161L, 138L, 
+    170L, 165L, 186L, 172L), SMOKE = structure(c(2L, 2L, 1L, 
+    2L, 1L, 1L, 1L, 1L, 2L, 1L, 1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 
+    1L, 2L, 2L, 1L, 1L, 1L, 2L, 1L, 2L, 1L, 1L, 2L, 1L, 2L, 1L, 
+    2L, 1L, 2L, 1L, 2L, 2L, 1L, 1L, 1L, 2L, 1L, 2L), .Label = c("N", 
+    "Y"), class = "factor"), EXERCISE = c(TRUE, TRUE, FALSE, 
+    FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, 
+    FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, 
+    FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, TRUE, FALSE, 
+    FALSE, FALSE, TRUE, FALSE, TRUE, FALSE, FALSE, TRUE, TRUE, 
+    FALSE, FALSE, FALSE, TRUE, TRUE, TRUE), RECOVER = c(1L, 0L, 
+    1L, 0L, 1L, 1L, 1L, 0L, 0L, 0L, 1L, 0L, 1L, 0L, 1L, 1L, 0L, 
+    0L, 1L, 0L, 1L, 1L, 1L, 0L, 1L, 0L, 0L, 0L, 1L, 0L, 1L, 0L, 
+    1L, 1L, 0L, 0L, 1L, 0L, 1L, 1L, 1L, 0L, 1L, 0L, 0L)), .Names = c("PATIENT", 
+"GENDER", "ETH", "TREATMENT", "AGE", "WEIGHT_1", "WEIGHT_2", 
+"HEIGHT", "SMOKE", "EXERCISE", "RECOVER"), class = "data.frame", row.names = c(NA, 
+-45L))
+
+
+attach(T)
+
+
+
+# Alternatively, copy the Patients.csv file into a convenient folder, make sure that the R working directory matches your folder and use the read.csv() command, as follows:
+
+T <- read.csv("Patients.csv", h=T)
+
+attach(T)
+
+ 
+plot(WEIGHT_1, HEIGHT,pch=16,xlab="WEIGHT BEFORE TREATMENT (kg)",ylab="HEIGHT (cm)", main="HEIGHT VS. WEIGHT", cex = 0.8, cex.lab = 1.5, cex.main = 1.6, xlim=c(0,150), ylim=c(100,200))
+ 
+
+mod <- lm(HEIGHT ~ WEIGHT_1)	
+
+mod
+ 
+abline(lm(HEIGHT ~ WEIGHT_1))
+
+ 
+
+Create complex multiple axes  
+ 
+
+x <- c(-25:25)
+
+y <- 1.5*x + 2
+
+z <- 0.3*(x**2) - 20 
+
+
+par(mar=c(5, 4, 4, 8) + 0.1) 
+
+plot(x, y,type="o", pch=14, col="red", xaxt="n", yaxt="n", lty=3, xlab="", ylab="")
+title("MY DESIGNER AXES", xlab="HORIZONTAL AXIS", ylab="VERTICAL AXIS")
+
+ 
+lines(x, z, type="b", pch=16, col="blue", lty=2)
+ 
+axis(1, at=seq(-25,25,5),labels= seq(-25,25,5), col.axis="blue", las=2)
+  
+axis(2, at=seq(-25,25,10),labels= seq(-25,25,10), col.axis="red", las=2)
+ 
+axis(4, at=z, labels=round(z,digits=2), col.axis="blue", las=2, 
+cex.axis=0.5, tck=-.02)
+
+
+mtext("An axis for z", side=4, line=3, cex.lab=1.3,las=2, col="blue") 
+
+
+
+# Superpose graphs 
+
+
+curve(3 * exp(-x/2), from = 0, to = 10, ylim = c(0, 2), ylab = "", col = "red", lwd = 2)
+
+curve(4 * exp(-x), add = T, lty = 4, col = "blue", lwd = 2)
+
+curve(2.5 * exp(-x/3), add = T, lty = 3, col = "darkgreen", lwd = 2)
+ 
+text(3.2, 1.9, expression(paste("My First Exponential: ", 3 * e^(-x/2))), col = "red")
+text(2.8, 0, expression(paste("My Second Exponential: ", 4 * e^(-x))), col = "blue" )
+text(7, 0.7, expression(paste("My Third Exponential: ", 2.5 * e^(-x/3))), col = "darkgreen" )
+
+ 
+
+
+# Create point labels 
+
+ cheight <- 
+structure(list(Child = structure(c(4L, 3L, 2L, 1L), .Label = c("Anne", 
+"John", "Mary", "Steven"), class = "factor"), Age = c(13L, 11L, 
+12L, 17L), Height = c(165L, 145L, 154L, 157L)), .Names = c("Child", 
+"Age", "Height"), class = "data.frame", row.names = c(NA, -4L
+))
+
+
+ 
+attach(cheight)
+ 
+# ALternatively, save the csv file and use the read.csv() command:
+
+cheight <- read.csv(Children.csv, h=T)
+
+ 
+attach(cheight)
+
+
+plot(Age, Height, main = "Heights of Four Children at Various Ages", pch = 16, ylab = "Height (cm)", xlab = "Age (yrs)" ,ylim = c(140, 180),xlim = c(10, 18))
+
+  
+text(Age, Height, Child, cex=1.2, pos=3, col="red") 
+  
+
+
+# Include a grid on your graph
+ 
+x <- seq(1:5)
+y <- x
+plot(x, y, pch = 16)
+
+ 
+
+grid()
+ 
+plot(x, y, pch = 16)
+
+grid(ny=NA)
+ 
+
+
+plot(x, y, pch = 16)
+grid(nx = NULL, ny = NULL)
+
+
+
+# Shade and colour your graph
+   
+x <- 1:100
+y <- 3*x^2 + 2*x + 7
+plot(x, y)
+lines(x, y)
+
+polygon(cbind(c(min(x), x, max(x)), c(min(y), y, min(y))), col="#00CC66") 
+
+   
+
+sample <- rnorm(30, mean=12, sd=4)
+ 
+x <- 1:25
+y <- rnorm(25, mean=2, sd=3)
+plot(x, y, pch = 16, cex=0.8)
+lines(x, y)
+
+polygon(cbind(c(min(x), x, max(x)),c(min(y), y, min(y))), col="#FF9933") 
+
+ 
+
+plot(x, y, pch = 16, cex = 0.8)
+
+lines(x, y)
+
+polygon(cbind(c(min(x), x, max(x)),c(max(y), y, max(y))), col="#CC66FF")
+
+
+
+# Now let’s see how to shade between the curve and the x axis. 
+
+plot(x, y)
+
+lines(x, y)
+
+polygon(cbind(c(min(x), x, max(x)), c(0, y, 0)), col="#339966") 
+
+ 
+# To shade between the curve and the x axis we used zeroes for the first and third vertical axis values. 
+
+# Obviously, you could shade both above and below the curve. 
+
+plot(x, y, pch = 16, cex = 0.8)
+
+lines(x, y)
+
+polygon(cbind(c(min(x), x, max(x)),c(max(y), y, max(y))), col="#66CCCC")
+
+polygon(cbind(c(min(x), x, max(x)),c(min(y), y, min(y))), col="#339999") 
+ 
+
+
+# Use polygon() to shade under a normal curve
+ 
+ 
+dnorm(x, mean = 0, sd = 1)
+
+ 
+x <- seq(-5, 5, length=1000)
+
+y <- dnorm(x)
+
+plot(x, y, type="l", lwd=2, col="blue", xlab="Z Value", ylab="Probability", main="Testing Polygon with a Normal Curve")  
+  
+
+ 
+plot(x, y, type="l", lwd=2, col="blue", xlab="Z Value", ylab="Probability", main="Testing Polygon with a Normal Curve")  
+ . 
+polygon(c(-5, x, 5), c(0, y,0), col="#FFFF66")
+
+
+
+# Let’s start again and shade between two Z values.
+  
+plot(x, y, type="l", lwd=2, col="blue", xlab="Z Value", ylab="Probability", main="Testing Polygon with a Normal Curve")  
+ 
+x <- seq(-3, -1.5, length=100)
+y <- dnorm (x)
+  
+
+polygon(c(-5, x, -1.5), c(0, y,0), col="#669966")
+ 
+
+
+# Create bar charts
+ 
+H <- c(2,3,3,3,4,5,5,5,5,6)
+ 
+counts <- table(H)
+counts
+ 
+
+barplot(counts)
+
+D <- c(3, 7, 12, 2, 0, 5)
+
+barplot(D, col="blue")
+
+
+ 
+ 
+measurements <- read.csv("Measurements.csv", header=T, sep=",")
+
+# OR
+
+measurements <- structure(list(Group1 = c(1L, 3L, 6L, 4L, 9L), Group2 = c(2L, 5L, 
+4L, 5L, 12L), Group3 = c(4L, 4L, 6L, 6L, 16L), Group4 = c(3L, 5L, 
+6L, 7L, 6L)), .Names = c("Group1", "Group2", "Group3", "Group4"), class = "data.frame", row.names = c(NA, -5L))
+attach(measurements)
+
+measurements
+   
+
+barplot(measurements$Group3, main="Group 3 Measurements", xlab="TRIAL", ylab="Measurement", names.arg=c("T1","T2","T3","T4","T5"), border="red", density=c(90, 70, 50, 40, 30)) 
+ 
+ 
+barplot(as.matrix(measurements), main="ALL MEASUREMENTS", ylab = "Measurements", cex.lab = 1.5, cex.main = 1.4, beside=TRUE, col=heat.colors(5))
+
+
+
+ 
+# Include a legend 
+
+barplot(as.matrix(measurements), main="ALL MEASUREMENTS", ylab = "Measurements", cex.lab = 1.5, cex.main = 1.4, beside=TRUE, col=heat.colors(5))
+legend("topleft", c("Measure 1","Measure 2","Measure 3","Measure 4", "Measure 5"), cex=1.3, bty="n", fill=heat.colors(5))
+
+
+# We used the topleft argument to position the legend towards the top left of the chart. Other options include:
+
+"bottomright", "bottom", "bottomleft", "left", "topleft", "top", "topright",
+"right", "center".
+
+ 
+# Now we create a table. 
+
+treatment <- table(TREATMENT)
+
+treatment 
+  
+
+colours <- c("red", "yellow", "blue")
+
+barplot(treatment, main="Treatment", horiz=TRUE, col= colours,
+names.arg=c("A", "B", "C"))
+
+ 
+
+barplot(treatment, main="Treatment", col= colours, names.arg=c("A", "B", "C"))
+
+
+# To get the stacked barplot, we omit the argument beside = T.
+
+smoketh <- table(as.numeric(ETH), as.numeric(SMOKE))
+
+smoketh
+
+   
+# Now we create the stacked bar plot.
+
+barplot(smoketh, main="Numbers of Smokers by Ethnicity",
+xlab="Non-Smoker or Smoker", ylab ="Number of Smokers", col=c("blue","red","yellow"), legend = rownames(smoketh))
+
+ 
+
+# Create histograms
+
+# Now we create a histogram for patients’ weight after treatment. 
+  
+
+hist(WEIGHT_2)
+
+
+ 
+ 
+G <- c(Group1, Group2, Group3, Group4)
+
+ 
+hist(G, col="#FF00CC", ylim=c(0,10), main = "HISTOGRAM OF ALL MEASUREMENTS", xlab ="MEASURE", ylab ="FREQUENCY") 
+ 
+  
+max <- max(G)
+max
+ 
+ 
+hist(G, col= "#CCCCCC", breaks=max, xlim=c(0,max), 
+main="HISTOGRAM OF MEASUREMENTS", las=2, xlab = "Values", cex.lab = 1.3)
+
+ 
+
+hist(G, col =  "#FF3366", breaks=6, xlim=c(0,max), 
+main=" HISTOGRAM OF MEASUREMENTS ", las=2, xlab = "Values", cex.lab = 1.3)
+
+ 
+measurebins <- c(0, 4, 8, 12, 16)
+
+hist(G, col = "#9933CC", breaks=measurebins, xlim=c(0,max), 
+main=" HISTOGRAM OF MEASUREMENTS ", las=2, xlab = "Values", cex.lab = 1.3)
+ 
+
+Z <- rnorm(50)
+ 
+Z[Z < -4 | Z > 4] <- NA
+ 
+
+x <- seq(-4, 4, 0.1)
+
+hist(Z, breaks=seq(-4, 4), ylim=c(0, 0.5), col="red", main = "HISTOGRAM WITH FITTED NORMAL CURVE", freq=FALSE)
+ 
+
+lines(x, dnorm(x), lwd=2)
+ 
+
+
+# Let’s use this technique to fit a histogram of patients’ heights and fit a standard normal curve. We standardise the height data by subtracting the mean and dividing by the standard deviation. The sd() command returns the standard deviation. 
+
+HSTD <- (HEIGHT - mean(HEIGHT))/ sd(HEIGHT)
+
+# Now we set up a sequence of horizontal axis values for plotting. To do so we examine the range of the standardised data. We use the range() command to do so. 
+
+range(HSTD)
+
+ 
+# Our horizontal axis must include these minimum and maximum values, so let’s set up a horizontal axis running from -3 to 3. 
+
+x <- seq(-3, 3, 0.1)
+
+
+hist(HSTD, breaks=seq(-3, 3), ylim=c(0, 0.5), col="red", main = "HISTOGRAM WITH FITTED NORMAL CURVE", freq=F)
+ 
+
+lines(x, dnorm(x), lwd=2)
+
+ 
+
+# Create boxplots
+
+changewt <- WEIGHT_1 - WEIGHT_2
+
+boxplot(changewt)
+  
+
+boxplot(changewt ~ TREATMENT, data=T, main=toupper("WEIGHT CHANGE (kg)"), font.main=3, cex.main=1.2, xlab="Treatment ", ylab="Weight Change (kg)", font.lab=3, col="#FFFFCC")
+
+
+# Now we create a notched boxplot of change in weight for each level of treatment (with different colours for each box).  We use the argument notch = T.  This time we include the argument range = 0 in order to ensure that the whiskers extend to the extreme points. Copy and paste the following syntax into R.
+ 
+boxplot(changewt ~ TREATMENT, data=T, main=toupper("WEIGHT CHANGE (kg)"), font.main=3, cex.main=1.2, col=c("red","blue", "yellow"), xlab="Treatment", ylab="Change in Weight (Kg)", font.lab=3, notch=TRUE, range = 0)    
+
+ 
+
+# Create pie charts
+
+   
+J <- c(1, 8, 3, 9, 2, 5, 10)
+
+pie(J)
+
+ 
+pie(J, main="Daily Values", col=topo.colors(length(J)),
+labels=c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"))
+
+
+table(TREATMENT)
+
+
+pie(table(TREATMENT))
+
+cols <- c("#FFFF33","#FF9999","#99CC99","#FF99FF","#CCCCCC","#33FF00","#3366FF")
+
+ 
+
+percentlabels <- round(100*J/sum(J), 1)  
+ 
+
+pielabels <- paste(percentlabels, "%", sep="")   
+
+pie(J, main="Daily Values", col=cols, labels=pielabels, cex=0.8)
+
+
+# Let’s create a legend to the left.
+
+legend("topleft", c("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"), cex=0.8, fill=cols)
+ 
+
+# As another example, let’s create a pie chart from the medical data set and include numbers of patients receiving each treatment. We use the same table of counts as before.
+
+table <- table(TREATMENT)
+
+table
+ 
+
+labs <- paste(names(table), " (",table,")", sep="")
+
+labs
+
+ 
+pie(table, labels = labs, col = c("#339999", "#006666", "#0099CC"),
+main="PIE CHART OF NUMBERS OF PATIENTS \nRECEIVING EACH TREATMENT")
+
+ 
+
+# Create dotcharts  
+ 
+TF <- subset(T, GENDER =="F")
+
+head(TF)
+
+  
+ 
+dotchart(TF$HEIGHT[1:6],labels=TF$PATIENT,cex=1.4, pch = 16,
+  main="Female Patient Heights in Centimetres",xlab=toupper("Height
+    (cm)"), xlim = c(130, 200), cex.lab = 0.7)
+
+
+dotchart(t(measurements))
+
+
+ 
+dotchart(t(measurements), xlim = c(0,20), pch = c(15:18), col = c("red", "blue", "darkgreen", "brown"), main = "Measurements for Four Groups", font.main = 2, xlab = "Measurements", cex.lab = 1.2)
+ 
+dotchart(as.matrix(measurements), xlim = c(0,20), pch = c(15:18), col = c("red", "blue", "darkgreen", "brown"), main = "Measurements for Four Groups arranged Differently", font.main = 2, xlab = "Measurements", cex.lab = 1.2)
+
+
+ 
+(mfrow=c(1,2))
+
+dotchart(t(measurements), xlim = c(0,20), pch = c(15:18), col = c("red", "blue", "darkgreen", "brown"), main = "Scores for Four Groups", font.main = 2, xlab = "Scores", cex.lab = 1.2)
+
+dotchart(as.matrix(measurements), xlim = c(0,20), pch = c(15:18), col = c("red", "blue", "darkgreen", "brown"), main = "Scores for Four Groups arranged Differently", font.main = 2, xlab = "Scores", cex.lab = 1.2)
+
+ 
+levels(TREATMENT)
+  
+changewt <- WEIGHT_1 - WEIGHT_2
+
+ 
+TCH <- cbind(T, changewt)
+
+#  Enter TCH at the R command line to see that the new variable has indeed been included in the array. 
+
+ 
+
+TCH <- TCH[order(TCH$changewt),]   
+
+TCH$TREATMENT <- factor(TREATMENT) 
+
+TCH$TREATMENT
+ 
+TCH$colour[TCH$TREATMENT ==  "A"]  <- "darkgreen"
+
+TCH$colour[TCH$TREATMENT == "B"]  <- "red"
+
+TCH$colour[TCH$TREATMENT == "C"]  <- "blue" 
+
+
+
+dotchart(TCH$changewt, labels=TCH$PATIENT, cex=.8, pch = 16, groups = TCH$TREATMENT,main="DOTCHART OF WEIGHT CHANGE BY TREATMENT",
+xlab="Weight Change (Kg)", cex.lab = 0.8, gcolor="black", color=TCH$colour)
+
+ 
+ 
+# R’s colour palettes 
+
+# R’s colour palettes include: Rainbow, heat.colors, terrain.colors, topo.colors, cm.colors 
+
+
+# You have already seen some of these palettes. For information on palettes in R insert a question mark in front of the palette name. For example: ?terrain.colors
+
+
+# Use smoothers on your graph 
+
+plot(WEIGHT_2, HEIGHT, main="LOWESS SMOOTHING EXAMPLE", 
+xlab="WEIGHT (kg) ", ylab="HEIGHT (cm)", pch=19) 
+
+lines(lowess(WEIGHT_2, HEIGHT), lwd=2, col="red")   
+
+
+pairs(~WEIGHT_1 + WEIGHT_2 + HEIGHT, data=T, 
+main="Scatterplot Matrix of Medical Data")
+ 
+
+pairs(~WEIGHT_1 + WEIGHT_2 + HEIGHT, data=T, 
+main="Scatterplot Matrix of Medical Data", panel = panel.smooth)
+
+
+ 
+
+# Write functions to create graphs 
+
+ nicehist <- function(x, k, col) {
+ hist(x, main = paste("HISTOGRAM_", k, sep = ""),
+ xlab = paste("VALUES_", k, sep = ""),
+ ylab = paste("COUNTS_", k, sep = ""), col = col) }
+ f <- c(3,2,5,4,3,2,7,6,5,7,8,6,4,5,6) 
+
+   
+
+ nicehist(f, 3, "red")
+ 
+
+
+ nicehist(f, 99, "#FFCCFF")
+
+ 
+
+# Include error bars on your graph
+
+# Here is a function that I wrote to plot error bars on your graphs. Copy and paste it into R. 
+
+
+ploterrors <- function(w, z, err) {   
+zmin       <- z - err
+zmax       <- z + err
+HATWIDTH   <- 0.012
+HAT  <-  HATWIDTH *( max(w) - min(w) )
+
+for( k in 1:length(z) ) {
+ 
+lines( c(w[k], w[k] ), c( z[k], zmin[k] ) , lwd = 0.8 )
+lines( c(w[k], w[k] ), c( z[k], zmax[k] ) , lwd = 0.8 )
+
+lines( c(w[k] - HAT, w[k] + HAT ), c( zmin[k], zmin[k] ) , lwd = 0.8 )
+lines( c(w[k] - HAT, w[k] + HAT ), c( zmax[k], zmax[k] ) , lwd = 0.8 )
+} }
+
+
+ 
+X <- c(1,2,3,4,5,6,7,8)
+Y <- c(1,2,3.4,5.6,7.8,10.3, 15.7, 18.3)
+ERROR <- c(0.5, 1.2, 0.23, 2.21, 1.43, 1.28 , 2.18, 1.41)
+
+plot(X, Y, xlab = "X VALUES", ylab = "Y VALUES", pch = 16)
+
+lines(X, Y) 
+
+ 
+# Now we include the error bars using the function by including the horizontal and vertical axis variables and including the vector of errors. 
+
+ploterrors(X, Y, ERROR)
+ 
+
+
+

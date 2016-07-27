@@ -1,0 +1,44 @@
+﻿> library(rattle)
+> summary(weather)> install.packages("rpart")
+>library(rpart)
+> weather2 <- subset(weather,select=-c(RISK_MM))> model <- rpart(formula=RainTomorrow ~ .,data=weather2, method=”class”)> summary(model)> library(rpart.plot)> fancyRpartPlot(model,main="Rain Tomorrow",sub="Chapter 12")-------------------------------------------------------------------------------------------------------------------> forestfires <- read.csv("http://archive.ics.uci.edu/ml/machine-learning-databases/forest-fires/forestfires.csv")> summary(forestfires)
+> model <- lm(formula = area ~ month + temp + wind + rain, data=forestfires)> summary(model)
+> model <- lm(formula = area ~ month + wind + rain, data=forestfires)> summary(model)> plot(model)
+-------------------------------------------------------------------------------------------------------------------
+> bupa <- read.csv("http://archive.ics.uci.edu/ml/machine-learning-databases/liver-disorders/bupa.data")> colnames(bupa) <- c("mcv","alkphos","alamine","aspartate","glutamyl","drinks","selector")> summary(bupa)> nn <- neuralnet(selector~mcv+alkphos+alamine+aspartate+glutamyl+drinks, data=bupa, linear.output=FALSE, hidden=2)
+> nn$result.matrix
+> plot(nn)
+-------------------------------------------------------------------------------------------------------------------
+> data <- read.table("http://archive.ics.uci.edu/ml/machine-learning-databases/auto-mpg/auto-mpg.data", na.string=”?”)> colnames(data) <- c("mpg","cylinders","displacement","horsepower","weight","acceleration","model.year","origin","car.name")> summary(data)> library(caret)> training <- createDataPartition(data$mpg, p=0.75, list=FALSE)
+> trainingData <- data[training,]> testData <- data[-training,]> # throws exception - model <- knn(train=trainingData, test=testData, cl=trainingData$mpg)
+> completedata <- data[complete.cases(data),]
+> drops <- c("car.name")> completeData2 <- completedata[,!(names(completedata) %in% drops)]> training <- createDataPartition(completeData2$mpg, p=0.75, list=FALSE)> trainingData <- completeData2[training,]> testData <- completeData2[-training,]> model <- knn(train=trainingData, test=testData, cl=trainingData$mpg)> plot(model)
+> library(kknn)> model <- kknn(formula = formula(mpg~.), train = trainingData, test = testData, k = 3, distance = 1)> fit <- fitted(model)> plot(testData$mpg, fit)> abline(a=0, b=1, col=3)
+-------------------------------------------------------------------------------------------------------------------
+> library(kernlab)> data("spam")> summary(spam)> table(spam$type)> index <- 1:nrow(spam)> testindex <- sample(index, trunc(length(index)/3))> testset <- spam[testindex,]> trainingset <- spam[-testindex,]
+> library(e1071)> model <- svm(type ~ ., data = trainingset, method = "C-classification", kernel = "radial", cost = 10, gamma = 0.1)> summary(model)> pred <- predict(model, testset)> table(pred, testset$type)
+-------------------------------------------------------------------------------------------------------------------
+> install.packages("MCMCpack")> library(MCMCpack)
+#from http://lib.stat.cmu.edu/datasets/stanford  datasets on transplants.  (The dataset on the site is part of the web page, so I copied into a local csv file)
+> transplants <- read.csv("transplant.csv")> summary(transplants)> model <- MCMCregress(expected ~ actual + transplants, data=transplants)> summary(model)> plot(model)
+-------------------------------------------------------------------------------------------------------------------
+> install.packages("randomForest")> library(randomForest)> fit <- randomForest(type ~ ., data=spam)> fit
+> head(importance(fit))
+-------------------------------------------------------------------------------------------------------------------
+> wheat <- read.csv("http://archive.ics.uci.edu/ml/machine-learning-databases/00236/seeds_dataset.txt", sep="\t")> head(wheat)
+> colnames(wheat) <- c("area", "perimeter", "compactness", "length", "width", "asymmetry", "groove", "undefined")> head(wheat)> wheat <- subset(wheat, select = -c(undefined) )> head(wheat)> # throws exception - fit <- kmeans(wheat, 5)
+> wheat <- wheat[complete.cases(wheat),]
+> plot(wheat)> fit <- kmeans(wheat, 5)> fit
+-------------------------------------------------------------------------------------------------------------------
+> sunspots <- read.csv("http://vincentarelbundock.github.io/Rdatasets/csv/datasets/sunspot.month.csv")> summary(sunspots)> head(sunspots)
+> d <- density(sunspots$sunspot.month)> d> plot(d)
+> N<-1000> sunspots.new <- rnorm(N, sample(sunspots$sunspot.month, size=N, replace=TRUE))> lines(density(sunspots.new), col="blue")
+-------------------------------------------------------------------------------------------------------------------
+> iris <- read.csv("https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data")> colnames(iris) <- c("SepalLength","SepalWidth","PetalLength","PetalWidth","Species")> modelName = "EEE"> head(iris)
+> data = iris[,-5]> z = unmap(iris[,5])> msEst <- mstep(modelName, data, z)> em(modelName, data, msEst$parameters)
+-------------------------------------------------------------------------------------------------------------------
+> hmm <- initHMM(c("Rainy","Sunny"), c('walk', 'shop', 'clean'), c(.6,.4), matrix(c(.7,.3,.4,.6),2), matrix(c(.1,.4,.5,.6,.3,.1),3))> hmm> future <- forward(hmm, c("walk","shop","clean"))> future
+-------------------------------------------------------------------------------------------------------------------
+> library(FactoMineR)> data(decathlon)> summary(decathlon)
+> head(decathlon)
+> res.pca = PCA(decathlon[,1:10], scale.unit=TRUE, ncp=5, graph=T)

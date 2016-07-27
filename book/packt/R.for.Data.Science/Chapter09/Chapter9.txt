@@ -1,0 +1,35 @@
+﻿> example(persp)
+-------------------------------------------------
+> install.packages("copula")> library(copula)> gc <- gumbelCopula(1.5, dim=2) > persp(gc, dCopula, col="red")
+-------------------------------------------------
+> summary(women)
+> fun <- function(x,y) {x * y}
+> persp(x=women$height, y=women$weight, z=outer(women$height,women$weight,fun))
+-------------------------------------------------
+> install.packages(“lattice”)> library(lattice)> mydata <- read.table("http://archive.ics.uci.edu/ml/machine-learning-databases/auto-mpg/auto-mpg.data")> colnames(mydata) <- c("mpg","cylinders","displacement","horsepower","weight","acceleration","model.year","origin","car.name")
+> cloud(mpg~cylinders*weight, data=mydata)
+-------------------------------------------------
+> scatterplot3d(data$mpg~data$cylinders*data$weight)
+-------------------------------------------------
+> install.packages("rgl")> library(rgl)> install.packages("car")> library(car)> rgl.snapshot("0860OS_9_8.png")
+-------------------------------------------------
+> install.packages("vrmlgen")> library(vrmlgen)> cloud3d(mydata$mpg~mydata$cylinders*mydata$weight,filename="out.wrl")
+-------------------------------------------------
+> size <- "small"> col <- "red"> char <- ""> library(RgoogleMaps)> lat <- c(44.26,44.28)> lon <- c(-71.2,-71.4)> mymarkers <- cbind.data.frame(lat, lon, size, col, char)> terrain_close <- GetMap.bbox(lonR= range(lon), latR= range(lat), destfile= "terrclose.png", markers= mymarkers, zoom=13, maptype="hybrid")
+-------------------------------------------------
+> library(vrmlgen)> data("uk_topo")> bar3d(uk_topo, autoscale = FALSE, cols = "blue", space = 0, 
+showaxis = FALSE, filename = "example6.wrl", htmlout = "example6.html")
+-------------------------------------------------
+> library(pbdDEMO)> N.gbd <- 5 * (comm.rank() * 2)> X.gbd <- rnorm(N.gbd * 3)> dim(X.gbd) <- c(N.gbd, 3)> bal.info <- balance.info(X.gbd)> new.X.gbd <- load.balance(X.gbd, bal.info)> org.X.gbd <- unload.balance(new.X.gbd, bal.info)
+-------------------------------------------------
+x <- big.matrix(5, 2, type="integer", init=0,dimnames=list(NULL, c("alpha", "beta")))options(bigmemory.allow.dimnames=TRUE)
+-------------------------------------------------> library(pbdMPI)Then use the mpiexec function to load our R script across nodes> mpiexec -np 2 Rscriptsome_code.r
+-------------------------------------------------
+> install.packages("Rcpp")> library(Rcpp)# need to install rtools on windows machines, macs are fine> cppFunction('int add(int x, int y, int z) {+   int sum = x + y + z;+   return sum;+ }')> add(1, 2, 3)
+-------------------------------------------------
+> library(ggplot2)> library(microbenchmark)> tm <- microbenchmark(rchisq(100, 0),+                      rchisq(100, 1),+                      rchisq(100, 2),+                      rchisq(100, 3),+                      rchisq(100, 5), times=1000L)> autoplot(tm)
+-------------------------------------------------
+> install.packages("swirl")> library(swirl)> swirl()
+-------------------------------------------------
+> library(babynames) # data package> library(dplyr)     # provides data manipulating functions.> library(magrittr)  # pipes> library(ggplot2)   # for graphics> babynames %>% +     filter(name %>% substr(1, 3) %>% equals("Dan")) %>% +     group_by(year, sex) %>% +     summarize(total = sum(n)) %>%+     qplot(year, total, color = sex, data = ., geom = "line") %>%+     add(ggtitle('Names starting with "Dan"')) %>% +     print
+-------------------------------------------------

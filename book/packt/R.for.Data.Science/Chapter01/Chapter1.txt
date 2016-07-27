@@ -1,0 +1,15 @@
+> x <- rbind(matrix(rnorm(100, sd = 0.3), ncol = 2),                      matrix(rnorm(100, mean = 1, sd = 0.3), ncol = 2))> x> fit <- kmeans(x,10)> fit---------------------------------------------------------------------
+> library(cluster)> x <- read.table(“medoids.csv”, header=TRUE, sep=",")> result <- pam(x, 2, FALSE, "euclidean")> result
+> summary(result)
+> plot(result$data, col = result$clustering)
+---------------------------------------------------------------------
+> dat <- matrix(rnorm(100), nrow=10, ncol=10)> dat> hc <- hclust(dist(dat))> hc> plot(hc)---------------------------------------------------------------------> install.packages(“mclust”)> library(mclust)> data <- read.csv("http://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data")> fit <- Mclust(data)> fit> summary(fit)> plot(fit)---------------------------------------------------------------------
+> data <- read.csv("http://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data")> d <- density(data$X5.1)> d> plot(d)---------------------------------------------------------------------
+> y <- rnorm(100)> boxplot(y)> identify(rep(1, length(y)), y, labels = seq_along(y))---------------------------------------------------------------------
+> x <- rnorm(100)> summary(x)> boxplot.stats(x)$out> boxplot(x)
+---------------------------------------------------------------------
+> boxplot(mpg~cyl,data=mtcars, xlab="Cylinders", ylab="MPG")---------------------------------------------------------------------
+> x <- rnorm(1000)> y <- rnorm(1000)> f <- data.frame(x,y)> a <- boxplot.stats(x)$out> b <- boxplot.stats(y)$out> list <- union(a,b)> plot(f)> px <- f[f$x %in% a,]> py <- f[f$y %in% b,]> p <- rbind(px,py)> par(new=TRUE)> plot(p$x, p$y,cex=2,col=2)---------------------------------------------------------------------
+> data <- read.csv("http://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data")> outliers <- function(data, low, high) {>	outs <- subset(data, data$X5.1 < low | data$X5.1 > high)>	return(outs)>}> outliers(data, 4.5, 7.5)---------------------------------------------------------------------
+> install.packages(“DMwR”)> library(DMwR)> nospecies <- data[,1:4]> scores <- lofactor(nospecies, k=3)> plot(density(scores))---------------------------------------------------------------------
+> install.packages(“arules”)> library(arules)> data <- read.csv("http://www.salemmarafi.com/wp-content/uploads/2014/03/groceries.csv")> rules <- apriori(data) > rules> inspect(rules)> rules <- apriori(data, parameter = list(supp = 0.001, conf = 0.8))

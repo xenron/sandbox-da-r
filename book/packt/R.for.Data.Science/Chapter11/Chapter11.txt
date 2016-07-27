@@ -1,0 +1,40 @@
+# copied data from http://lib.stat.cmu.edu/datasets/fraser-river web page
+> fraser <- scan("fraser.txt")> plot(fraser)
+> head(fraser)> fraserc <- decompose(fraser)> # throws an exception stl(fraser)
+> fraser.ts <- ts(fraser, frequency=12, start=c(1913,3))
+> stl(fraser.ts, s.window="periodic")
+> fraser.stl = stl(fraser.ts, s.window="periodic")> summary(fraser.stl)
+> monthplot(fraster.stl)
+> library(forecast)> seasonplot(fraser.ts)
+> plot(fraser.stl)
+-----------------------------------------------------------------------------
+> library(TTR)> fraser.SMA3 <- SMA(fraser,n=12)> plot(fraser.SMA3)
+> fraser.SMA60 <- SMA(fraser,n=60)> plot(fraser.SMA60)
+-----------------------------------------------------------------------------
+> fraser.components <- decompose(fraser.ts)> fraser.adjusted <- fraser - fraser.components$season> plot(fraser.adjusted)
+-----------------------------------------------------------------------------
+> fraser.forecast <- HoltWinters(fraser.ts,beta=FALSE)> fraser.forecast> fraser.forecast$SSE> plot(fraser.forecast)
+> fraser.forecast$fitted
+-----------------------------------------------------------------------------
+> install.packages("forecast")> library(forecast)> fraser.forecast2 <- forecast.HoltWinters(fraser.forecast, h=8)> fraser.forecast2
+> plot.forecast(fraser.forecast2)
+-----------------------------------------------------------------------------
+> acf(fraser.forecast2$residuals,lag.max=20)
+-----------------------------------------------------------------------------
+> Box.test(fraser.forecast2$residuals,lag=20,type="Ljung-Box")> plot.ts(fraser.forecast2$residuals)
+-----------------------------------------------------------------------------
+> sleep <- read.table("http://physionet.org/physiobank/database/santa-fe/b2.txt") > colnames(sleep) <- c("heart","chest","oxygen")> head(sleep)> sleepts <- ts(sleep)> plot.ts(sleepts)
+> heart.ts <- ts(sleep$heart)> heart.forecast <- HoltWinters(heart.ts, gamma=FALSE)> heart.forecast
+> plot(heart.forecast)
+> chest.ts <- ts(sleep$chest)> chest.forecast <- HoltWinters(chest.ts, gamma=FALSE)> chest.forecast> plot(chest.forecast)
+> oxygen.ts <- ts(sleep$oxygen)> oxygen.forecast <- HoltWinters(oxygen.ts, gamma=FALSE)> oxygen.forecast
+> plot(oxygen.forecast)-----------------------------------------------------------------------------
+> fraser.ets <- ets(fraser.ts)> summary(fraser.ts)> plot(fraser.ets)
+-----------------------------------------------------------------------------
+> fraser.arima <- arima(fraser.ts, order=c(2,0,0))> summary(fraser.arima)> tsdisplay(arima.errors(fraser.arima))
+> fraser.farima <- forecast(fraser.arima, h=8)> summary(fraser.farima)> plot(fraser.farima)
+-----------------------------------------------------------------------------
+> fraser.aarima <- auto.arima(fraser.ts)> summary(fraser.aarima)> fraser.arima3 <- arima(fraser.ts, order=c(4,0,1), seasonal=list(order=c(2,0,0), period=12))> summary(fraser.arima3)
+> fraser.farima3 <- forecast(fraser.arima3, h=8)> plot(fraser.farima3)
+-----------------------------------------------------------------------------
+

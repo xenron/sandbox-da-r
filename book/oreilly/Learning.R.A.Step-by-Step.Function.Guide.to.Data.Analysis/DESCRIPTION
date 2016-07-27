@@ -1,0 +1,23 @@
+Package: learningr
+Type: Package
+Title: Data and Functions to Accompany the Book "Learning R"
+Version: 0.30
+Date: 2015-02-04
+Author: Richie Cotton
+Maintainer: Richie Cotton <richierocks@gmail.com>
+Description: Crabs in the English channel, deer skulls, English
+    monarchs, half-caste Manga characters, Jamaican cities,
+    Shakespeare's The Tempest, drugged up cyclists and sexually
+    transmitted diseases.
+Imports:
+    plyr
+Suggests:
+    knitr
+License: Unlimited
+LazyData: TRUE
+VignetteBuilder: knitr
+Collate:
+    'learningr-package.R'
+    'buggy_count.R'
+    'hypotenuse.R'
+    'fix_filenames.R'

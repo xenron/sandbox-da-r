@@ -1,0 +1,309 @@
+
+# CHAPTER 4 CODE FILE
+
+ 
+# Get started with ggplot  
+
+# To read the medical data set into R copy and paste the following code at the command line:
+
+
+T <- structure(list(PATIENT = structure(c(32L, 24L, 11L, 15L, 41L, 
+8L, 14L, 26L, 5L, 2L, 43L, 37L, 42L, 25L, 44L, 3L, 17L, 6L, 4L, 
+23L, 35L, 31L, 39L, 45L, 27L, 9L, 12L, 34L, 10L, 19L, 40L, 7L, 
+38L, 21L, 13L, 1L, 16L, 20L, 28L, 29L, 18L, 22L, 30L, 36L, 33L
+), .Label = c("Adrienne", "Alan", "Andy", "Ann ", "Anne ", "Anton", 
+"Audrey", "Ben", "Bernie", "Beth", "Bob", "Bobby", "Bruce", "Charles", 
+"Dave", "Dianne", "Frida", "Guy", "Henry", "Hugh", "Ian", "Irina", 
+"James", "Jim", "Jo ", "John", "Jonah", "Joseph", "Lesley", "Liz", 
+"Magnus", "Mary", "Max", "Merril", "Mike", "Mikhail", "Nick", 
+"Peter", "Robert", "Robin", "Simon", "Steve", "Stuart", "Sue", 
+"Telu"), class = "factor"), GENDER = structure(c(1L, 2L, 2L, 
+2L, 2L, 2L, 2L, 2L, 1L, 2L, 2L, 2L, 2L, 1L, 1L, 2L, 1L, 2L, 1L, 
+2L, 1L, 2L, 2L, 2L, 2L, 1L, 2L, 1L, 1L, 2L, 1L, 1L, 2L, 2L, 2L, 
+2L, 1L, 2L, 2L, 1L, 2L, 1L, 1L, 2L, 2L), .Label = c("F", "M"), class = "factor"), 
+    ETH = c(1L, 2L, 2L, 1L, 1L, 3L, 3L, 2L, 3L, 2L, 2L, 3L, 1L, 
+    3L, 1L, 3L, 1L, 2L, 3L, 2L, 2L, 1L, 3L, 2L, 2L, 3L, 2L, 2L, 
+    1L, 3L, 2L, 3L, 1L, 2L, 3L, 2L, 3L, 3L, 2L, 2L, 1L, 1L, 1L, 
+    2L, 3L), TREATMENT = structure(c(1L, 2L, 1L, 2L, 3L, 1L, 
+    1L, 3L, 2L, 2L, 1L, 3L, 1L, 2L, 1L, 1L, 2L, 3L, 1L, 2L, 2L, 
+    1L, 3L, 3L, 1L, 2L, 2L, 2L, 3L, 1L, 1L, 2L, 1L, 1L, 2L, 3L, 
+    3L, 2L, 2L, 1L, 3L, 2L, 3L, 3L, 2L), .Label = c("A", "B", 
+    "C"), class = "factor"), AGE = structure(c(3L, 3L, 2L, 2L, 
+    2L, 3L, 1L, 1L, 3L, 3L, 3L, 3L, 1L, 1L, 2L, 2L, 2L, 1L, 2L, 
+    1L, 1L, 1L, 3L, 3L, 1L, 3L, 1L, 2L, 1L, 2L, 3L, 1L, 2L, 3L, 
+    2L, 2L, 1L, 2L, 3L, 3L, 1L, 2L, 2L, 1L, 1L), .Label = c("E", 
+    "M", "Y"), class = "factor"), WEIGHT_1 = c(79.2, 87.5, 65.1, 
+    58.8, 72, 95.9, 76.2, 56.3, 77.1, 104.4, 67.7, 82.8, 59.7, 
+    68.6, 79.6, 125.2, 83.1, 63.9, 57.4, 84.3, 72.2, 68.7, 65.5, 
+    64.2, 87.1, 56.9, 56.5, 75.3, 67.6, 82.5, 59.4, 68.9, 79.1, 
+    125.7, 83.7, 63.3, 67.7, 84.8, 91.4, 68.3, 39.9, 64.7, 65.6, 
+    92, 71.8), WEIGHT_2 = c(76.6, 84.8, 64.6, 59.3, 70.1, 94.5, 
+    74.7, 58.9, 76.1, 99.5, 65.3, 84.3, 57.3, 65.3, 79.8, 117.6, 
+    82.3, 62.2, 56.3, 84.9, 71, 66.8, 65.3, 65.2, 86.5, 55.4, 
+    57.8, 74.3, 67.4, 80.2, 57.1, 66.1, 76.8, 114.3, 82.7, 62.9, 
+    67.7, 83.9, 89.2, 68.6, 41.4, 65.3, 63.2, 87.5, 70.6), HEIGHT = c(169L, 
+    178L, 162L, 161L, 175L, 188L, 176L, 159L, 171L, 193L, 170L, 
+    183L, 149L, 154L, 179L, 194L, 177L, 162L, 149L, 182L, 168L, 
+    175L, 156L, 154L, 180L, 156L, 155L, 173L, 170L, 179L, 163L, 
+    161L, 177L, 190L, 182L, 167L, 165L, 180L, 185L, 161L, 138L, 
+    170L, 165L, 186L, 172L), SMOKE = structure(c(2L, 2L, 1L, 
+    2L, 1L, 1L, 1L, 1L, 2L, 1L, 1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 
+    1L, 2L, 2L, 1L, 1L, 1L, 2L, 1L, 2L, 1L, 1L, 2L, 1L, 2L, 1L, 
+    2L, 1L, 2L, 1L, 2L, 2L, 1L, 1L, 1L, 2L, 1L, 2L), .Label = c("N", 
+    "Y"), class = "factor"), EXERCISE = c(TRUE, TRUE, FALSE, 
+    FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, 
+    FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, 
+    FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, TRUE, FALSE, 
+    FALSE, FALSE, TRUE, FALSE, TRUE, FALSE, FALSE, TRUE, TRUE, 
+    FALSE, FALSE, FALSE, TRUE, TRUE, TRUE), RECOVER = c(1L, 0L, 
+    1L, 0L, 1L, 1L, 1L, 0L, 0L, 0L, 1L, 0L, 1L, 0L, 1L, 1L, 0L, 
+    0L, 1L, 0L, 1L, 1L, 1L, 0L, 1L, 0L, 0L, 0L, 1L, 0L, 1L, 0L, 
+    1L, 1L, 0L, 0L, 1L, 0L, 1L, 1L, 1L, 0L, 1L, 0L, 0L)), .Names = c("PATIENT", 
+"GENDER", "ETH", "TREATMENT", "AGE", "WEIGHT_1", "WEIGHT_2", 
+"HEIGHT", "SMOKE", "EXERCISE", "RECOVER"), class = "data.frame", row.names = c(NA, 
+-45L))
+
+
+attach(T)
+
+
+library(ggplot2)
+
+
+P <- ggplot(T, aes(x = HEIGHT, y = WEIGHT_1)) + geom_point()
+
+P 
+ 
+P + xlab("HEIGHT (cm)") + ylab("WEIGHT_1 (Kg)") 
+ 
+ 
+
+  
+P + labs(x = "HEIGHT (cm)", y = "WEIGHT_1 (Kg)") + labs(title = "WEIGHT vs. HEIGHT_1")
+ 
+ 
+P <- P + labs(x = "HEIGHT (cm)", y = "WEIGHT_1 (Kg)") + labs(title = "WEIGHT vs. HEIGHT")
+  
+ 
+P + theme(plot.title = element_text(size = rel(2), color = "blue"))
+ 
+ 
+P + geom_point(color = "darkgreen", size = 5) 
+
+ 
+
+
+
+# Map color, shape and size to a variable 
+ 
+P + geom_point(aes(color = factor(ETH)), size=I(5)) + scale_color_manual(values = c("red", "yellow", "blue"))
+ 
+
+P + geom_point(aes(size = factor(ETH))) 
+
+  
+P + geom_point(aes(size = WEIGHT_2)) + scale_size_area() 
+
+ 
+P + geom_point(aes(shape = factor(TREATMENT)), size = 3) + scale_shape(solid = FALSE)
+ 
+ 
+P + theme_bw()
+ 
+ 
+P + theme(panel.background = element_rect(fill = "ivory"))
+ 
+ 
+ 
+ 
+# Control the legend name
+  
+P + geom_point(aes(color = factor(ETH)), size= I(3)) + scale_color_brewer(name = "Ethnicity", labels=c("European","Asian","Other")) 
+
+
+
+# Modify the x and y axes
+      
+
+P + scale_x_continuous("Centimetres") + scale_y_continuous("Kilograms")   
+
+  
+P + scale_y_continuous(limits=c(60, 100)) + scale_x_continuous(limits=c(140, 180)) 
+ 
+ 
+P + scale_x_continuous(breaks=c(150, 160, 180)) + scale_y_continuous(breaks=c(70, 90, 120))
+ 
+ 
+P + scale_x_continuous(breaks=c(150, 160, 180), labels=c("SMALL", "MEDIUM", "LARGE")) 
+
+
+ P + geom_point(aes(color = factor(ETH)), size=I(4)) + scale_color_brewer(type="div") 
+
+ P + geom_point(aes(color = factor(ETH)), size=I(4)) + scale_color_brewer(palette="Greens") 
+
+ P + geom_point(aes(color = factor(ETH)), size=I(4)) + scale_color_brewer(type="seq", palette=3) 
+
+ P + geom_point(aes(color = factor(ETH)), size=I(4)) + scale_color_brewer(type="seq", palette=4) 
+
+ P + geom_point(aes(color = factor(ETH)), size=I(4)) +  scale_color_brewer(type="seq", palette=6) 
+ 
+ P + geom_point(aes(color = factor(ETH)), size=I(4)) + scale_color_brewer(type="seq", palette=7) 
+
+ P + geom_point(aes(color = factor(ETH)), size=I(4)) + scale_color_brewer(palette="Reds") 
+
+ P + geom_point(aes(color = factor(ETH)), size=I(4)) + scale_color_brewer(palette="Set1")  
+
+ 
+
+# Create curves for each factor level     
+ 
+cheight <- structure(list(Child = structure(c(3L, 3L, 3L, 3L, 3L, 3L, 4L, 
+4L, 4L, 4L, 4L, 4L, 2L, 2L, 2L, 2L, 2L, 2L, 1L, 1L, 1L, 1L, 1L, 
+1L), .Label = c("Anne", "Joe", "John", "Mary"), class = "factor"), 
+    Age = c(13L, 14L, 15L, 16L, 17L, 18L, 13L, 14L, 15L, 16L, 
+    17L, 18L, 13L, 14L, 15L, 16L, 17L, 18L, 13L, 14L, 15L, 16L, 
+    17L, 18L), Height = c(165L, 172L, 174L, 177L, 179L, 181L, 
+    145L, 153L, 155L, 157L, 158L, 159L, 154L, 159L, 163L, 169L, 
+    173L, 177L, 157L, 160L, 163L, 165L, 167L, 178L)), .Names = c("Child", 
+"Age", "Height"), class = "data.frame", row.names = c(NA, -24L))
+
+attach(cheight)
+
+
+ggplot(cheight, aes(x=Age, y=Height, color = factor(Child))) + geom_point(size = 3) +  geom_line(lwd = 0.7) + labs(title = "Childrens’ Growth Patterns") + labs(x = "Age (years)", y = "HEIGHT (cm)") + scale_color_manual(values = c("red", "yellow", "blue", "darkgreen"))
+
+
+ 
+
+# Create histograms
+ 
+ggplot(T, aes(x=HEIGHT)) + geom_histogram(binwidth=10)  
+ 
+
+ggplot(T, aes(x=HEIGHT, fill=GENDER)) + geom_histogram(binwidth=10) + scale_fill_brewer(type = "div", palette = 4) 
+
+ 
+ggplot(T, aes(x=HEIGHT, fill=GENDER)) + geom_histogram(position="dodge", binwidth=10) + scale_fill_brewer(type = "qual", palette = 2) 
+ 
+
+ggplot(T, aes(x=HEIGHT, fill=factor(ETH))) + 
+geom_histogram(position="dodge", binwidth=10) + scale_fill_brewer(type = "qual", palette = 6) 
+
+ 
+
+
+
+# Create bar charts   
+
+W <- ggplot(T, aes(factor(ETH))) +  geom_bar() 
+
+W
+ 
+
+W + geom_bar(fill="ivory", color="darkgreen") 
+
+
+ 
+
+
+# Create a stacked bar chart
+ 
+ggplot(T, aes(TREATMENT, fill=factor(RECOVER))) + geom_bar() + scale_fill_manual(values = c("springgreen3", " lightsalmon1"))
+ 
+
+ggplot(T, aes(TREATMENT, fill= factor(RECOVER))) + geom_bar()+ facet_wrap(~ RECOVER) + scale_fill_manual(values = c("#669933", "#FFCC33"))
+
+
+
+ 
+
+# Create a grouped bar chart
+ 
+ggplot(subset(T, EXERCISE == "TRUE"), aes(TREATMENT, fill= factor(RECOVER))) + geom_bar(position="dodge") + scale_fill_manual(values = c("#6666FF", "#669900"))
+
+ 
+
+
+# Create a faceted bar chart
+ 
+ggplot(T, aes(TREATMENT, fill=factor(RECOVER))) + geom_bar() + 
+facet_grid(. ~ GENDER) + scale_fill_manual(values = c("#339999","#CC9900"))
+
+
+
+
+ 
+# Create box plots  
+ 
+ H <- ggplot(subset(T, GENDER == "F"), aes(factor(ETH), HEIGHT)) 
+  
+
+ H + geom_boxplot() 
+ 
+ H + geom_boxplot() + geom_jitter() 
+
+ H + geom_boxplot() + coord_flip() 
+
+ H + geom_boxplot(outlier.color = "red", outlier.size = 5) 
+
+ H + geom_boxplot(aes(fill = SMOKE))
+ 
+ H + geom_boxplot(fill= "#99CCFF" , color="#990000")  
+
+ H + geom_boxplot(aes(fill = factor(ETH))) + scale_fill_manual(values = c("#CCCC99","#FFCCCC","#99CCFF"))
+
+
+ 
+
+
+# Label points with text 
+ 
+F <- subset(T, GENDER == "F" & TREATMENT == "A") 
+
+S <- ggplot(F, aes(x=HEIGHT, y=WEIGHT_1, label=PATIENT)) 
+
+ 
+S + geom_text(size = 6, col = "red")  
+ 
+ 
+S + geom_point() + geom_text(hjust=1, vjust=1, size = 6, col = "blue")  
+
+ 
+S + geom_point() + geom_text(angle = 45, hjust=0, vjust=0, size = 6, col = "darkgreen")  
+
+ 
+S + geom_point() + geom_text(angle = 45, hjust=0, vjust=0, size = 6, col = "darkgreen") +  scale_y_continuous(limits=c(50, 100)) + scale_x_continuous(limits=c(140, 200)) 
+
+
+
+
+# Map color to text 
+ 
+S + geom_text(aes(color=factor(ETH))) 
+
+ 
+S + geom_point() + geom_text(aes(color=factor(ETH), angle = 35, hjust=1, vjust=1)) +  scale_y_continuous(limits=c(50, 90)) + scale_x_continuous(limits=c(140, 190)) + scale_color_brewer(palette= "Set1" , name = "Ethnicity",
+labels=c("European","Asian","Other"))  
+ 
+
+
+# Include regression lines  
+ 
+
+ P <- ggplot(T, aes(x = HEIGHT, y = WEIGHT_1)) + geom_point()
+
+ 
+ lm(WEIGHT_1 ~ HEIGHT, data = T)
+  
+ P + geom_abline(intercept = -123.61, slope = 1.17)
+ 
+   
+ P + geom_abline(intercept = -123.61, slope = 1.17, col = "red") +
+ geom_text(data = T, aes(170, 110, label = "Slope = 1.17"))
+ 
+ 
+ P + stat_smooth(method="lm", se=FALSE) 
+
+ P + stat_smooth(method="lm", se=TRUE) 
+
+

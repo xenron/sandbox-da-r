@@ -1,0 +1,33 @@
+﻿> install.packages(“xlsx”)> library(xlsx)> url <- “http://www.stern.nyu.edu/~adamodar/pc/datasets/histretSP.xls”> download.file(url, destfile=”histretSP.xls”)> data <- read.xlsx(“histretSP.xls”, 1, startRow=12, endRow=98, headers=TRUE)> summary(data)
+> library(lattice)> splom(~data[2:4])---------------------------------------------------------------------------
+> install.packages(“car”)> library(car)> scatterplotMatrix(data)> cor(data)
+---------------------------------------------------------------------------
+> install.packages('corrgram')> library(corrgram)> corrgram(data)
+> plot(data$SP500,data$TBill3Mos)
+> abline(lm(data$TBill3Mos ~ data$TBond10Year))---------------------------------------------------------------------------
+> install.packages("PerformanceAnalytics")> library(PerformanceAnalytics)> data <- read.csv("returns.csv")> chart.Correlation(cor(data), histogram=TRUE)
+---------------------------------------------------------------------------
+> cov(data)
+> cor.test(data$SP500, data$TBill3Mos)
+> pairs(data)
+---------------------------------------------------------------------------
+> install.packages('Hmisc')> library(Hmisc)> rcorr(as.matrix(data))
+---------------------------------------------------------------------------
+We are using the self-esteem responses from http://personality-testing.info/_rawdata/.  There are a few steps to getting the data readable in R.  The top entry in the table on the above page references a zip file at http://personality-testing.info/_rawdata/16PF.zip.  Download that to your workspace and extract the data.csv file as poly.csv in your workspace.
+> data <- read.table(“poly.csv”, sep=”\t”)> library(psych)> result <- polychoric(data)> plot(data)
+---------------------------------------------------------------------------
+> install.packages('polycor')> library('polycor')
+> cor(data$q1, data$q2)
+> polychor(data$q1, data$q2)
+> polychor(data$q1, data$q2, ML=TRUE, std.err=TRUE)
+---------------------------------------------------------------------------
+For this test we are using Titanic survival information from the site http://biostat.mc.vanderbilt.edu/wiki/Main/DataSets.  The binary data used is the survival characteristic.
+> data <- read.csv(“titanic3.csv”)> summary(data)> install.packages("psych")> library(polycor)> nrow(subset(data, survived==1 & sex=='male'))> nrow(subset(data, survived==1 & sex=='female'))> nrow(subset(data, survived==0 & sex=='male'))> nrow(subset(data, survived==0 & sex=='female'))> tetrachoric(matrix(c(161,339,682,127),2,2))
+> draw.tetra(-0.75, 0.37, -0.30)
+---------------------------------------------------------------------------
+> set.seed(12345)
+> R <- matrix(0, 4, 4)> R[upper.tri(R)] <- runif(6)> diag(R) <- 1> R <- cov2cor(t(R) %*% R)> round(R, 4)  # population correlations
+> data <- rmvnorm(1000, rep(0, 4), R)> round(cor(data), 4)> x1 <- data[,1]> x2 <- data[,2]> y1 <- cut(data[,3], c(-Inf, .75, Inf))> y2 <- cut(data[,4], c(-Inf, -1, .5, 1.5, Inf))> data <- data.frame(x1, x2, y1, y2)> hetcor(data)  > hetcor(x1, x2, y1, y2, ML=TRUE)
+---------------------------------------------------------------------------
+> install.packages('ggm')> library(ggm)> pcor(c("SP500","TBill3Mos"),var(data))> pcor(c("SP500","TBill3Mos","TBond10Year"),var(data))
+---------------------------------------------------------------------------

@@ -1,0 +1,342 @@
+ 
+# CHAPTER 3 CODE
+
+# Mastering the qplot function
+ 
+ 
+install.packages("ggplot2")
+
+ 
+library(ggplot2)
+
+  
+
+# Create scatterplots using qplot 
+
+ 
+# Enter the medical data set by cutting and pasting the following code:
+
+
+
+T <- structure(list(PATIENT = structure(c(32L, 24L, 11L, 15L, 41L, 
+8L, 14L, 26L, 5L, 2L, 43L, 37L, 42L, 25L, 44L, 3L, 17L, 6L, 4L, 
+23L, 35L, 31L, 39L, 45L, 27L, 9L, 12L, 34L, 10L, 19L, 40L, 7L, 
+38L, 21L, 13L, 1L, 16L, 20L, 28L, 29L, 18L, 22L, 30L, 36L, 33L
+), .Label = c("Adrienne", "Alan", "Andy", "Ann ", "Anne ", "Anton", 
+"Audrey", "Ben", "Bernie", "Beth", "Bob", "Bobby", "Bruce", "Charles", 
+"Dave", "Dianne", "Frida", "Guy", "Henry", "Hugh", "Ian", "Irina", 
+"James", "Jim", "Jo ", "John", "Jonah", "Joseph", "Lesley", "Liz", 
+"Magnus", "Mary", "Max", "Merril", "Mike", "Mikhail", "Nick", 
+"Peter", "Robert", "Robin", "Simon", "Steve", "Stuart", "Sue", 
+"Telu"), class = "factor"), GENDER = structure(c(1L, 2L, 2L, 
+2L, 2L, 2L, 2L, 2L, 1L, 2L, 2L, 2L, 2L, 1L, 1L, 2L, 1L, 2L, 1L, 
+2L, 1L, 2L, 2L, 2L, 2L, 1L, 2L, 1L, 1L, 2L, 1L, 1L, 2L, 2L, 2L, 
+2L, 1L, 2L, 2L, 1L, 2L, 1L, 1L, 2L, 2L), .Label = c("F", "M"), class = "factor"), 
+    ETH = c(1L, 2L, 2L, 1L, 1L, 3L, 3L, 2L, 3L, 2L, 2L, 3L, 1L, 
+    3L, 1L, 3L, 1L, 2L, 3L, 2L, 2L, 1L, 3L, 2L, 2L, 3L, 2L, 2L, 
+    1L, 3L, 2L, 3L, 1L, 2L, 3L, 2L, 3L, 3L, 2L, 2L, 1L, 1L, 1L, 
+    2L, 3L), TREATMENT = structure(c(1L, 2L, 1L, 2L, 3L, 1L, 
+    1L, 3L, 2L, 2L, 1L, 3L, 1L, 2L, 1L, 1L, 2L, 3L, 1L, 2L, 2L, 
+    1L, 3L, 3L, 1L, 2L, 2L, 2L, 3L, 1L, 1L, 2L, 1L, 1L, 2L, 3L, 
+    3L, 2L, 2L, 1L, 3L, 2L, 3L, 3L, 2L), .Label = c("A", "B", 
+    "C"), class = "factor"), AGE = structure(c(3L, 3L, 2L, 2L, 
+    2L, 3L, 1L, 1L, 3L, 3L, 3L, 3L, 1L, 1L, 2L, 2L, 2L, 1L, 2L, 
+    1L, 1L, 1L, 3L, 3L, 1L, 3L, 1L, 2L, 1L, 2L, 3L, 1L, 2L, 3L, 
+    2L, 2L, 1L, 2L, 3L, 3L, 1L, 2L, 2L, 1L, 1L), .Label = c("E", 
+    "M", "Y"), class = "factor"), WEIGHT_1 = c(79.2, 87.5, 65.1, 
+    58.8, 72, 95.9, 76.2, 56.3, 77.1, 104.4, 67.7, 82.8, 59.7, 
+    68.6, 79.6, 125.2, 83.1, 63.9, 57.4, 84.3, 72.2, 68.7, 65.5, 
+    64.2, 87.1, 56.9, 56.5, 75.3, 67.6, 82.5, 59.4, 68.9, 79.1, 
+    125.7, 83.7, 63.3, 67.7, 84.8, 91.4, 68.3, 39.9, 64.7, 65.6, 
+    92, 71.8), WEIGHT_2 = c(76.6, 84.8, 64.6, 59.3, 70.1, 94.5, 
+    74.7, 58.9, 76.1, 99.5, 65.3, 84.3, 57.3, 65.3, 79.8, 117.6, 
+    82.3, 62.2, 56.3, 84.9, 71, 66.8, 65.3, 65.2, 86.5, 55.4, 
+    57.8, 74.3, 67.4, 80.2, 57.1, 66.1, 76.8, 114.3, 82.7, 62.9, 
+    67.7, 83.9, 89.2, 68.6, 41.4, 65.3, 63.2, 87.5, 70.6), HEIGHT = c(169L, 
+    178L, 162L, 161L, 175L, 188L, 176L, 159L, 171L, 193L, 170L, 
+    183L, 149L, 154L, 179L, 194L, 177L, 162L, 149L, 182L, 168L, 
+    175L, 156L, 154L, 180L, 156L, 155L, 173L, 170L, 179L, 163L, 
+    161L, 177L, 190L, 182L, 167L, 165L, 180L, 185L, 161L, 138L, 
+    170L, 165L, 186L, 172L), SMOKE = structure(c(2L, 2L, 1L, 
+    2L, 1L, 1L, 1L, 1L, 2L, 1L, 1L, 2L, 1L, 2L, 1L, 2L, 1L, 2L, 
+    1L, 2L, 2L, 1L, 1L, 1L, 2L, 1L, 2L, 1L, 1L, 2L, 1L, 2L, 1L, 
+    2L, 1L, 2L, 1L, 2L, 2L, 1L, 1L, 1L, 2L, 1L, 2L), .Label = c("N", 
+    "Y"), class = "factor"), EXERCISE = c(TRUE, TRUE, FALSE, 
+    FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, TRUE, TRUE, 
+    FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, 
+    FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, TRUE, FALSE, 
+    FALSE, FALSE, TRUE, FALSE, TRUE, FALSE, FALSE, TRUE, TRUE, 
+    FALSE, FALSE, FALSE, TRUE, TRUE, TRUE), RECOVER = c(1L, 0L, 
+    1L, 0L, 1L, 1L, 1L, 0L, 0L, 0L, 1L, 0L, 1L, 0L, 1L, 1L, 0L, 
+    0L, 1L, 0L, 1L, 1L, 1L, 0L, 1L, 0L, 0L, 0L, 1L, 0L, 1L, 0L, 
+    1L, 1L, 0L, 0L, 1L, 0L, 1L, 1L, 1L, 0L, 1L, 0L, 0L)), .Names = c("PATIENT", 
+"GENDER", "ETH", "TREATMENT", "AGE", "WEIGHT_1", "WEIGHT_2", 
+"HEIGHT", "SMOKE", "EXERCISE", "RECOVER"), class = "data.frame", row.names = c(NA, 
+-45L))
+
+
+attach(T)
+
+
+qplot(HEIGHT, WEIGHT_1, data = T, xlab = "HEIGHT (cm)", ylab = "WEIGHT BEFORE TREATMENT (kg)" , color = I("red"), size = I(3))
+
+ 
+png(filename = "fig_1.png")
+qplot(HEIGHT, WEIGHT_1, data = T, xlab = "HEIGHT (cm)", ylab = "WEIGHT BEFORE TREATMENT (kg)" , color = I("red"), size = I(3))
+dev.off()
+
+ 
+TF <- subset(T, GENDER ==  "F"  &  HEIGHT > 165)
+
+TF
+ 
+
+qplot(HEIGHT, WEIGHT_1, data = TF,  geom = c("point"), xlab = "HEIGHT", ylab = "WEIGHT")
+
+qplot(HEIGHT, WEIGHT_1, data = T, geom = "point", xlab = "HEIGHT (cm)", ylab = "WEIGHT BEFORE TREATMENT (kg)" , color = I("red"), size = I(3))
+
+
+
+# Map aesthetics to categorical variables  
+
+qplot(HEIGHT, WEIGHT_1, data = T, xlab = "HEIGHT (cm)", ylab = "WEIGHT BEFORE TREATMENT (kg)" , size = factor(GENDER), color = factor(GENDER), alpha = I(0.7)) + scale_size_manual(values = c(5, 7))
+
+ 
+qplot(HEIGHT, WEIGHT_1, data = T, xlab = "HEIGHT (cm)", ylab = "WEIGHT BEFORE TREATMENT (kg)" , size = factor(GENDER), color = factor(GENDER), alpha = I(0.7)) 
+
+ 
+qplot(HEIGHT, WEIGHT_1, data = T, geom = c("point"), xlab = "HEIGHT (cm)", ylab = "WEIGHT BEFORE TREATMENT (kg)" , size = factor(GENDER), color = factor(EXERCISE)) + scale_size_manual(values = c(5, 7))
+
+
+
+#  Control colors on your graph 
+
+qplot(HEIGHT, WEIGHT_1, data = T, geom = c("point"), xlab = "HEIGHT (cm)", ylab = "WEIGHT BEFORE TREATMENT (kg)" , size = factor(GENDER), color = factor(EXERCISE)) + scale_size_manual(values = c(3, 7)) + scale_color_manual(values = c("red","blue"))
+ 
+qplot(HEIGHT, WEIGHT_1, data = T, geom = c("point"), xlab = "HEIGHT (cm)", ylab = "WEIGHT BEFORE TREATMENT (kg)" , size = factor(GENDER), 
+color = factor(EXERCISE)) + scale_size_manual(values = c(3, 7), name="Gender") + scale_color_manual(values = c("red","blue"),name="Exercise")
+  
+
+qplot(HEIGHT, WEIGHT_1, data = T, alpha = I(0.3), geom = c("point"), xlab = "HEIGHT (cm)", ylab = "WEIGHT BEFORE TREATMENT (kg)", size = factor(GENDER), 
+color = factor(EXERCISE)) + scale_size_manual(values = c(3, 7), name="Gender") + scale_color_manual(values = c("red","blue"),name="Exercise")
+
+
+
+# Set up graphs as objects 
+ 
+Y <- qplot(HEIGHT, WEIGHT_1, data = T, main = "HEIGHT vs. WEIGHT", xlab = "HEIGHT (cm)", ylab = "WEIGHT BEFORE TREATMENT (kg)" , geom = "point" , color = factor(ETH), size = 2, alpha = I(0.7))   
+
+Y + scale_color_manual(values = c("darkgreen","red", "yellow"))
+
+
+ 
+# Create Facet plots 
+ 
+qplot(HEIGHT, WEIGHT_1, data = T,  geom = "point",  main = "HEIGHT VS. WEIGHT BY ETHNICITY", xlab = "WEIGHT BEFORE TREATMENT (Kg)", ylab = "HEIGHT (cm)", facets = ETH ~ .)
+ 
+qplot(HEIGHT, WEIGHT_1, data=T, shape=factor(GENDER), color=factor(GENDER),facets=SMOKE ~ EXERCISE, size=I(3), xlab="HEIGHT", ylab="WEIGHT BEFORE TREATMENT", main = "HEIGHT vs. WEIGHT")
+
+  
+
+
+# Create line graphs using qplot 
+ 
+qplot(HEIGHT, WEIGHT_1, data = T, geom = "line", color = factor(ETH), main = "Height vs. Weight before Treatment") 
+
+qplot(HEIGHT, WEIGHT_1, data=T, geom="line", group=TREATMENT) 
+
+qplot(HEIGHT, WEIGHT_1, data=T, geom="line", linetype=as.factor(TREATMENT)) 
+
+qplot(HEIGHT, WEIGHT_1, data=T,  geom="line", linetype= as.factor(TREATMENT), color= as.factor(TREATMENT)) 
+ 
+qplot(HEIGHT, WEIGHT_1, data = T, geom = c("line", "point"), color = factor(ETH), main = "Height vs. Weight before Treatment") 
+ 
+ 
+ 
+
+# Create multiple curves simultaneously
+
+cheight <- structure(list(Child = structure(c(3L, 3L, 3L, 3L, 3L, 3L, 4L, 
+4L, 4L, 4L, 4L, 4L, 2L, 2L, 2L, 2L, 2L, 2L, 1L, 1L, 1L, 1L, 1L, 
+1L), .Label = c("Anne", "Joe", "John", "Mary"), class = "factor"), 
+    Age = c(13L, 14L, 15L, 16L, 17L, 18L, 13L, 14L, 15L, 16L, 
+    17L, 18L, 13L, 14L, 15L, 16L, 17L, 18L, 13L, 14L, 15L, 16L, 
+    17L, 18L), Height = c(165L, 172L, 174L, 177L, 179L, 181L, 
+    145L, 153L, 155L, 157L, 158L, 159L, 154L, 159L, 163L, 169L, 
+    173L, 177L, 157L, 160L, 163L, 165L, 167L, 178L)), .Names = c("Child", 
+"Age", "Height"), class = "data.frame", row.names = c(NA, -24L))
+
+attach(cheight)
+
+
+qplot(Age, Height, data = cheight, geom = c("line","point"),
+color = Child, main = "Growth Patterns of Four Children")
+  
+
+# Include smoothed curves 
+ 
+Y <- qplot(HEIGHT, WEIGHT_1, data = T, xlab = "HEIGHT (cm)", ylab = "WEIGHT BEFORE TREATMENT (kg)", geom = c( "point","smooth"))   
+ 
+Y
+
+ 
+Y <- qplot(HEIGHT, WEIGHT_1, data = T, xlab = "HEIGHT (cm)", ylab = "WEIGHT BEFORE TREATMENT (kg)" , geom = c("point","smooth"), color = factor(ETH), alpha = I(0.2))   
+
+Y
+
+ 
+Y + scale_color_manual(values = c("darkgreen", "red", "yellow"))
+
+
+
+ 
+qplot(WEIGHT_1, WEIGHT_2, data = T, xlab = "BEFORE", ylab = "AFTER") + geom_smooth() 
+
+
+ 
+
+p <- qplot(WEIGHT_1, WEIGHT_2, data = T,  geom = c("point","smooth"), xlab = "BEFORE", ylab = "AFTER")
+ 
+ 
+qplot(WEIGHT_1, WEIGHT_2, data = T,  geom = c("point","smooth"),  xlab = "BEFORE", ylab = "AFTER", method = "lm")
+
+ 
+
+# Create histograms with qplot
+ 
+qplot(HEIGHT, geom = "histogram",  ylab = "COUNT", xlab = "HEIGHT", binwidth = 10)
+
+
+qplot(HEIGHT, geom = "histogram",  ylab = "COUNT", xlab = "HEIGHT", binwidth = 10, color = I("blue"), fill = I("wheat") )
+
+
+
+
+# Create facet plots for histograms 
+ 
+TRC <- factor(TREATMENT) 
+
+ 
+qplot(WEIGHT_1, data = T,   geom = "histogram",  binwidth = 5, xlab = "WEIGHT", ylab = "FREQUENCY", fill = I("red"), facets = TREATMENT ~ .) 
+
+
+ 
+# Create Kernel Density Plots 
+
+qplot(HEIGHT, data = T,   geom = "density",  binwidth = 5, xlab = "HEIGHT (cm)", ylab = "DENSITY")  
+
+ 
+plot(density(HEIGHT), xlab = "HEIGHT (cm)", ylab = "DENSITY", main = "HEIGHT DENSITY PLOT") 
+ 
+polygon(density(HEIGHT), col="#66FF99", border="darkgreen") 
+
+ 
+Y <- qplot(HEIGHT, data=T, geom="density", fill=factor(GENDER), alpha=I(0.5), main="Height by Gender", xlab="Height (cm)", ylab="Density ")
+
+Y + scale_fill_manual(values = c("red", "yellow"))
+
+ 
+
+
+# Create bar charts  
+
+ 
+qplot(TREATMENT, data = T, geom = "bar",  binwidth = 5, xlab = "HEIGHT (cm)", ylab = "FREQUENCY", fill = I("#CC6600"), color = I("blue"))
+
+ 
+dinners = data.frame(person=c("Thomas", "Thomas", "Thomas", "James", "James"), meal = c("curry", "stew", "salad", "fish", "stir-fry"), price = c(15, 18, 12, 25, 13))
+
+dinners
+  
+qplot(person, data = dinners, geom = "bar", ylab = "Meals", fill = I("#9999CC"))
+ 
+qplot(person, weight = price, data = dinners, fill = I("#009933"), geom = "bar", ylab = "Total Cost ($)") 
+
+
+ 
+
+# Create boxplots  
+
+ qplot(TREATMENT, WEIGHT_2, data = T, geom = c("boxplot","point"),
+xlab = "TREATMENT", ylab = "WEIGHT (kg)", fill =
+I("#669900"))
+
+ 
+qplot(as.factor(ETH), WEIGHT_2, data = T,   geom = "boxplot", xlab = "ETHNICITY", ylab = "WEIGHT (kg)", fill = I(c("#66CC99", "#9999CC", "#CC6666"))) 
+
+
+ 
+# Create graphs with dates
+
+ 
+head(economics)
+      
+
+tail(economics)
+         
+ 
+economics$date[1]
+ 
+
+ 
+date1 <- "03/11/2011" 
+
+date1
+ 
+
+ 
+date1B <- as.Date(date1, "%d/%m/%Y")
+
+date1B
+ 
+as.Date('12MAR89',format='%d%b%y')
+ 
+
+as.Date('August 11, 1987',format='%B %d, %Y')
+
+ 
+ 
+qplot(date, pop, data=economics, geom="line", col = I("red"), size = I(2))
+ 
+econdata <- subset(economics, date > as.Date("2006-6-1"))
+
+
+econdata
+       
+
+qplot(date, pop, data=econdata, geom="line", col = I("red"), size = I(2))
+ 
+
+
+
+ 
+library(reshape)
+ 
+dat <- melt(econdata, id = "date")
+
+head(dat)
+    
+
+datsub <- subset(dat, variable == "pop" |  variable == "unemploy") 
+
+datsub
+   
+
+attach(datsub)
+
+ 
+
+qplot(date, value, data = datsub, type = "point", size = I(3), id = variable, color = variable)
+
+
+ 
+
+
+library(scales)  
+
+W <-  qplot(date, value, data = datsub, type = "point", size = I(3), id = variable, color = variable)
+
+W + scale_x_date(labels = date_format("%m/%d"))
+
+
+ 

@@ -1,0 +1,32 @@
+> install.packages("playwith")> library("playwith")> data <- read.csv("https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-white.csv", sep=";")> plot(data$fixed.acidity)> playwith(plot(data$fixed.acidity))
+----------------------------------------------------------------------------
+> install.packages("latticist")> library("latticist")> latticist(data$fixed.acidity)----------------------------------------------------------------------------> data <- read.csv("http://faculty.washington.edu/kenrice/sisg-adv/airportlocations.csv")> summary(data)
+> install.packages("hexbin")> library(hexbin)
+> bin <- hexbin(data$Latitude,data$Longitude)> bin> plot(bin)
+----------------------------------------------------------------------------
+> install.packages("mapdata")> map(database="usa", col="gray90", fill=TRUE)
+----------------------------------------------------------------------------
+> library(maps)> library(maptools)> library(RColorBrewer)> install.packages("classInt")> library(classInt)> install.packages("gpclib")> library(gpclib)> library(mapdata)> map("worldHires")
+> points(data$Longitude,data$Latitude,pch=16,col="red",cex=1)
+----------------------------------------------------------------------------
+> require(graphics)> head(quakes)> mean(quakes$mag)> map()> points(quakes$long,quakes$lat,pch=".",col="red",cex=1)
+----------------------------------------------------------------------------
+> lon <- mean(quakes$lon)> lat <- mean(quakes$lat)> orient <- c(lat,lon,0)> x <- c(min(quakes$lon)/2,max(quakes$lon)*1.5)> y <- c(min(quakes$lat)-10,max(quakes$lat)+10)> map(database= "world", ylim=y, xlim=x, col="grey80", fill=TRUE)> points(quakes$long,quakes$lat,pch=".",col="red",cex=quakes$mag/2)
+----------------------------------------------------------------------------
+> library(RgoogleMaps)> terrain <- GetMap(center=c(lat,lon),zoom=5,maptype="terrain",destfile="terrain.png",scale=c(320,320)
+> markers <- cbind.data.frame(quakes$lat,quakes$long,"small","red","")> names(markers) <- c("lat","lon","size","col","char")> terrain <- GetMap.bbox(center=c(lat,lon),zoom=5,maptype="terrain",destfile="terrain2.png",lonR=range(quakes$long),latR=range(quakes$lat),markers=markers)
+----------------------------------------------------------------------------
+> qplot(lat,long,data=quakes,color=mag)
+> qplot(lat,long,data=quakes,color=mag,size=depth)
+> qplot(lat,long,data=quakes,color=mag,size=depth, alpha=0.5)
+> qplot(height,weight,data=women,geom="line")
+> qplot(School,data=painters,geom="bar")
+----------------------------------------------------------------------------
+> sa <- ggplot(data, aes(x=residual.sugar, y=alcohol))> sa <- sa + geom_line()> sa
+> sa + facet_grid(. ~ quality)
+> sa + facet_grid(quality ~ .)
+----------------------------------------------------------------------------
+> sa <- ggplot(data, aes(x=residual.sugar, y=alcohol))> sa <- sa + geom_line()> sa <- sa + geom_smooth()> sa----------------------------------------------------------------------------> ggplot(data, aes(x=residual.sugar)) + geom_histogram(binwidth=.5)
+> ggplot(data, aes(x=residual.sugar)) + geom_density()
+----------------------------------------------------------------------------
+> bp <- ggplot(data, aes(x=residual.sugar, y=alcohol))> bp <- bp + geom_boxplot()> bp + facet_grid(. ~ quality)

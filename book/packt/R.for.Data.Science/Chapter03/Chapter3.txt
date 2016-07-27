@@ -1,0 +1,18 @@
+﻿> path <- "C:/Users/Dan/Documents/state-of-the-union.txt"> install.packages(“tm”)> library(tm)> text <- readLines(path,encoding="UTF-8")> vs <- VectorSource(text)> elem <- getElem(stepNext(vs))> result <- readPlain(elem, "en", "id1")> txt <- Corpus(vs)
+----------------------------------------------------------------
+> txtlc <- tm_map(txt, tolower)> inspect(txt[1])> inspect(txtlc[1])----------------------------------------------------------------
+> txtnp <- tm_map(txt, removePunctuation)> inspect(txt[1])> inspect(txtnp[1])
+----------------------------------------------------------------
+> txtnn <- tm_map(txt, removeNumbers)> inspect(txt[49])> inspect(txtnn[49])----------------------------------------------------------------
+> txtns <- tm_map(txt[1], removeWords, stopwords("english"))> inspect(txtns)> inspect(txt[1])
+----------------------------------------------------------------
+> txtnw <- tm_map(txt[30], stripWhitespace)> inspect(txtnw)> inspect(txt[30])----------------------------------------------------------------> inspect(txt[86])> txtstem <- tm_map(txt, stemDocument)> inspect(txtstem[86])> txtcomplete <- tm_map(txtstem, stemCompletion, dictionary=txt)> inspect(txtcomplete[86])----------------------------------------------------------------
+> dtm <- DocumentTermMatrix(txt)> dtm> dtm2 <- removeSparseTerms(dtm, 0.94)> inspect(dtm2)
+> findAssocs(dtm, "work", 0.15)                   
+----------------------------------------------------------------
+> library(stats)> mymeans <- kmeans(dtm,5)> mymeans> summary(mymeans)> freq <- findFreqTerms(dtm,10)> freq> m2 <- as.matrix(dtm)> dm <- dist(scale(m2))> fit <- hclust(dm, method="ward")> plot(fit)
+----------------------------------------------------------------
+> source("http://bioconductor.org/biocLite.R")> biocLite("Rgraphviz")> plot(dtm, terms = findFreqTerms(dtm, lowfreq = 5)[1:10], corThreshold = 0.5)----------------------------------------------------------------> library(ggplot)
+> p <- ggplot(subset(wf, freq>10), aes(word,freq))> p <- p + geom_bar(stat="identity")> p <- p + theme(axis.text.x=element_text(angle=45, hjust=1))> p----------------------------------------------------------------> install.packages("wordcloud")> library(wordcloud)> wordcloud(names(wf), freq, min.freq=10)
+----------------------------------------------------------------
+> install.packages("XML")> library(XML)> url <- “books.xml”> data <- xmlParse(url)----------------------------------------------------------------> df <- xmlToDataFrame(data)> colnames(df)> mean(as.numeric(df$price))> root <- xmlRoot(data)> root[1]> fields <- xmlApply(root, names)> fields> table(sapply(fields, identical, fields[[1]]))> unique(unlist(fields))> unique(xpathSApply(data,"//*/level",xmlValue))> table(xpathSApply(data,"//*/level",xmlValue))> instructors <- table(xpathSApply(data,"///*/instructor",xmlValue))> instructors> which.max(instructors)> which.min(instructors)> sections <- table(xpathSApply(data,"//*/section_listing",xmlValue))> which.max(sections)> credits <- table(xpathSApply(data,"//credits",xmlValue))> credits> xpathSApply(data,"//*[credits=12]",xmlValue)
