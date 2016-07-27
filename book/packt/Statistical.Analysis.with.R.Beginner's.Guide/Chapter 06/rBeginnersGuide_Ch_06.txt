@@ -1,0 +1,91 @@
+//R Beginner's Guide
+//Chapter 6 - Planning the Attack
+//by John M. Quick
+//created June 13, 2010
+
+//CALCULATING OUTCOMES FROM REGRESSION MODELS
+
+> #set the R working directory
+> #replace the sample location with one that is relevant to you> setwd("/Users/johnmquick/rBeginnersGuide/")
+
+> #load the chapter six workspace> load("rBeginnersGuide_Ch_06_ReadersCopy.RData")
+
+> #what is the predicted rating of an ambush attack in which the Shu forces engage 5000 soldiers?>#ambush model: Rating = 56 + 44 * execution - 1.97 * duration + 0.0018 * Shu soldiers - 0.00082 * Wei soldiers >  56 + 44 * probabilitySuccessAmbush - 1.97 * meanDurationAmbush + 0.0018 * 5000 - 0.00082 * (5000 * ratioWeiShuSoldiersAmbush)[1] 52.746
+
+//CREATING CUSTOM FUNCTIONS
+
+> #use function() to define custom function> #define our ambush regression model as a custom function in R> functionAmbushRating <- function(execution, duration, ShuSoldiers, WeiSoldiers) {+	56 + 44 * execution -+	1.97 * duration ++	0.0018 * ShuSoldiers - 0.00082 * WeiSoldiers} 
+
+> #what is the predicted rating of an ambush attack in which the Shu forces engage 5000 soldiers?> functionAmbushRating(probabilitySuccessAmbush, meanDurationAmbush, 5000, 5000 * ratioWeiShuSoldiersAmbush)[1] 52.746
+
+> #what is the predicted rating of an ambush attack by 5000 Shu soldiers against 1000 Wei soldiers?> functionAmbushRating(probabilitySuccessAmbush, meanDurationAmbush, 5000, 1000)[1] 59.388
+
+> #what is the predicted rating of a successful ambush attack by 5000 Shu soldiers against 1000 Wei soldiers?> functionAmbushRating(1, meanDurationAmbush, 5000, 1000)[1] 81.388
+
+> #head to head rating function
+> functionHeadToHeadRating <- function(duration, ShuSoldiers, WeiSoldiers) {
++      97 - 0.77 * duration +
++      0.00054 * ShuSoldiers - 0.00028 * WeiSoldiers
++ }
+
+> #surround rating function
+> functionSurroundRating <- function(execution, duration, ShuSoldiers, WeiSoldiers) {
++      35 + 58 * execution -
++      0.15 * duration +
++      0.18 * ShuSoldiers - 0.19 * WeiSoldiers
++ }
+
+> #fire rating function
+> functionFireRating <- function(execution, duration, ShuSoldiers, WeiSoldiers) {
++      37 + 56 * execution -
++      1.24 * duration -
++      0.00000013 * (ShuSoldiers * WeiSoldiers)
++ }
+
+//CREATING RESOURCE-FOCUSED CUSTOM FUNCTIONS
+
+> #rearrange the ambush model to solve for the number of Shu soldiers engaged> #original ambush model: Rating = 56 + 44 * execution - 1.97 * duration + 0.0018 * Shu soldiers - 0.00082 * Wei soldiers> #ambush model solved for Shu soldiers: (Rating - 56 - 44 * execution + 1.97 * duration + .0.00082 * Wei soldiers) / 0.0018
+
+> #convert the rearranged ambush model equation into a custom function> functionAmbushShuSoldiers <- function(rating, execution, duration, WeiSoldiers) {+ 	(rating - 56 - 44 * execution ++ 	1.97 * duration ++ 	0.00082 * WeiSoldiers) /+ 	0.0018+ }
+
+>  #how many Shu soldiers must be engaged in an ambush attack against 10,000 Wei soldiers to bring our rating to 80?>  functionAmbushShuSoldiers(80, probabilitySuccessAmbush, meanDurationAmbush, 10000)[1] 20551.11>  #how many Shu soldiers must be engaged in an ambush attack against 10,000 Wei soldiers to bring our rating to 80 if we are certain of successful execution?>  functionAmbushShuSoldiers(80, 1, meanDurationAmbush, 10000)[1] 8328.889
+
+> #create a custom function that predicts the number of Shu soldiers required in a given head to head battle
+>  functionHeadToHeadShuSoldiers <- function(rating, duration, WeiSoldiers) {+	(rating - 97 + 0.77 * duration ++	0.00028 * WeiSoldiers) /+	0.00054+ }
+
+> #create a custom function that predicts the number of Shu soldiers required in a given surround attack
+>  functionSurroundShuSoldiers <- function(rating, execution, duration, WeiSoldiers) {+	(rating - 35 - 58 * execution ++	0.15 * duration ++	0.19 * WeiSoldiers) /+	0.18+ }
+
+> #create a custom function that predicts the number of Shu soldiers required in a given fire attack
+> functionFireShuSoldiers <- function(rating, execution, duration, WeiSoldiers) {
++	(rating - 37 - 56 * execution +
++	1.24 * duration) /
++	(0.00000013 * - WeiSoldiers)
++ }
+
+//INCORPORATING RESOURCE CONSTRAINTS INTO PREDICTIONS
+
+> #custom function that calculates the gold cost of a battle> #cost formula: travel cost + (provision cost + equipment cost) * battle duration> functionGoldCost <- function(ShuSoldiers, distance, duration) {+ 		ShuSoldiers * ((distance / 100) + 2 * (duration / 30))+ }
+
+> #what is the predicted cost of an attack by 25,000 Shu soldiers that takes place 100 miles away and lasts for 90 days?> functionGoldCost(25000, 100, 90)[1] 175000
+
+> #custom function that calculates the the maximum distance the Shu army can travel given our resources> functionMaxDistance <- function(gold, ShuSoldiers, duration) {+	100 * ((gold / ShuSoldiers) + (duration / 15))+ }
+
+> #what is the maximum distance that 25,000 Shu soldiers could travel to make a 90 day attack, 100 miles away?> functionMaxDistance(1000000, 25000, 90)[1] 4600
+
+//ASSESSING VIABILITY
+
+> #custom function that calculates the number of Shu soldiers needed to execute a given fire attack> functionFireShuSoldiers <- function(rating, execution, duration, WeiSoldiers) {+ 	(rating - 37 - 56 * execution ++	1.24 * duration) /+	(0.00000013 * - WeiSoldiers)+ }> #assuming successful execution, how many Shu soldiers would be needed to lead a fire attack against the 10,000 Wei soldiers stationed 225 miles away at Anding?> functionFireShuSoldiers(80, 1, 7, 15000)[1] 2215.385
+
+//ASSESSING THE VIABILITY OF POTENTIAL STRATEGIES
+
+> #how much would it cost to launch a 7 day fire attack with 2,370 soldiers, 700 miles away in Guangling?> functionGoldCost(2370, 700, 7)[1] 17696
+
+> #custom function that calculates the the maximum distance the Shu army can travel given our resources> functionMaxDistance <- function(gold, ShuSoldiers, duration) {+	100 * ((gold / ShuSoldiers) + (duration / 15))+ }
+
+> #based on past battle data, how many Shu soldiers would be needed to lead a victorious 7 day fire attack against the 10,000 Wei soldiers at Anding?> functionFireShuSoldiers(80, probabilitySuccessFire, 7, 10000)[1] -25538.46
+
+> #save your R workspace using save.image(file)
+> #remember to include the .RData file extension> save.image("rBeginnersGuide_Ch_04_hero.RData")
+
+> #save your R console text by copying and pasting it into a text file

@@ -1,0 +1,30 @@
+//R Beginner's Guide
+//Chapter 10 - Stepping Out of the Strategist's Shadow
+//by John M. Quick
+//created July 18, 2010
+
+//USING R'S HELP FUNCTION
+
+> #learn more about the help command by using the help(...) function without any arguments> help()
+
+> #learn more about a specific subject using the help(...) function with a single argument> #the argument should specify the name of the subject that you are seeking help on> help(library)
+
+> #review the help documentation on the chooseCRANmirror(), install.packages(), and library(...) functions
+> #chooseCRANmirror()
+> help(chooseCRANmirror)
+> #install.packages()
+> help(install.packages)
+> #library(...)
+> help(library)
+
+//EXPANDING R WITH PACKAGES
+
+> #acquiring, preparing, installing, and using a new R package> #step 1: choose a CRAN mirror> #open the CRAN mirror window using chooseCRANmirror()> #then choose the mirror located nearest to you> chooseCRANmirror()
+
+> #step 2: install the package> #open the packages window using install.packages> #then choose a package to install it on your computer> install.packages()
+
+> #step 3: load the package> #use the library(...) function to load a package once it has been installed> #load the magic package> library(magic)
+
+> #step 4: use the package
+> #once loaded, a package's functions can be used within the R console> #use the magic(n) function from the magic package to generate an 8x8 magic square> #n is a single nonnegative number that indicates how many rows and columns the magic square will have> #this function generates the same type of magic square that we encountered when solving Zhuge Liang's puzzle in chapter 3!> magic(8)
+

@@ -1,0 +1,6 @@
+export HADOOP_JAR="target/ch6-1.0-SNAPSHOT-jar-with-dependencies.jar"
+
+${HADOOP_COMMAND} jar ${HADOOP_JAR} \
+	-files helper.R \
+	/tmp/test-file.seq \
+	/tmp/hadoop-out

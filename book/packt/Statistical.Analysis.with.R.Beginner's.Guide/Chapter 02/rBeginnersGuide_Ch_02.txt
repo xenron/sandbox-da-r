@@ -1,0 +1,20 @@
+//R Beginner's Guide
+//Chapter 2 - Preparing R for Battle
+//by John M. Quick
+//created July 16, 2010
+
+//ISSUING YOUR FIRST R COMMAND
+
+> #use the date() command to get the current date and time
+> #what is the current date and time?
+> date()
+
+//SETTING YOUR R WORKING DIRECTORY
+
+> #set the R working directory> #this should be the first thing you do every time you open R> #I am going to set the R working directory to my desktop at "/Users/johnmquick/Desktop"> #you should replace the sample location with the path to your desktop
+> #use setwd(dir) to set the R working directory> setwd("/Users/johnmquick/Desktop")
+> #use getwd() to display the current R working directory> #what is my current working directory?> getwd()[1] "/Users/johnmquick/Desktop"
+
+
+
+

@@ -1,0 +1,9 @@
+//R Beginner's Guide
+//The Common Steps to All R Analyses
+//by John M. Quick
+//created June 17, 2010
+
+> #There are five steps that are common to every data analysis conducted in R> #Step 1: set your working directory> #set your working directory using setwd(dir)> #replace the sample location with one that is relevant to you> setwd("/Users/johnmquick/rBeginnersGuide/")> #once set, you can verify your new working directory using getwd()> getwd()[1] "/Users/johnmquick/rBeginnersGuide/"> #Step 2: Import data (or load an existing workspace)> #read a dataset from a csv file into R using read.csv(file) and save it into a new variable> dataset <- read.csv("datafile.csv")
+
+> #OR
+> #load an existing workspace using load.image(file)> load.image("existingWorkspace.RData")> #verify the contents of your workspace using ls()> ls()[1] "myVariable 1"[2] "myVariable 2"[3] "myVariable 3"> #Step 3: Explore your data> #calculate a mean using mean(data)> mean(myData)[1] 1000> #calculate a standard deviation using sd(data)> sd(myData)[1] 100> #calculate a range (minimum and maximum) using range(data)> range(myData)> [1] 500 2000> #generate a detailed summary for a given object using summary(object)> summary(object)> #Step 4: Conduct your analysis> #The appropriate methods for this step will vary between analyses.> #Step 5: Save your workspace and console files> #save your R workspace using save.image(file)> #remember to include the .RData file extension> save.image("myWorkspace.RData")> #save your R console text by copying it and pasting it into a text file.

@@ -1,0 +1,23 @@
+This directory contains R scripts that demonstrate the "multicore"
+package, and are based on examples in chapter three of the book
+"Parallel R".
+
+The example scripts can be executed using a command such as:
+
+  % R --slave -f mclapply.R
+
+or using the "source" function within an R session:
+
+  > source('mclapply.R')
+
+Example scripts:
+
+  mclapply.R            Using mclapply to implement parallel kmeans
+  mccores.R             The mc.cores argument
+  mcsetseed.R           The mc.setseed argument
+  mcpreschedule.R       The mc.preschedule argument
+  mcpvec.R              Example use of the pvec function
+  mcparallelcollect.R   Example use of the parallel and collect functions
+  mcrng.R               Using a parallel RNG with multicore
+  mclowlevel.R          Using the low-level API to implement a stripped-
+                        down version of the mclapply function.

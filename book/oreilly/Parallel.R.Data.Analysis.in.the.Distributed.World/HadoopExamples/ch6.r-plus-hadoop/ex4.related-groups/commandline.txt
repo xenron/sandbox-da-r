@@ -1,0 +1,10 @@
+${HADOOP_COMMAND} jar ${HADOOP_STREAMING_JAR} \
+	\
+	-D mapred.output.compress=true \
+	-D mapred.output.compression.codec=${HADOOP_COMPRESSION_CODEC} \
+	\
+	-inputformat ${HADOOP_INPUTFORMAT} \
+	-input /tmp/mr.txt \
+	-output /tmp/hadoop-out \
+	-mapper $PWD/mapper.R \
+	-reducer $PWD/reducer.R

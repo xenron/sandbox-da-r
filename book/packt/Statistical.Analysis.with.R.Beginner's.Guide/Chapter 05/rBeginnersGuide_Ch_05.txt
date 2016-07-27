@@ -1,0 +1,945 @@
+//R Beginner's Guide
+//Chapter 5 - Assessing the Situation
+//by John M. Quick
+//created June 8, 2010
+
+//MAKING AN INITIAL INFERENCE FROM OUR DATA
+
+> #set the R working directory
+> #replace the sample location with one that is relevant to you
+> setwd("/Users/johnmquick/rBeginnersGuide/")
+
+> #load the chapter 5 workspace
+> load("rBeginnersGuide_Ch_05_ReadersCopy.RData")
+> #verify the contents of the workspace
+>ls()
+
+> #mean number of Shu soldiers engaged in battle
+> meanSoldiersShu
+[1] 21035.83
+> #mean number of Wei soldiers engaged in battle
+> meanSoldiersWei
+[1] 21937.5
+
+> #ratio of mean Wei soldiers to Shu soldiers
+> meanSoldierRatioWeiShu <- meanSoldiersWei / meanSoldiersShu
+> #display the contents of meanSoldierRatioWeiShu
+> meanSoldierRatioWeiShu
+[1] 1.042863
+
+> #how many Wei soldiers would we expect to engage in battle if our Shu forces numbered 100,000?
+> 100000 * meanSoldierRatioWeiShu
+[1] 104286.3
+
+//EXAMINING OUR DATA
+
+> #display all of our battle history data
+> battleHistory
+        Method Rating SuccessfullyExecuted  Result ShuSoldiersEngaged WeiSoldiersEngaged DurationInDays
+1   headToHead      5                    Y  Defeat               5000              15000            116
+2   headToHead     15                    Y  Defeat               5000              10000             96
+3   headToHead     25                    Y  Defeat               5000              10000             76
+4   headToHead     25                    Y  Defeat               5000              10000             61
+5   headToHead     35                    Y  Defeat               7500              15000             52
+6   headToHead     20                    Y  Defeat              50000             100000             94
+7   headToHead     30                    Y  Defeat             100000             200000             87
+8   headToHead     85                    Y Victory              10000               5000             36
+9   headToHead     95                    Y Victory             100000              50000             44
+10  headToHead     85                    Y Victory              30000              15000             49
+11  headToHead     10                    Y  Defeat               2500               5000            112
+12  headToHead     15                    Y  Defeat               2000               2500             90
+13  headToHead     15                    Y  Defeat                250                500            111
+14  headToHead     20                    Y  Defeat               1000               2000             93
+15  headToHead     10                    Y  Defeat               7000               7500            120
+16  headToHead     10                    Y  Defeat               5000               7500            100
+17  headToHead     90                    Y Victory              15000              10000             35
+18  headToHead     80                    Y Victory              15000              10000             45
+19  headToHead     85                    Y Victory              25000              10000             40
+20  headToHead     85                    Y Victory              25000              20000             45
+21  headToHead     35                    Y  Defeat              30000              35000             95
+22  headToHead     45                    Y  Defeat              25000              35000            105
+23  headToHead     50                    Y  Defeat              40000              45000            100
+24  headToHead     35                    Y  Defeat              30000              45000             91
+25  headToHead     25                    Y  Defeat              65000              75000            120
+26  headToHead     20                    Y  Defeat              50000              75000             99
+27  headToHead     30                    Y  Defeat              60000              75000            102
+28  headToHead     90                    Y Victory              75000              40000             44
+29  headToHead     90                    Y Victory              50000              25000             50
+30  headToHead     95                    Y Victory             100000              60000             30
+31    surround      5                    N  Defeat              25000              25000            175
+32    surround     20                    N  Defeat              50000              50000            124
+33    surround     10                    N  Defeat              50000              75000            139
+34    surround     55                    Y  Defeat             100000             150000            158
+35    surround     15                    N  Defeat              25000              50000            128
+36    surround    100                    Y Victory             150000              50000             60
+37    surround     90                    Y Victory             100000              25000             80
+38    surround     95                    Y Victory             100000              30000             70
+39    surround     95                    Y Victory             125000              40000             72
+40    surround     95                    Y Victory              60000              15000             65
+41    surround     15                    N  Defeat              15000              15000            126
+42    surround     20                    N  Defeat              15000              10000            163
+43    surround     15                    N  Defeat              10000              10000            114
+44    surround     10                    N  Defeat              10000              10000            127
+45    surround     35                    N  Defeat              25000              15000            112
+46    surround     55                    Y  Defeat              50000             100000            159
+47    surround     90                    Y Victory             100000              20000             90
+48    surround     80                    Y Victory              10000               5000             88
+49    surround     90                    Y Victory             100000              25000             72
+50    surround     80                    Y Victory              25000              15000             61
+51    surround     15                    N  Defeat               2500               5000             99
+52    surround     10                    N  Defeat               2500               2500            115
+53    surround     15                    N  Defeat               1000                500            110
+54    surround      5                    N  Defeat               1000               2000            120
+55    surround     15                    N  Defeat              10000               7500            160
+56    surround     85                    Y Victory              15000               7500             63
+57    surround     90                    Y Victory              25000              10000             69
+58    surround     85                    Y Victory              15000              10000             74
+59    surround     90                    Y Victory              45000              20000             87
+60    surround     80                    Y Victory              25000              20000             85
+61      ambush     10                    N  Defeat                500               1500             17
+62      ambush     10                    N  Defeat                500               1500             18
+63      ambush      5                    N  Defeat                500               2500             15
+64      ambush      5                    N  Defeat                500               2500             16
+65      ambush     25                    N  Defeat               1000               2000             19
+66      ambush     95                    Y Victory               1000               2000              7
+67      ambush      5                    N  Defeat               1000               4000             17
+68      ambush     85                    Y Victory               1000               4000              9
+69      ambush     85                    Y Victory               1500               5000             12
+70      ambush     90                    Y Victory               1500               5000              7
+71      ambush     50                    Y  Defeat               1500               5000             19
+72      ambush     20                    N  Defeat               2500               5000             21
+73      ambush     35                    N  Defeat               2500               5000             14
+74      ambush     40                    N  Defeat               5000              10000             14
+75      ambush     35                    N  Defeat               5000              10000             18
+76      ambush     90                    Y Victory               5000              10000             10
+77      ambush     20                    N  Defeat               5000              25000             12
+78      ambush     85                    Y Victory               5000              10000             13
+79      ambush     95                    Y Victory              10000              10000              8
+80      ambush     95                    Y Victory              10000               7500              7
+81      ambush     45                    Y  Defeat              10000              40000             16
+82      ambush     30                    N  Defeat              10000              25000             15
+83      ambush     35                    N  Defeat              10000              20000             18
+84      ambush     35                    N  Defeat              15000              18000             21
+85      ambush     40                    N  Defeat              15000              12000             19
+86      ambush     95                    Y Victory              15000              10000              7
+87      ambush     85                    Y Victory              25000              50000             10
+88      ambush     90                    Y Victory              25000              35000              9
+89      ambush     80                    Y Victory              25000              50000             12
+90      ambush     90                    Y Victory              25000              40000              8
+91        fire     30                    N  Defeat                100               1500              4
+92        fire    100                    Y Victory                100               1500              1
+93        fire     25                    N  Defeat                100               2500              2
+94        fire     10                    N  Defeat                250               2500             14
+95        fire     95                    Y Victory                250               2000              4
+96        fire     30                    N  Defeat                250               2000             10
+97        fire     30                    N  Defeat                500               4000             13
+98        fire     20                    N  Defeat                500               4000             13
+99        fire     70                    Y  Defeat                500               5000              3
+100       fire     90                    Y Victory                500               5000              6
+101       fire     30                    N  Defeat                500               5000             12
+102       fire     40                    N  Defeat               1000               5000              3
+103       fire     45                    N  Defeat               1000               5000              1
+104       fire     15                    N  Defeat               1000              10000             12
+105       fire     90                    Y Victory               1000              10000              3
+106       fire     15                    N  Defeat               1000              10000             10
+107       fire     20                    N  Defeat               1500              25000              2
+108       fire     25                    N  Defeat               1500              10000              4
+109       fire     85                    Y Victory               1500              10000             10
+110       fire     85                    Y Victory               2000               7500              9
+111       fire     30                    N  Defeat               2000               7500              7
+112       fire     40                    N  Defeat               2000              25000              2
+113       fire     40                    N  Defeat               2500              20000              3
+114       fire     30                    N  Defeat               2500              18000              7
+115       fire     80                    Y Victory               2500              12000              4
+116       fire     15                    N  Defeat               5000              10000             11
+117       fire     10                    N  Defeat               5000              50000             13
+118       fire     80                    Y Victory               7500              25000              4
+119       fire     50                    Y  Defeat               7500              50000              9
+120       fire     15                    N  Defeat              10000              25000             10
+
+> #our battleHistory dataset contains seven columns
+> #Method contains the type of battle technique employed (headToHead, surround, ambush, or fire)
+> #Rating contains a measure of the Shu army's performance on a scale from 0 to 100
+> #SuccessfullyExecuted contains a yes (Y) or no (N) value indicating whether the battle method was executed successfully
+> #Result tells us whether the battle ended in Victory or Defeat
+> #ShuSoldiersEngaged presents the number of soldiers who engaged in combat for the Shu army during each battle
+> #WeiSoldiersEngaged is identical to ShuSoldiersEngaged, but for the Wei forces
+> #DurationInDays indicates how long each battle lasted, in days
+
+//CREATING A SUBSET FROM A LARGE DATASET
+
+> #use the subset(data, ...) function to create a subset from a larger dataset
+> #create a subset that isolates our head to head combat data
+> subsetHeadToHead <- subset(battleHistory, battleHistory$Method == "headToHead")
+> #display the contents of the head to head subset
+> subsetHeadToHead
+       Method Rating SuccessfullyExecuted  Result ShuSoldiersEngaged WeiSoldiersEngaged DurationInDays
+1  headToHead      5                    Y  Defeat               5000              15000            116
+2  headToHead     15                    Y  Defeat               5000              10000             96
+3  headToHead     25                    Y  Defeat               5000              10000             76
+4  headToHead     25                    Y  Defeat               5000              10000             61
+5  headToHead     35                    Y  Defeat               7500              15000             52
+6  headToHead     20                    Y  Defeat              50000             100000             94
+7  headToHead     30                    Y  Defeat             100000             200000             87
+8  headToHead     85                    Y Victory              10000               5000             36
+9  headToHead     95                    Y Victory             100000              50000             44
+10 headToHead     85                    Y Victory              30000              15000             49
+11 headToHead     10                    Y  Defeat               2500               5000            112
+12 headToHead     15                    Y  Defeat               2000               2500             90
+13 headToHead     15                    Y  Defeat                250                500            111
+14 headToHead     20                    Y  Defeat               1000               2000             93
+15 headToHead     10                    Y  Defeat               7000               7500            120
+16 headToHead     10                    Y  Defeat               5000               7500            100
+17 headToHead     90                    Y Victory              15000              10000             35
+18 headToHead     80                    Y Victory              15000              10000             45
+19 headToHead     85                    Y Victory              25000              10000             40
+20 headToHead     85                    Y Victory              25000              20000             45
+21 headToHead     35                    Y  Defeat              30000              35000             95
+22 headToHead     45                    Y  Defeat              25000              35000            105
+23 headToHead     50                    Y  Defeat              40000              45000            100
+24 headToHead     35                    Y  Defeat              30000              45000             91
+25 headToHead     25                    Y  Defeat              65000              75000            120
+26 headToHead     20                    Y  Defeat              50000              75000             99
+27 headToHead     30                    Y  Defeat              60000              75000            102
+28 headToHead     90                    Y Victory              75000              40000             44
+29 headToHead     90                    Y Victory              50000              25000             50
+30 headToHead     95                    Y Victory             100000              60000             30
+
+> #create a subset that isolates our surround combat data
+> subsetSurround <- subset(battleHistory, battleHistory$Method == "surround")
+> #display the contents of the surround subset
+> subsetSurround
+     Method Rating SuccessfullyExecuted  Result ShuSoldiersEngaged WeiSoldiersEngaged DurationInDays
+31 surround      5                    N  Defeat              25000              25000            175
+32 surround     20                    N  Defeat              50000              50000            124
+33 surround     10                    N  Defeat              50000              75000            139
+34 surround     55                    Y  Defeat             100000             150000            158
+35 surround     15                    N  Defeat              25000              50000            128
+36 surround    100                    Y Victory             150000              50000             60
+37 surround     90                    Y Victory             100000              25000             80
+38 surround     95                    Y Victory             100000              30000             70
+39 surround     95                    Y Victory             125000              40000             72
+40 surround     95                    Y Victory              60000              15000             65
+41 surround     15                    N  Defeat              15000              15000            126
+42 surround     20                    N  Defeat              15000              10000            163
+43 surround     15                    N  Defeat              10000              10000            114
+44 surround     10                    N  Defeat              10000              10000            127
+45 surround     35                    N  Defeat              25000              15000            112
+46 surround     55                    Y  Defeat              50000             100000            159
+47 surround     90                    Y Victory             100000              20000             90
+48 surround     80                    Y Victory              10000               5000             88
+49 surround     90                    Y Victory             100000              25000             72
+50 surround     80                    Y Victory              25000              15000             61
+51 surround     15                    N  Defeat               2500               5000             99
+52 surround     10                    N  Defeat               2500               2500            115
+53 surround     15                    N  Defeat               1000                500            110
+54 surround      5                    N  Defeat               1000               2000            120
+55 surround     15                    N  Defeat              10000               7500            160
+56 surround     85                    Y Victory              15000               7500             63
+57 surround     90                    Y Victory              25000              10000             69
+58 surround     85                    Y Victory              15000              10000             74
+59 surround     90                    Y Victory              45000              20000             87
+60 surround     80                    Y Victory              25000              20000             85
+
+> #create a subset that isolates our ambush combat data
+> subsetAmbush <- subset(battleHistory, battleHistory$Method == "ambush")
+> #display the contents of the surround subset
+> subsetAmbush
+   Method Rating SuccessfullyExecuted  Result ShuSoldiersEngaged WeiSoldiersEngaged DurationInDays
+61 ambush     10                    N  Defeat                500               1500             17
+62 ambush     10                    N  Defeat                500               1500             18
+63 ambush      5                    N  Defeat                500               2500             15
+64 ambush      5                    N  Defeat                500               2500             16
+65 ambush     25                    N  Defeat               1000               2000             19
+66 ambush     95                    Y Victory               1000               2000              7
+67 ambush      5                    N  Defeat               1000               4000             17
+68 ambush     85                    Y Victory               1000               4000              9
+69 ambush     85                    Y Victory               1500               5000             12
+70 ambush     90                    Y Victory               1500               5000              7
+71 ambush     50                    Y  Defeat               1500               5000             19
+72 ambush     20                    N  Defeat               2500               5000             21
+73 ambush     35                    N  Defeat               2500               5000             14
+74 ambush     40                    N  Defeat               5000              10000             14
+75 ambush     35                    N  Defeat               5000              10000             18
+76 ambush     90                    Y Victory               5000              10000             10
+77 ambush     20                    N  Defeat               5000              25000             12
+78 ambush     85                    Y Victory               5000              10000             13
+79 ambush     95                    Y Victory              10000              10000              8
+80 ambush     95                    Y Victory              10000               7500              7
+81 ambush     45                    Y  Defeat              10000              40000             16
+82 ambush     30                    N  Defeat              10000              25000             15
+83 ambush     35                    N  Defeat              10000              20000             18
+84 ambush     35                    N  Defeat              15000              18000             21
+85 ambush     40                    N  Defeat              15000              12000             19
+86 ambush     95                    Y Victory              15000              10000              7
+87 ambush     85                    Y Victory              25000              50000             10
+88 ambush     90                    Y Victory              25000              35000              9
+89 ambush     80                    Y Victory              25000              50000             12
+90 ambush     90                    Y Victory              25000              40000              8
+
+> #create a subset that isolates our fire attack combat data
+> subsetFire <- subset(battleHistory, battleHistory$Method == "fire")
+> #display the contents of the surround subset
+> subsetFire
+    Method Rating SuccessfullyExecuted  Result ShuSoldiersEngaged WeiSoldiersEngaged DurationInDays
+91    fire     30                    N  Defeat                100               1500              4
+92    fire    100                    Y Victory                100               1500              1
+93    fire     25                    N  Defeat                100               2500              2
+94    fire     10                    N  Defeat                250               2500             14
+95    fire     95                    Y Victory                250               2000              4
+96    fire     30                    N  Defeat                250               2000             10
+97    fire     30                    N  Defeat                500               4000             13
+98    fire     20                    N  Defeat                500               4000             13
+99    fire     70                    Y  Defeat                500               5000              3
+100   fire     90                    Y Victory                500               5000              6
+101   fire     30                    N  Defeat                500               5000             12
+102   fire     40                    N  Defeat               1000               5000              3
+103   fire     45                    N  Defeat               1000               5000              1
+104   fire     15                    N  Defeat               1000              10000             12
+105   fire     90                    Y Victory               1000              10000              3
+106   fire     15                    N  Defeat               1000              10000             10
+107   fire     20                    N  Defeat               1500              25000              2
+108   fire     25                    N  Defeat               1500              10000              4
+109   fire     85                    Y Victory               1500              10000             10
+110   fire     85                    Y Victory               2000               7500              9
+111   fire     30                    N  Defeat               2000               7500              7
+112   fire     40                    N  Defeat               2000              25000              2
+113   fire     40                    N  Defeat               2500              20000              3
+114   fire     30                    N  Defeat               2500              18000              7
+115   fire     80                    Y Victory               2500              12000              4
+116   fire     15                    N  Defeat               5000              10000             11
+117   fire     10                    N  Defeat               5000              50000             13
+118   fire     80                    Y Victory               7500              25000              4
+119   fire     50                    Y  Defeat               7500              50000              9
+120   fire     15                    N  Defeat              10000              25000             10
+
+//DERIVING SUMMARY STATISTICS
+
+> #use mean(data) to calculate the mean of a given dataset
+> #what was the mean number of Shu soldiers engaged in past head to head conflicts?
+> meanShuSoldiersHeadToHead <- mean(subsetHeadToHead$ShuSoldiersEngaged)
+> #what was the mean number of Wei soldiers engaged in past head to head conflicts?
+> meanWeiSoldiersHeadToHead <- mean(subsetHeadToHead$WeiSoldiersEngaged)
+> #what was the mean duration (in days) of past head to head conflicts?
+> meanDurationHeadToHead <- mean(subsetHeadToHead$DurationInDays)
+> #display the calculated means
+> meanShuSoldiersHeadToHead
+[1] 31341.67
+> meanWeiSoldiersHeadToHead
+[1] 33833.33
+> meanDurationHeadToHead
+[1] 77.93333
+
+> #use sd(data) to calculate the standard deviation of a given dataset
+> #what was the standard deviation of Shu soldiers engaged in past head to head conflicts?
+> sdShuSoldiersHeadToHead <- sd(subsetHeadToHead$ShuSoldiersEngaged)
+> #what was the standard deviation of Wei soldiers engaged in past head to head conflicts?
+> sdWeiSoldiersHeadToHead <- sd(subsetHeadToHead$WeiSoldiersEngaged)
+> #what was the standard deviation of duration (in days) in past head to head conflicts?
+> sdDurationHeadToHead <- sd(subsetHeadToHead$DurationInDays)
+> #display the calculated standard deviations
+> sdShuSoldiersHeadToHead
+[1] 31320.13
+> sdWeiSoldiersHeadToHead
+[1] 41192.22
+> sdDurationHeadToHead
+[1] 77.93333
+
+> #use range(data, ...) to calculate the range of a given dataset
+> #what was the range of Shu soldiers engaged in past head to head conflicts?
+> rangeShuSoldiersHeadToHead <- range(subsetHeadToHead$ShuSoldiersEngaged)
+> #what was the range of Wei soldiers engaged in past head to head conflicts?
+> rangeWeiSoldiersHeadToHead <- range(subsetHeadToHead$WeiSoldiersEngaged)
+> #what was the range of duration (in days) of past head to head conflicts?
+> rangeDurationHeadToHead <- range(subsetHeadToHead$DurationInDays)
+> #display the calculated ranges
+> rangeShuSoldiersHeadToHead
+[1] 250 100000
+> rangeWeiSoldiersHeadToHead
+[1] 500 200000
+> rangeDurationHeadToHead
+[1] 30 120
+
+> #use the summary(object) function to generate a summary of a given object
+> #general summary of our head to head combat data
+> summaryHeadToHead <- summary(subsetHeadToHead)
+> #display the head to head subset summary
+> summaryHeadToHead
+        Method       Rating   SuccessfullyExecuted     Result   ShuSoldiersEngaged WeiSoldiersEngaged DurationInDays  
+ ambush    : 0   Min.   :10   N: 0                 Defeat :20   Min.   :   250     Min.   :   500     Min.   : 30.00  
+ fire      : 0   1st Qu.:20   Y:30                 Victory:10   1st Qu.:  5000     1st Qu.: 10000     1st Qu.: 46.00  
+ headToHead:30   Median :25                                     Median : 25000     Median : 15000     Median : 90.50  
+ surround  : 0   Mean   :46                                     Mean   : 31342     Mean   : 33833     Mean   : 77.93  
+                 3rd Qu.:80                                     3rd Qu.: 50000     3rd Qu.: 45000     3rd Qu.:100.00  
+                 Max.   :95                                     Max.   :100000     Max.   :200000     Max.   :120.00
+
+> #calculate summary statistics (means, standard deviations, ranges) for each battle method
+> #also generate a summary of each subset
+> #display the contents of each variable
+
+> #surround summary statistics
+> #means
+> meanShuSoldiersSurround <- mean(subsetSurround$ShuSoldiersEngaged)
+> meanShuSoldiersSurround
+[1] 42900
+> meanWeiSoldiersSurround <- mean(subsetSurround$WeiSoldiersEngaged)
+> meanWeiSoldiersSurround
+[1] 27333.33
+> meanDurationSurround <- mean(subsetSurround$DurationInDays)
+> meanDurationSurround
+[1] 105.5
+> #standard deviations
+> sdShuSoldiersSurround <- sd(subsetSurround$ShuSoldiersEngaged)
+> sdShuSoldiersSurround
+[1] 41977.91
+> sdWeiSoldiersSurround <- sd(subsetSurround$WeiSoldiersEngaged)
+> sdWeiSoldiersSurround
+[1] 32355.6
+> sdDurationSurround <- sd(subsetSurround$DurationInDays)
+> sdDurationSurround
+[1] 34.90949
+> #ranges
+> rangeShuSoldiersSurround <- range(subsetSurround$ShuSoldiersEngaged)
+> rangeShuSoldiersSurround
+[1]   1000 150000
+> rangeWeiSoldiersSurround <- range(subsetSurround$WeiSoldiersEngaged)
+> rangeWeiSoldiersSurround
+[1]    500 150000
+> rangeDurationSurround <- range(subsetSurround$DurationInDays)
+> rangeDurationSurround
+[1]  60 175
+> #summary
+> summarySurround <- summary(subsetSurround)
+> summarySurround
+        Method       Rating      SuccessfullyExecuted     Result   ShuSoldiersEngaged WeiSoldiersEngaged DurationInDays 
+ ambush    : 0   Min.   :10.00   N:14                 Defeat :16   Min.   :  1000     Min.   :   500     Min.   : 60.0  
+ fire      : 0   1st Qu.:26.25   Y:16                 Victory:14   1st Qu.: 11250     1st Qu.: 10000     1st Qu.: 72.5  
+ headToHead: 0   Median :70.00                                     Median : 25000     Median : 15000     Median :104.5  
+ surround  :30   Mean   :58.17                                     Mean   : 42900     Mean   : 27333     Mean   :105.5  
+                 3rd Qu.:88.75                                     3rd Qu.: 57500     3rd Qu.: 28750     3rd Qu.:126.8  
+                 Max.   :95.00                                     Max.   :150000     Max.   :150000     Max.   :175.0
+
+> #ambush summary statistics
+> #means
+> meanShuSoldiersAmbush <- mean(subsetAmbush$ShuSoldiersEngaged)
+> meanShuSoldiersAmbush
+[1] 7850
+> meanWeiSoldiersAmbush <- mean(subsetAmbush$WeiSoldiersEngaged)
+> meanWeiSoldiersAmbush
+[1] 14250
+> meanDurationAmbush <- mean(subsetAmbush$DurationInDays)
+> meanDurationAmbush
+[1] 13.6
+> #standard deviations
+> sdShuSoldiersAmbush <- sd(subsetAmbush$ShuSoldiersEngaged)
+> sdShuSoldiersAmbush
+[1] 8253.683
+> sdWeiSoldiersAmbush <- sd(subsetAmbush$WeiSoldiersEngaged)
+> sdWeiSoldiersAmbush
+[1] 14726.68
+> sdDurationAmbush <- sd(subsetAmbush$DurationInDays)
+> sdDurationAmbush
+[1] 4.575798
+> #ranges
+> rangeShuSoldiersAmbush <- range(subsetAmbush$ShuSoldiersEngaged)
+> rangeShuSoldiersAmbush
+[1]   500 25000
+> rangeWeiSoldiersAmbush <- range(subsetAmbush$WeiSoldiersEngaged)
+> rangeWeiSoldiersAmbush
+[1]  1500 50000
+> rangeDurationAmbush <- range(subsetAmbush$DurationInDays)
+> rangeDurationAmbush
+[1]  7 21
+> #summary
+> summaryAmbush <- summary(subsetAmbush)
+> summaryAmbush
+        Method       Rating   SuccessfullyExecuted     Result   ShuSoldiersEngaged WeiSoldiersEngaged DurationInDays  
+ ambush    : 0   Min.   :10   N: 0                 Defeat :20   Min.   :   250     Min.   :   500     Min.   : 30.00  
+ fire      : 0   1st Qu.:20   Y:30                 Victory:10   1st Qu.:  5000     1st Qu.: 10000     1st Qu.: 46.00  
+ headToHead:30   Median :25                                     Median : 25000     Median : 15000     Median : 90.50  
+ surround  : 0   Mean   :46                                     Mean   : 31342     Mean   : 33833     Mean   : 77.93  
+                 3rd Qu.:80                                     3rd Qu.: 50000     3rd Qu.: 45000     3rd Qu.:100.00  
+                 Max.   :95                                     Max.   :100000     Max.   :200000     Max.   :120.00 
+> #fire summary statistics
+> #means
+> meanShuSoldiersFire <- mean(subsetFire$ShuSoldiersEngaged)
+> meanShuSoldiersFire
+[1] 2051.667
+> meanWeiSoldiersFire <- mean(subsetFire$WeiSoldiersEngaged)
+> meanWeiSoldiersFire
+[1] 12333.33
+> meanDurationFire <- mean(subsetFire$DurationInDays)
+> meanDurationFire
+[1] 6.866667
+> #standard deviations
+> sdShuSoldiersFire <- sd(subsetFire$ShuSoldiersEngaged)
+> sdShuSoldiersFire
+[1] 2492.661
+> sdWeiSoldiersFire <- sd(subsetFire$WeiSoldiersEngaged)
+> sdWeiSoldiersFire
+[1] 12729.50
+> sdDurationFire <- sd(subsetFire$DurationInDays)
+> sdDurationFire
+[1] 4.248597
+> #ranges
+> rangeShuSoldiersFire <- range(subsetFire$ShuSoldiersEngaged)
+> rangeShuSoldiersFire
+[1]   100 10000
+> rangeWeiSoldiersFire <- range(subsetFire$WeiSoldiersEngaged)
+> rangeWeiSoldiersFire
+[1]  1500 50000
+> rangeDurationFire <- range(subsetFire$DurationInDays)
+> rangeDurationFire
+[1]  1 14
+> #summary
+> summaryFire <- summary(subsetFire)
+> summaryFire
+        Method       Rating      SuccessfullyExecuted     Result   ShuSoldiersEngaged WeiSoldiersEngaged DurationInDays  
+ ambush    : 0   Min.   : 10.0   N:20                 Defeat :22   Min.   :  100      Min.   : 1500      Min.   : 1.000  
+ fire      :30   1st Qu.: 25.0   Y:10                 Victory: 8   1st Qu.:  500      1st Qu.: 4250      1st Qu.: 3.000  
+ headToHead: 0   Median : 55.0                                     Median : 1000      Median : 8750      Median : 6.500  
+ surround  : 0   Mean   : 52.0                                     Mean   : 2052      Mean   :12333      Mean   : 6.867  
+                 3rd Qu.: 77.5                                     3rd Qu.: 2375      3rd Qu.:16500      3rd Qu.:10.000  
+                 Max.   :100.0                                     Max.   :10000      Max.   :50000      Max.   :14.000
+
+//QUANTIFYING CATEGORICAL VARIABLES
+
+> #represent categorical data numerically using as.numeric(data)
+> #recode the SuccessfullyExecuted column into N = 1 and Y = 2
+> numericExecutionHeadToHead <- as.numeric(subsetHeadToHead$SuccessfullyExecuted)
+> #display the contents of numericSuccessfullyExecutedHeadToHead
+> numericExecutionHeadToHead
+[1] 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+
+> #recode the SuccessfullyExecuted column into N = 0 and Y = 1
+> #by default, R recodes variables from 1 to n, so subtract one to offset the coding from 0 to n
+> numericExecutionHeadToHead <- as.numeric(subsetHeadToHead$SuccessfullyExecuted) - 1
+> #display the contents of numericExecutionHeadToHead
+> numericExecutionHeadToHead
+[1] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+
+> #recode the Result column into Defeat = 0 and Victory = 1
+> numericResultHeadToHead <- as.numeric(subsetHeadToHead$Result) - 1
+> #display the contents of numericResultHeadToHead
+> numericResultHeadToHead
+[1] 0 0 0 0 0 0 0 1 1 1 0 0 0 0 0 0 1 1 1 1 0 0 0 0 0 0 0 1 1 1
+
+> #quantify the SuccessfullyExecuted and Result columns for each battle method
+> #recode the SuccessfullyExecuted column into N = 0 and Y = 1
+> #recode the Result column into Defeat = 0 and Victory = 1
+> #display the contents of each variable
+
+> #surround
+> #SuccessfullyExecuted
+> numericExecutionSurround <- as.numeric(subsetSurround$SuccessfullyExecuted) - 1
+> numericExecutionSurround
+[1] 0 0 0 1 0 1 1 1 1 1 0 0 0 0 0 1 1 1 1 1 0 0 0 0 0 1 1 1 1 1
+> #Result
+> numericResultSurround <- as.numeric(subsetSurround$Result) - 1
+> numericResultSurround
+[1] 0 0 0 0 0 1 1 1 1 1 0 0 0 0 0 0 1 1 1 1 0 0 0 0 0 1 1 1 1 1
+
+> #ambush
+> #SuccessfullyExecuted
+> numericExecutionAmbush <- as.numeric(subsetAmbush$SuccessfullyExecuted) - 1
+> numericExecutionAmbush
+[1] 0 0 0 0 0 1 0 1 1 1 1 0 0 0 0 1 0 1 1 1 1 0 0 0 0 1 1 1 1 1
+
+> #Result
+> numericResultAmbush <- as.numeric(subsetAmbush$Result) - 1
+> numericResultAmbush
+[1] 0 0 0 0 0 1 0 1 1 1 0 0 0 0 0 1 0 1 1 1 0 0 0 0 0 1 1 1 1 1
+
+> #fire
+> #SuccessfullyExecuted
+> numericExecutionFire <- as.numeric(subsetFire$SuccessfullyExecuted) - 1
+> numericExecutionFire
+[1] 0 1 0 0 1 0 0 0 1 1 0 0 0 0 1 0 0 0 1 1 0 0 0 0 1 0 0 1 1 0
+
+> #Result
+> numericResultFire <- as.numeric(subsetFire$Result) - 1
+> numericResultFire
+[1] 0 1 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 1 0 0 0 0 1 0 0 1 0 0
+
+//CORRELATING VARIABLES
+
+> #use cor(x,y) to calculate the correlation between two variables
+> #remember only to use numeric values when calculating correlations
+
+> #How is the performance rating of the Shu army related to the outcome of a head to head battle?
+> corRatingResultHeadToHead <- cor(subsetHeadToHead$Rating, numericResultHeadToHead)
+> #display the value of the correlation
+> corRatingResultHeadToHead
+[1] 0.9495232
+
+> #How is the number of Shu soldiers engaged in a head to head battle correlated with the number of Wei soldiers engaged?
+> corShuWeiSoldiersHeadToHead <- cor(subsetHeadToHead$ShuSoldiersEngaged, subsetHeadToHead$WeiSoldiersEngaged)
+> #display the value of the correlation
+> corShuWeiSoldiersHeadToHead
+[1] 0.7653596
+
+> use cor(data) to calculate the correlation between all numeric variables in a dataset
+
+> #How are all of our numeric battle data correlated with one another?
+> corHeadToHead <- cor(subsetHeadToHead)
+Warning message:
+In cor(subsetHeadToHead) : NAs introduced by coercion
+> #display the correlations
+> corHeadToHead
+                     Method      Rating SuccessfullyExecuted Result ShuSoldiersEngaged WeiSoldiersEngaged DurationInDays
+Method                    1          NA                   NA     NA                 NA                 NA             NA
+Rating                   NA  1.00000000                   NA     NA          0.4222706        -0.04668125     -0.8785341
+SuccessfullyExecuted     NA          NA                    1     NA                 NA                 NA             NA
+Result                   NA          NA                   NA      1                 NA                 NA             NA
+ShuSoldiersEngaged       NA  0.42227061                   NA     NA          1.0000000         0.76535963     -0.2356156
+WeiSoldiersEngaged       NA -0.04668125                   NA     NA          0.7653596         1.00000000      0.1378893
+DurationInDays           NA -0.87853412                   NA     NA         -0.2356156         0.13788932      1.0000000
+
+> #NA values are introduced by nonnumeric data
+> #to correlate nonnumeric variables, we must first quantify them
+
+> #correlate Rating with Successfully Executed for each remaining battle method
+> #then correlate the entire subset
+> #display the result of each
+
+> #surround
+> #How is a battle's rating related to successful execution of the surround strategy?
+> corResultExecutionSurround <- cor(numericResultSurround, numericExecutionSurround)
+> corResultExecutionSurround
+[1] 0.875
+> #What other correlations are present in the dataset?
+> corSurround <- cor(subsetSurround)
+> corSurround
+                     Method      Rating SuccessfullyExecuted Result ShuSoldiersEngaged WeiSoldiersEngaged DurationInDays
+Method                    1          NA                   NA     NA                 NA                 NA             NA
+Rating                   NA  1.00000000                   NA     NA          0.6187682         0.05539471     -0.7803213
+SuccessfullyExecuted     NA          NA                    1     NA                 NA                 NA             NA
+Result                   NA          NA                   NA      1                 NA                 NA             NA
+ShuSoldiersEngaged       NA  0.61876819                   NA     NA          1.0000000         0.50092799     -0.3310438
+WeiSoldiersEngaged       NA  0.05539471                   NA     NA          0.5009280         1.00000000      0.3550494
+DurationInDays           NA -0.78032126                   NA     NA         -0.3310438         0.35504935      1.0000000
+
+> #ambush
+> #How is a battle's rating related to successful execution of the ambush strategy?
+> corResultExecutionAmbush <- cor(numericResultAmbush, numericExecutionAmbush)
+> corResultExecutionAmbush
+[1] 0.8744746
+> #What other correlations are present in the dataset?
+> corAmbush <- cor(subsetAmbush)
+> corAmbush
+                     Method     Rating SuccessfullyExecuted Result ShuSoldiersEngaged WeiSoldiersEngaged DurationInDays
+Method                    1         NA                   NA     NA                 NA                 NA             NA
+Rating                   NA  1.0000000                   NA     NA          0.4479816          0.2878108     -0.8163571
+SuccessfullyExecuted     NA         NA                    1     NA                 NA                 NA             NA
+Result                   NA         NA                   NA      1                 NA                 NA             NA
+ShuSoldiersEngaged       NA  0.4479816                   NA     NA          1.0000000          0.8603362     -0.2906190
+WeiSoldiersEngaged       NA  0.2878108                   NA     NA          0.8603362          1.0000000     -0.2018726
+DurationInDays           NA -0.8163571                   NA     NA         -0.2906190         -0.2018726      1.0000000
+
+> #fire
+> #How is a battle's rating related to successful execution of the fire attack strategy?
+> corResultExecutionFire <- cor(numericResultFire, numericExecutionFire)
+> corResultExecutionFire
+[1] 0.8528029
+> #What other correlations are present in the dataset?
+> corFire <- cor(subsetFire)
+> corFire
+                     Method     Rating SuccessfullyExecuted Result ShuSoldiersEngaged WeiSoldiersEngaged DurationInDays
+Method                    1         NA                   NA     NA                 NA                 NA             NA
+Rating                   NA  1.0000000                   NA     NA         -0.1145212         -0.1768208     -0.4597561
+SuccessfullyExecuted     NA         NA                    1     NA                 NA                 NA             NA
+Result                   NA         NA                   NA      1                 NA                 NA             NA
+ShuSoldiersEngaged       NA -0.1145212                   NA     NA          1.0000000          0.7385061      0.1629878
+WeiSoldiersEngaged       NA -0.1768208                   NA     NA          0.7385061          1.0000000      0.1070097
+DurationInDays           NA -0.4597561                   NA     NA          0.1629878          0.1070097      1.0000000
+
+//REGRESSION
+
+//MODELING WITH SIMPLE LINEAR REGRESSION
+
+> #create a linear regression model using the lm(formula, data)
+> #predict the rating of a head to head battle using the number of Shu soldiers engaged
+> #display the contents of the model
+>  lmHeadToHeadRating_ShuSoldiers
+Call:
+lm(formula = subsetHeadToHead$Rating ~ subsetHeadToHead$ShuSoldiersEngaged,     data = subsetHeadToHead)
+
+Coefficients:
+                        (Intercept)  subsetHeadToHead$ShuSoldiersEngaged  
+                          3.146e+01                            4.374e-04  
+
+> #create the model summary
+> lmHeadToHeadRating_ShuSoldiers_Summary <- summary(lmHeadToHeadRating_ShuSoldiers)
+> #display the model summary
+> lmHeadToHeadRating_ShuSoldiers_Summary
+Call:
+lm(formula = subsetHeadToHead$Rating ~ subsetHeadToHead$ShuSoldiersEngaged, 
+    data = subsetHeadToHead)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-45.199 -23.371  -9.112  24.253  51.981 
+
+Coefficients:
+                                     Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                         3.146e+01  7.797e+00   4.035 0.000383 ***
+subsetHeadToHead$ShuSoldiersEngaged 4.374e-04  1.774e-04   2.465 0.020098 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 29.93 on 28 degrees of freedom
+Multiple R-squared: 0.1783,	Adjusted R-squared: 0.149 
+F-statistic: 6.076 on 1 and 28 DF,  p-value: 0.0201
+
+
+
+//MODELING WITH MULTIPLE LINEAR REGRESSION
+
+> #create a multiple linear regression model using the lm(formula, data) function
+> #predict the rating of a head to head battle using the number of Shu and Wei soldiers engaged
+> lmHeadToHeadRating_ShuWeiSoldiers <- lm(subsetHeadToHead$Rating ~ subsetHeadToHead$ShuSoldiersEngaged + subsetHeadToHead$WeiSoldiersEngaged, subsetHeadToHead)
+> #model summary
+> lmHeadToHeadRating_ShuWeiSoldiers_Summary <- summary(lmHeadToHeadRating_ShuWeiSoldiers)
+> #display the summary
+> lmHeadToHeadRating_ShuWeiSoldiers_Summary
+Call:
+lm(formula = subsetHeadToHead$Rating ~ subsetHeadToHead$ShuSoldiersEngaged + 
+    subsetHeadToHead$WeiSoldiersEngaged, data = subsetHeadToHead)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-29.765 -17.896  -6.758  14.918  46.789 
+
+Coefficients:
+                                      Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                         33.0642804  6.1518218   5.375 1.11e-05 ***
+subsetHeadToHead$ShuSoldiersEngaged  0.0011453  0.0002171   5.275 1.46e-05 ***
+subsetHeadToHead$WeiSoldiersEngaged -0.0007033  0.0001651  -4.260 0.000222 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 23.57 on 27 degrees of freedom
+Multiple R-squared: 0.5086,	Adjusted R-squared: 0.4722 
+F-statistic: 13.97 on 2 and 27 DF,  p-value: 6.833e-05
+
+> #predict the rating of a head to head battle using duration
+> lmHeadToHeadRating_Duration <- lm(subsetHeadToHead$Rating ~ subsetHeadToHead$DurationInDays, subsetHeadToHead)
+> #summary
+> lmHeadToHeadRating_Duration_Summary <- summary(lmHeadToHeadRating_Duration)
+> lmHeadToHeadRating_Duration_Summary
+Call:
+lm(formula = subsetHeadToHead$Rating ~ subsetHeadToHead$DurationInDays, 
+    data = subsetHeadToHead)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-36.328  -9.003   2.853   8.252  25.894 
+
+Coefficients:
+                                 Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                     119.54682    8.16731  14.637 1.20e-14 ***
+subsetHeadToHead$DurationInDays  -0.95441    0.09807  -9.732 1.75e-10 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 15.77 on 28 degrees of freedom
+Multiple R-squared: 0.7718,	Adjusted R-squared: 0.7637 
+F-statistic: 94.71 on 1 and 28 DF,  p-value: 1.747e-10 
+
+> #predict the rating of a head to head battle using duration and the number of Shu soldiers
+> lmHeadToHeadRating_DurationShuSoldiers <- lm(subsetHeadToHead$Rating ~ subsetHeadToHead$DurationInDays + subsetHeadToHead$ShuSoldiersEngaged, subsetHeadToHead)
+> #summary
+> lmHeadToHeadRating_DurationShuSoldiers_Summary <- summary(lmHeadToHeadRating_DurationShuSoldiers)
+> lmHeadToHeadRating_DurationShuSoldiers_Summary 
+Call:
+lm(formula = subsetHeadToHead$Rating ~ subsetHeadToHead$DurationInDays + 
+    subsetHeadToHead$ShuSoldiersEngaged, data = subsetHeadToHead)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-29.121  -9.290   2.693   8.955  25.584 
+
+Coefficients:
+                                      Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                          1.076e+02  8.579e+00  12.543 8.96e-13 ***
+subsetHeadToHead$DurationInDays     -8.961e-01  9.105e-02  -9.842 2.00e-10 ***
+subsetHeadToHead$ShuSoldiersEngaged  2.361e-04  8.681e-05   2.720   0.0113 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 14.23 on 27 degrees of freedom
+Multiple R-squared: 0.8209,	Adjusted R-squared: 0.8076 
+F-statistic: 61.87 on 2 and 27 DF,  p-value: 8.263e-11 
+
+> #predict the rating of a head to head battle using duration and the number of Shu and Wei soldiers
+> lmHeadToHeadRating_DuratioSoldiers <- lm(subsetHeadToHead$Rating ~ subsetHeadToHead$DurationInDays + subsetHeadToHead$ShuSoldiersEngaged + subsetHeadToHead$WeiSoldiersEngaged, subsetHeadToHead)
+> #summary
+> lmHeadToHeadRating_DuratioSoldiers_Summary <- summary(lmHeadToHeadRating_DuratioSoldiers)
+> lmHeadToHeadRating_DuratioSoldiers_Summary 
+Call:
+lm(formula = subsetHeadToHead$Rating ~ subsetHeadToHead$DurationInDays + 
+    subsetHeadToHead$ShuSoldiersEngaged + subsetHeadToHead$WeiSoldiersEngaged, 
+    data = subsetHeadToHead)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-25.4560  -8.3716  -0.2642  10.0152  24.3812 
+
+Coefficients:
+                                      Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                         97.3500156  8.6961491  11.195 1.92e-11 ***
+subsetHeadToHead$DurationInDays     -0.7680305  0.0958033  -8.017 1.70e-08 ***
+subsetHeadToHead$ShuSoldiersEngaged  0.0005422  0.0001406   3.857 0.000678 ***
+subsetHeadToHead$WeiSoldiersEngaged -0.0002755  0.0001049  -2.627 0.014258 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 12.89 on 26 degrees of freedom
+Multiple R-squared: 0.8585,	Adjusted R-squared: 0.8421 
+F-statistic: 52.56 on 3 and 26 DF,  p-value: 3.57e-11 
+
+> #the duration of battle is very important in predicting the performance of the Shu army in a head to head conflict!
+
+//MODELING INTERACTIONS
+
+> #before creating an interaction variable, the component variables must first be centered
+> #center a variable by subtracting its mean from each of its values
+> #center the number of Shu soldiers engaged
+> centeredShuSoldiersHeadToHead <- subsetHeadToHead$ShuSoldiersEngaged - mean(subsetHeadToHead$ShuSoldiersEngaged)
+> #center the number of Wei soldiers engaged
+> centeredWeiSoldiersHeadToHead <- subsetHeadToHead$WeiSoldiersEngaged - mean(subsetHeadToHead$WeiSoldiersEngaged)
+
+> #create an interaction variable by multiplying two or more centered variables
+> interactionSoldiersHeadToHead <- centeredShuSoldiersHeadToHead * centeredWeiSoldiersHeadToHead
+
+> #predict the rating of a battle using the duration, number of Shu and Wei soldiers engaged, and the interaction between the number of Shu and Wei soldiers engaged
+> lmHeadToHeadRating_DurationSoldiersShuWeiInteraction <- lm(subsetHeadToHead$Rating ~  subsetHeadToHead$DurationInDays + subsetHeadToHead$ShuSoldiersEngaged + subsetHeadToHead$WeiSoldiersEngaged + interactionSoldiersHeadToHead, subsetHeadToHead)
+
+> #model summary
+> lmHeadToHeadRating_DurationSoldiersShuWeiInteraction_Summary <- summary(lmHeadToHeadRating_DurationSoldiersShuWeiInteraction)
+> #display the summary
+> lmHeadToHeadRating_DurationSoldiersShuWeiInteraction_Summary
+Call:
+lm(formula = subsetHeadToHead$Rating ~ subsetHeadToHead$DurationInDays + 
+    subsetHeadToHead$ShuSoldiersEngaged + subsetHeadToHead$WeiSoldiersEngaged + 
+    interactionSoldiersHeadToHead, data = subsetHeadToHead)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-25.3749  -8.9428   0.6675   9.3589  22.2165 
+
+Coefficients:
+                                      Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                          9.956e+01  8.871e+00  11.222 2.98e-11 ***
+subsetHeadToHead$DurationInDays     -7.977e-01  9.890e-02  -8.066 2.02e-08 ***
+subsetHeadToHead$ShuSoldiersEngaged  4.661e-04  1.553e-04   3.000  0.00603 ** 
+subsetHeadToHead$WeiSoldiersEngaged -1.338e-04  1.635e-04  -0.819  0.42078    
+interactionSoldiersHeadToHead       -2.413e-09  2.143e-09  -1.126  0.27090    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 12.83 on 25 degrees of freedom
+Multiple R-squared: 0.8653,	Adjusted R-squared: 0.8437 
+F-statistic: 40.14 on 4 and 25 DF,  p-value: 1.549e-10 
+
+//COMPARING AND CHOOSING MODELS
+
+> #use HLR to compare different models
+> #first consider the models individually
+> #simple regression model using duration to predict battle rating
+> lmHeadToHeadRating_Duration_Summary
+Call:
+lm(formula = subsetHeadToHead$Rating ~ subsetHeadToHead$DurationInDays, 
+    data = subsetHeadToHead)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-36.328  -9.003   2.853   8.252  25.894 
+
+Coefficients:
+                                 Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                     119.54682    8.16731  14.637 1.20e-14 ***
+subsetHeadToHead$DurationInDays  -0.95441    0.09807  -9.732 1.75e-10 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 15.77 on 28 degrees of freedom
+Multiple R-squared: 0.7718,	Adjusted R-squared: 0.7637 
+F-statistic: 94.71 on 1 and 28 DF,  p-value: 1.747e-10 
+
+> #multiple regression model using duration, Shu soldiers, and Wei soldiers to predict battle rating
+> lmHeadToHeadRating_DuratioSoldiers_Summary
+Call:
+lm(formula = subsetHeadToHead$Rating ~ subsetHeadToHead$DurationInDays + 
+    subsetHeadToHead$ShuSoldiersEngaged + subsetHeadToHead$WeiSoldiersEngaged, 
+    data = subsetHeadToHead)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-25.4560  -8.3716  -0.2642  10.0152  24.3812 
+
+Coefficients:
+                                      Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                         97.3500156  8.6961491  11.195 1.92e-11 ***
+subsetHeadToHead$DurationInDays     -0.7680305  0.0958033  -8.017 1.70e-08 ***
+subsetHeadToHead$ShuSoldiersEngaged  0.0005422  0.0001406   3.857 0.000678 ***
+subsetHeadToHead$WeiSoldiersEngaged -0.0002755  0.0001049  -2.627 0.014258 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 12.89 on 26 degrees of freedom
+Multiple R-squared: 0.8585,	Adjusted R-squared: 0.8421 
+F-statistic: 52.56 on 3 and 26 DF,  p-value: 3.57e-11 
+
+> #interaction model using duration, Shu soldiers, Wei soldiers, and the interaction between Shu and Wei soldiers to predict battle rating
+> lmHeadToHeadRating_DurationSoldiersShuWeiInteraction_Summary
+Call:
+lm(formula = subsetHeadToHead$Rating ~ subsetHeadToHead$DurationInDays + 
+    subsetHeadToHead$ShuSoldiersEngaged + subsetHeadToHead$WeiSoldiersEngaged + 
+    interactionSoldiersHeadToHead, data = subsetHeadToHead)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-25.3749  -8.9428   0.6675   9.3589  22.2165 
+
+Coefficients:
+                                      Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                          9.956e+01  8.871e+00  11.222 2.98e-11 ***
+subsetHeadToHead$DurationInDays     -7.977e-01  9.890e-02  -8.066 2.02e-08 ***
+subsetHeadToHead$ShuSoldiersEngaged  4.661e-04  1.553e-04   3.000  0.00603 ** 
+subsetHeadToHead$WeiSoldiersEngaged -1.338e-04  1.635e-04  -0.819  0.42078    
+interactionSoldiersHeadToHead       -2.413e-09  2.143e-09  -1.126  0.27090    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 12.83 on 25 degrees of freedom
+Multiple R-squared: 0.8653,	Adjusted R-squared: 0.8437 
+F-statistic: 40.14 on 4 and 25 DF,  p-value: 1.549e-10 
+
+> #use anova(object, ...) to compare the relative contribution of multiple models
+> #compare the three head to head combat models using ANOVA
+> anovaHeadToHeadRatingModelComparison <- anova(lmHeadToHeadRating_Duration, lmHeadToHeadRating_DuratioSoldiers, lmHeadToHeadRating_DurationSoldiersShuWeiInteraction)
+
+> display the anova results
+> anovaHeadToHeadRatingModelComparison
+Analysis of Variance Table
+
+Model 1: subsetHeadToHead$Rating ~ subsetHeadToHead$DurationInDays
+Model 2: subsetHeadToHead$Rating ~ subsetHeadToHead$DurationInDays + subsetHeadToHead$ShuSoldiersEngaged + 
+    subsetHeadToHead$WeiSoldiersEngaged
+Model 3: subsetHeadToHead$Rating ~ subsetHeadToHead$DurationInDays + subsetHeadToHead$ShuSoldiersEngaged + 
+    subsetHeadToHead$WeiSoldiersEngaged + interactionSoldiersHeadToHead
+  Res.Df    RSS Df Sum of Sq      F   Pr(>F)   
+1     28 6964.9                                
+2     26 4320.5  2    2644.4 8.0386 0.002015 **
+3     25 4112.0  1     208.5 1.2676 0.270903   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+//SAVE YOUR WORKSPACE AND CONSOLE TEXT
+
+> #save your R workspace using save.image(file)
+> #remember to include the .RData file extension
+> save.image("rBeginnersGuide_Ch_04_hero.RData")
+
+> #save your R console text by copying and pasting it into a text file

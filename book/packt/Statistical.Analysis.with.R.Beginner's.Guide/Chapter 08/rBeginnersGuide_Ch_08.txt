@@ -1,0 +1,186 @@
+//R Beginner's Guide
+//Chapter 8 - Briefing the Emperor
+//by John M. Quick
+//created July 10, 2010
+
+//CHARTS, GRAPHS, AND PLOTS IN R
+
+//CREATING A BAR CHART
+> #set the R working directory
+> #replace the sample location with one that is relevant to you
+> setwd("/Users/johnmquick/rBeginnersGuide/")
+
+> #load the chapter six workspace
+> load("rBeginnersGuide_Ch_08_ReadersCopy.RData")
+
+> #create a bar chart that compares the mean durations of the battle methods
+> #calculate the mean duration of each battle method
+> meanDurationFire <- mean(subsetFire$DurationInDays)
+> meanDurationAmbush <- mean(subsetAmbush$DurationInDays)
+> meanDurationHeadToHead <- mean(subsetHeadToHead$DurationInDays)
+> meanDurationSurround <- mean(subsetSurround$DurationInDays)
+> #use a vector to define the chart's bar values
+> barAllMethodsDurationBars <- c(meanDurationFire, meanDurationAmbush, meanDurationHeadToHead, meanDurationSurround)
+> #use barplot(...) to create and display the bar chart
+> barplot(height = barAllMethodsDurationBars)
+
+//CUSTOMIZING GRAPHICS
+
+> #use additional arguments to customize a graphic
+> #define a title for the bar chart
+> barAllMethodsDurationLabelMain <- "Average Duration by Battle Method"
+> #define x and y labels for the bar chart
+> barAllMethodsDurationLabelX <- "Battle Method"
+> barAllMethodsDurationLabelY <- "Duration in Days"
+> #set the x and y axis scales
+> barAllMethodsDurationLimX <- c(0, 5)
+> barAllMethodsDurationLimY <- c(0, 120)
+> #define rainbow colors for the bars
+> barAllMethodsDurationRainbowColors <- rainbow(length(barAllMethodsDurationBars))
+> #incorporate customizations into the graphic function using the main, xlab, ylab, xlim, ylim, names, and col arguments
+> #use barplot(...) to create and display the bar chart
+> barplot(height = barAllMethodsDurationBars, main = barAllMethodsDurationLabelMain, xlab = barAllMethodsDurationLabelX, ylab = barAllMethodsDurationLabelY, xlim = barAllMethodsDurationLimX, ylim = barAllMethodsDurationLimY, col = barAllMethodsDurationRainbowColors)
+
+> #add a legend to the bar chart
+> #the x and y arguments position the legend
+> #x and y can be defined using words or numerical coordinates
+> #the legend argument receives a vector containing the labels for the legend
+> barAllMethodsDurationLegendLabels <- c("Fire", "Ambush", "Head to Head", "Surround")
+> #the fill argument contains the colors for the legend
+> legend(x = 0, y = 120, legend = barAllMethodsDurationLegendLabels, fill = barAllMethodsDurationRainbowColors)
+
+//CREATING A SCATTERPLOT
+
+> #create a scatterplot that depicts the relationship between the number of Shu and Wei soldiers engaged in past fire attacks
+> #get the data to be used in the plot
+> scatterplotFireWeiSoldiersData <- subsetFire$WeiSoldiers
+> scatterplotFireShuSoldiersData <- subsetFire$ShuSoldiers
+> #customize the plot
+> scatterplotFireSoldiersLabelMain <- "Soldiers Engaged in Past Fire Attacks"
+> scatterplotFireSoldiersLabelX <- "Wei"
+> scatterplotFireSoldiersLabelY <- "Shu"
+> #use plot(...) to create and display the scatterplot
+> plot(x = scatterplotFireWeiSoldiersData, y = scatterplotFireShuSoldiersData, main = scatterplotFireSoldiersLabelMain, xlab = scatterplotFireSoldiersLabelX, ylab = scatterplotFireSoldiersLabelY)
+
+> #create a scatterplot that depicts the relationships between all of the variables in our fire attack dataset
+> plot(x = subsetFire)
+
+//CREATING A LINE CHART
+
+> #create a line chart that depicts the durations of past fire attacks
+> #get the data to be used in the chart
+> lineFireDurationDataX <- c(1:30)
+> lineFireDurationDataY <- subsetFire$DurationInDays
+> #customize the chart
+> lineFireDurationMain <- "Duration of Past Fire Attacks"
+> lineFireDurationLabX <- "Battle Number"
+> lineFireDurationLabY <- "Duration in Days"
+> #use the type argument to connect the data points with a line
+> lineFireDurationType <- "o"
+> #use plot(...) to create and display the line chart
+> plot(x = lineFireDurationDataX, y = lineFireDurationDataY, main = lineFireDurationMain, xlab = lineFireDurationLabX, ylab = lineFireDurationLabY, type = lineFireDurationType)
+
+//CREATING A BOX PLOT
+
+> #create a box plot that depicts the number of soldiers required to launch a fire attack
+> #get the data to be used in the plot
+> boxplotFireShuSoldiersData <- subsetFire$ShuSoldiers
+> #customize the plot
+> boxPlotFireShuSoldiersLabelMain <- "Number of Soldiers Required to Launch a Fire Attack"
+> boxPlotFireShuSoldiersLabelX <- "Fire Attack Method"
+> boxPlotFireShuSoldiersLabelY <- "Number of Soldiers"
+> #use boxplot(...) to create and display the box plot
+> boxplot(x = boxplotFireShuSoldiersData, main = boxPlotFireShuSoldiersLabelMain, xlab = boxPlotFireShuSoldiersLabelX, ylab = boxPlotFireShuSoldiersLabelY)
+
+> #create a box plot that compares the number of soldiers required across the battle methods
+> #get the data formula to be used in the plot
+> boxplotAllMethodsShuSoldiersData <- battleHistory$ShuSoldiers ~ battleHistory$Method
+> #customize the plot
+> boxPlotAllMethodsShuSoldiersLabelMain <- "Number of Soldiers Required by Battle Method"
+> boxPlotAllMethodsShuSoldiersLabelX <- "Battle Method"
+> boxPlotAllMethodsShuSoldiersLabelY <- "Number of Soldiers"
+> #use boxplot(...) to create and display the box plot
+> boxplot(formula = boxplotAllMethodsShuSoldiersData, main = boxPlotAllMethodsShuSoldiersLabelMain, xlab = boxPlotAllMethodsShuSoldiersLabelX, ylab = boxPlotAllMethodsShuSoldiersLabelY)
+
+//CREATING A HISTOGRAM
+
+> #create a histogram that depicts the frequency distribution of past fire attack durations
+> #get the histogram data
+> histFireDurationData <- subsetFire$DurationInDays
+> #customize the histogram
+> histFireDurationDataMain <- "Duration of Past Fire Attacks"
+> histFireDurationLabX <- "Duration in Days"
+> histFireDurationLimY <- c(0, 10)
+> histFireDurationRainbowColor <- rainbow(max(histFireDurationData))
+> #use hist(...) to create and display the histogram
+> hist(x = histFireDurationData, main = histFireDurationDataMain, xlab = histFireDurationLabX, ylim = histFireDurationLimY, col = histFireDurationRainbowColor)
+
+//CREATING A PIE CHART
+
+> #create a pie chart that depicts the gold cost of the fire attack in relation to the total funds allotted to the Shu army
+> #get the data to be used in the chart
+> #what is the cost of the proposed fire attack?
+> functionGoldCost(2500, 225, 7)
+[1] 6791.667
+> #we already know that 1,000,000 gold has been allotted to the Shu army
+> #therefore our remaining funds after the fire attack would be 993,208
+> #create a vector to hold the values for the chart's slices
+> pieFireGoldCostSlices <- c(6792, 993208)
+> #use the labels argument to specify the text associated with each of the chart's slices
+> pieFireGoldCostLabels <- c("mission cost", "remaining funds")
+> #customize the chart
+> pieFireGoldCostMain <- "Gold Cost of Fire Attack"
+> pieFireGoldCostSpecificColors <- c("green", "blue")
+> #use pie(...) to create and display the pie chart
+> pie(x = pieFireGoldCostSlices, labels = pieFireGoldCostLabels, main = pieFireGoldCostMain, col = pieFireGoldCostSpecificColors)
+
+> #use the legend(...) function to add a legend to the chart
+> legend(x = "bottom", legend = pieFireGoldCostLabels, fill = pieFireGoldCostSpecificColors)
+
+//EXPORTING GRAPHICS
+
+> #use an export function to save a graphic as a digital image
+> #prepare R to export your graphic in one of the following formats: pdf, png, jpg, tiff, or bmp
+> #note that your image will be saved into your R working directory by default if only a filename is provided
+> #otherwise, your image will be saved to the full provided path
+> #optionally, the width and height, in pixels, of the resulting image can be specified
+> #export as pdf
+> pdf("myGraphic.pdf", width = 500, height = 500)
+> #OR
+> #export as png
+> png("myGraphic.png", width = 500, height = 500)
+> #OR
+> #export as jpg
+> jpeg("myGraphic.jpg", width = 500, height = 500)
+> #OR
+> #export as tiff
+> tiff("myGraphic.tiff", width = 500, height = 500)
+> #OR
+> #export as bmp
+> bmp("myGraphic.bmp", width = 500, height = 500)
+
+> #create the graphic in R
+> #note that your graphic may NOT be displayed in the graphic window during this process
+> #we will use our original fire cost pie chart as an example
+> #use pie(...) to create the pie chart
+> pie(x = pieFireGoldCostSlices, labels = pieFireGoldCostLabels, main = pieFireGoldCostMain, col = pieFireGoldCostSpecificColors)
+> #use the legend(...) function to add a legend to the chart
+> legend(x = "bottom", legend = pieFireGoldCostLabels, fill = pieFireGoldCostSpecificColors)
+
+> #use dev.off() to close the current device and export the graphic as a digital image
+> dev.off()
+
+> #verify that your digital image has been created
+
+> #custom function that saves an R graphic as a digital image
+> exportGraphic <- function(filename, filetype, width, height, graphicsFunction) {
++	filetype(filename, width = width, height = height) 
++	graphicsFunction 
++	dev.off()
++}
+
+> #save your R workspace using save.image(file)
+> #remember to include the .RData file extension
+> save.image("myWorkspace.RData")
+
+> #save your R console text by copying and pasting it into a text file

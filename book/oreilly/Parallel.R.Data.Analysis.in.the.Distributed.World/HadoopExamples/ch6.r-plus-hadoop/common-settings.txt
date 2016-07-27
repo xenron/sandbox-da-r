@@ -1,0 +1,13 @@
+##
+## common settings for chapter 6 examples
+##
+
+export HADOOP_VERSION="0.20.203.0"
+export HADOOP_HOME="/opt/thirdparty/dist/hadoop-${HADOOP_VERSION}"
+export HADOOP_COMMAND="${HADOOP_HOME}/bin/hadoop"
+export HADOOP_STREAMING_JAR="${HADOOP_HOME}/contrib/streaming/hadoop-streaming-${HADOOP_VERSION}.jar"
+export HADOOP_COMPRESSION_CODEC="org.apache.hadoop.io.compress.GzipCodec"
+
+## for Hadoop 0.21.x, use "org.apache.hadoop.mapreduce.lib.input.NLineInputFormat:
+## Note the subtle difference in class name!
+export HADOOP_INPUTFORMAT="org.apache.hadoop.mapred.lib.NLineInputFormat"

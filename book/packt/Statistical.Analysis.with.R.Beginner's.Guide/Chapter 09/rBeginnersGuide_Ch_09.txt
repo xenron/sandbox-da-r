@@ -1,0 +1,214 @@
+//R Beginner's Guide
+//Chapter 9 - Briefing the Generals
+//by John M. Quick
+//created July 11, 2010
+
+//MORE CHARTS, GRAPHS, AND PLOTS IN R
+
+> #set the R working directory> #replace the sample location with one that is relevant to you> setwd("/Users/johnmquick/rBeginnersGuide/")
+
+> #load the chapter 9 workspace> load("rBeginnersGuide_Ch_09_ReadersCopy.RData")
+
+//CUSTOMIZING A BAR CHART
+
+> #modify the chapter 8 bar chart that compared the mean durations of the battle methods> #use the names argument to assign a text label to each bar> #the names argument receives a vector containing text labels for each of the chart's bars> barAllMethodsDurationNames <- c("Fire", "Ambush", "Head to Head", "Surround")> #use the width argument to change the width of each bar> #note that width can be set using a single value for all bars or by creating a vector to hold a unique value for each bar> #note that the xlim argument must be defined in order to use the single value approach> barAllMethodsDurationLimX <- c(0, 4)> barAllMethodsDurationWidth <- 0.25> #use the space argument to change the distance between each bar> #the space value is a ratio of the average bar width; it defaults to 0.2> #note that space can be set using a single value for all bars or by creating a vector to hold a unique value for each bar> barAllMethodsDurationSpace <- 2> #use barplot(...) to create and display the bar chart> barplot(height = barAllMethodsDurationBars, main = barAllMethodsDurationLabelMain, xlab = barAllMethodsDurationLabelX, ylab = barAllMethodsDurationLabelY, xlim = barAllMethodsDurationLimX, ylim = barAllMethodsDurationLimY, col = barAllMethodsDurationRainbowColors, names = barAllMethodsDurationNames, width = barAllMethodsDurationWidth, space = barAllMethodsDurationSpace)
+
+> #set a bar chart's orientation using the horiz argument> #if TRUE, the bars will display horizontally> #if FALSE (default), the bars will display vertically> barAllMethodsDurationHoriz <- TRUE> #note that you must reorient the chart for it to display properly> #this can be accomplished by switching the values of all arguments related to the x and y axes> #use barplot(...) to create and display the bar chart> barplot(height = barAllMethodsDurationBars, main = barAllMethodsDurationLabelMain, xlab = barAllMethodsDurationLabelY, ylab = barAllMethodsDurationLabelX, xlim = barAllMethodsDurationLimY, ylim = barAllMethodsDurationLimX, col = barAllMethodsDurationRainbowColors, names = barAllMethodsDurationNames, width = barAllMethodsDurationWidth, space = barAllMethodsDurationSpace, horiz = barAllMethodsDurationHoriz)
+
+> #create a new bar chart to demonstrate the stacking feature> #create a bar chart that depicts the average number of soldiers involved in each battle method with stacked bars for the Shu and Wei forces> #set the stacking of a chart's bars using the beside argument> #if TRUE (default), the bars will display next to one another> #if FALSE, the bars will display atop one another> barAllMethodsSoldiersBeside <- FALSE> #note that the bar values must be in matrix form for the beside argument to take effect> #calculate the bar values for each method> #fire> meanShuSoldiersFire <- mean(subsetFire$ShuSoldiers)> meanWeiSoldiersFire <- mean(subsetFire$WeiSoldiers)> #ambush> meanShuSoldiersAmbush <- mean(subsetAmbush$ShuSoldiers)> meanWeiSoldiersAmbush <- mean(subsetAmbush$WeiSoldiers)> #head to head> meanShuSoldiersHeadToHead <- mean(subsetHeadToHead$ShuSoldiers)> meanWeiSoldiersHeadToHead <- mean(subsetHeadToHead$WeiSoldiers)> #surround> meanShuSoldiersSurround <- mean(subsetSurround$ShuSoldiers)> meanWeiSoldiersSurround <- mean(subsetSurround$WeiSoldiers)> #put the bar values into matrix form using the matrix(...) function> #the matrix should have four columns (one for each method) and two rows (one for each kingdom)> #when the chart is created, the rows will be stacked within each column> barAllMethodsSoldiersBars <- matrix(c(meanShuSoldiersFire, meanWeiSoldiersFire, meanShuSoldiersAmbush, meanWeiSoldiersAmbush, meanShuSoldiersHeadToHead, meanWeiSoldiersHeadToHead, meanShuSoldiersSurround, meanWeiSoldiersSurround), 2, 4)> #customize the chart> barAllMethodsSoldiersMain <- "Average Number of Soldiers Engaged in Battle by Kingdom"> barAllMethodsSoldiersLabX <- "Battle Method"> barAllMethodsSoldiersLabY <- "Number of Soldiers"> barAllMethodsSoldiersNames <- c("Fire", "Ambush", "Head to Head", "Surround")> #use barplot(...) to create and display the bar chart> barplot(height = barAllMethodsSoldiersBars, main = barAllMethodsSoldiersMain, xlab = barAllMethodsSoldiersLabX, ylab = barAllMethodsSoldiersLabY, names = barAllMethodsSoldiersNames, beside = barAllMethodsSoldiersBeside)
+
+> #use the density argument to define the thickness of the shaded lines> #density receives either a single nonnegative value for all matrix rows or a vector containing a value for each row> #density is measured in lines per inch with a default value of NULL> barAllMethodsSoldiersDensity <- c(10, 25)> #angle modifies the angle of the shaded lines> #angle receives either a single value for all matrix rows or a vector containing a value for each row> #angle is measured in degrees> barAllMethodsSoldiersAngle <- c(45, -45)> #use barplot(...) to create and display the bar chart> barplot(height = barAllMethodsSoldiersBars, main = barAllMethodsSoldiersMain, xlab = barAllMethodsSoldiersLabX, ylab = barAllMethodsSoldiersLabY, names = barAllMethodsSoldiersNames, beside = barAllMethodsSoldiersBeside, density = barAllMethodsSoldiersDensity, angle = barAllMethodsSoldiersAngle)
+
+> #add a legend to the stacked bar chart> #use the x and y arguments to specify the exact location of the legend> #note that the possible x and y values are determined by the limits of your axes> #add labels for the Shu and Wei armies> #incorporate the density and angle arguments from our barplot(...) function> #use cex to increase the size of the legend> legend(x = 0.2, y = 70000, legend = c("Shu", "Wei"), density = barAllMethodsSoldiersDensity, angle = barAllMethodsSoldiersAngle, cex = 2)
+
+> #create a bar chart that depicts the total number of soldiers in the Shu and Wei armies as two separate bars
+> #soldier data
+> heroBarSoldiersShu <- sum(subset(soldiersByCity$Soldiers, soldiersByCity$Kingdom == "Shu"))
+> heroBarSoldiersWei <- sum(subset(soldiersByCity$Soldiers, soldiersByCity$Kingdom == "Wei"))
+> heroBarSoldiersData <- c(heroBarSoldiersShu, heroBarSoldiersWei)
+> #customizations
+> heroBarSoldiersMain = "Total Soldiers by Kingdom"
+> heroBarSoldiersLabX = "Kingdom"
+> heroBarSoldiersLabY = "Number of Soldiers"
+> heroBarSoldiersLimY = c(0, 400000)
+> heroBarSoldiersNames = c("Shu", "Wei")
+> #barplot(...) function
+> barplot(height = heroBarSoldiersData, main = heroBarSoldiersMain, xlab = heroBarSoldiersLabX, ylab = heroBarSoldiersLabY, ylim = heroBarSoldiersLimY, names = heroBarSoldiersNames)
+
+> #create a stacked bar chart that depicts the total number of soldiers in the Shu and Wei armies as two separate bars, grouped by city
+#soldier data
+> heroBarStackedSoldiersShu <- subset(soldiersByCity$Soldiers, soldiersByCity$Kingdom == "Shu")
+> heroBarStackedSoldiersWei <- subset(soldiersByCity$Soldiers, soldiersByCity$Kingdom == "Wei")
+> heroBarStackedSoldiersData <- matrix(c(heroBarStackedSoldiersShu, heroBarStackedSoldiersWei), 11, 2)
+> #customizations
+> heroBarStackedSoldiersMain = "Total Soldiers by Kingdom by City"
+> heroBarStackedSoldiersLabX = "Kingdom"
+> heroBarStackedSoldiersLabY = "Number of Soldiers"
+> heroBarStackedSoldiersLimX = c(0, 4)
+> heroBarStackedSoldiersLimY = c(0, 400000)
+> heroBarStackedSoldiersNames = c("Shu", "Wei")
+> heroBarStackedSoldiersRainbowColors = rainbow(11)
+> heroBarStackedSoldiersWidth <- 0.75
+> #set beside argument
+> heroBarStackedSoldiersBeside = FALSE
+> #barplot(...) function
+> barplot(height = heroBarStackedSoldiersData, main = heroBarStackedSoldiersMain, xlab = heroBarStackedSoldiersLabX, ylab = heroBarStackedSoldiersLabY, xlim = heroBarStackedSoldiersLimX, ylim = heroBarStackedSoldiersLimY, names = heroBarStackedSoldiersNames, col = heroBarStackedSoldiersRainbowColors, width = heroBarStackedSoldiersWidth, beside = heroBarStackedSoldiersBeside)
+> #legends
+> legend(x = 1.9, y = 395000, legend = subset(soldiersByCity$City, soldiersByCity$Kingdom == "Shu"), fill = heroBarStackedSoldiersRainbowColors, title = "Shu")
+> legend(x = 3, y = 395000, legend = subset(soldiersByCity$City, soldiersByCity$Kingdom == "Wei"), fill = heroBarStackedSoldiersRainbowColors, title = "Wei")
+
+//CUSTOMIZING A SCATTERPLOT
+
+> #modify the chapter 8 single scatterplot that depicted the relationship between the number of Shu and Wei soldiers engaged in past fire attacks > #use the pch argument to change the style of the data point markers> #pch accepts a whole number value between 0 and 25> scatterplotFireSoldiersPch <- 2> #use the cex argument to change the size of the data point markers> #cex accepts a numeric value indicating by how much to scale the markers> #cex defaults to value of 1> scatterplotFireSoldiersCex <- 3> plot(x = scatterplotFireWeiSoldiersData, y = scatterplotFireShuSoldiersData, main = scatterplotFireSoldiersLabelMain, xlab = scatterplotFireSoldiersLabelX, ylab = scatterplotFireSoldiersLabelY, pch = scatterplotFireSoldiersPch, cex = scatterplotFireSoldiersCex)
+
+> #prepare the line chart to incorporate data from the other battle methods> #modify the chart title> scatterplotAllMethodsSoldiersMain = "Soldiers Engaged by Battle Method"> #rescale the axes to handle the new data> scatterplotAllMethodsSoldiersLimX <- c(0, 200000)> scatterplotAllMethodsSoldiersLimY <- c(0, 150000)> #incorporate the col argument to distinguish between the different battle methods> scatterplotAllMethodsSoldiersFireCol <- "red"> #use plot(...) to create and display the revised line chart> plot(x = scatterplotFireWeiSoldiersData, y = scatterplotFireShuSoldiersData, main = scatterplotAllMethodsSoldiersMain, xlab = scatterplotFireSoldiersLabelX, ylab = scatterplotFireSoldiersLabelY, xlim = scatterplotAllMethodsSoldiersLimX, ylim = scatterplotAllMethodsSoldiersLimY, col = scatterplotAllMethodsSoldiersFireCol, pch = scatterplotFireSoldiersPch, cex = scatterplotFireSoldiersCex)
+
+> #use points(...) to add new relationships to a scatterplot> #add points representing the three remaining battle methods> #note that after entering each subsequent function into the R console, it will be immediately drawn atop your existing scatterplot> #ambush> pointsAmbushDataX <- subsetAmbush$WeiSoldiersEngaged> pointsAmbushDataY <- subsetAmbush$ShuSoldiersEngaged> pointsAmbushType <- "p"> pointsAmbushPch <- 1> pointsAmbushCex <- 1> pointsAmbushCol <- "blue"> points(x = pointsAmbushDataX, y = pointsAmbushDataY, type = pointsAmbushType, col = pointsAmbushCol, pch = pointsAmbushPch, cex = pointsAmbushCex)> #head to head> pointsHeadToHeadDataX <- subsetHeadToHead$WeiSoldiersEngaged> pointsHeadToHeadDataY <- subsetHeadToHead$ShuSoldiersEngaged> pointsHeadToHeadType <- "p"> pointsHeadToHeadPch <- 3> pointsHeadToHeadCex <- 1> pointsHeadToHeadCol <- "darkorange2"> points(x = pointsHeadToHeadDataX, y = pointsHeadToHeadDataY, type = pointsHeadToHeadType, col = pointsHeadToHeadCol, pch = pointsHeadToHeadPch, cex = pointsHeadToHeadCex)> #surround> pointsSurroundDataX <- subsetSurround$WeiSoldiersEngaged> pointsSurroundDataY <- subsetSurround$ShuSoldiersEngaged> pointsSurroundType <- "p"> pointsSurroundPch <- 4> pointsSurroundCex <- 1> pointsSurroundCol <- "forestgreen"> points(x = pointsSurroundDataX, y = pointsSurroundDataY, type = pointsSurroundType, col = pointsSurroundCol, pch = pointsSurroundPch, cex = pointsSurroundCex)
+
+> #add a legend> #use the x and y arguments to specify the exact location of the legend> #add labels for the battle methods> #add fill colors to match the scatterplot's points> legend(x = 145000, y = 65000, legend = c("Fire", "Ambush", "Head to Head", "Surround"), fill = c("red", "blue", "darkorange2", "forestgreen"))
+
+> #add a best fit line using abline(...)> #the reg argument represents a regression equation> #reg is defined using the lm(...) function
+> #the lty argument defines the style of line to be used> #as with other graphic functions, the col argument defines a color for the line> #note that after entering each subsequent function into the R console, it will be immediately drawn atop your existing scatterplot> #fire> scatterplotAllMethodsSoldiersFireLineReg <- lm(scatterplotFireShuSoldiersData ~ scatterplotFireWeiSoldiersData)> scatterplotAllMethodsSoldiersFireLty <- "solid"> #abline(...) will draw a best fit line atop a preexisting plot> abline(reg = scatterplotAllMethodsSoldiersFireLineReg, lty = scatterplotAllMethodsSoldiersFireLty, col = scatterplotAllMethodsSoldiersFireCol)> #ambush> scatterplotAllMethodsSoldiersAmbushLineReg <- lm(pointsAmbushDataY ~ pointsAmbushDataX)> scatterplotAllMethodsSoldiersAmbushLty <- "dotted"> #abline(...) will draw a best fit line atop a preexisting plot> abline(reg = scatterplotAllMethodsSoldiersAmbushLineReg, lty = scatterplotAllMethodsSoldiersAmbushLty, col = pointsAmbushCol)> #head to head> scatterplotAllMethodsSoldiersHeadToHeadLineReg <- lm(pointsHeadToHeadDataY ~ pointsHeadToHeadDataX)> scatterplotAllMethodsSoldiersHeadToHeadLty <- "dotdash"> #abline(...) will draw a best fit line atop a preexisting plot> abline(reg = scatterplotAllMethodsSoldiersHeadToHeadLineReg, lty = scatterplotAllMethodsSoldiersHeadToHeadLty, col = pointsHeadToHeadCol)> #surround> scatterplotAllMethodsSoldiersSurroundLineReg <- lm(pointsSurroundDataY ~ pointsSurroundDataX)> scatterplotAllMethodsSoldiersSurroundLty <- "dashed"> #abline(...) will draw a best fit line atop a preexisting plot> abline(reg = scatterplotAllMethodsSoldiersSurroundLineReg, lty = scatterplotAllMethodsSoldiersSurroundLty, col = pointsSurroundCol)
+
+> #create a scatterplot that depicts the relationship between the execution and rating of past fire attacks
+> heroScatterplotFireExecutionData <- numericExecutionFire
+> heroScatterplotFireRatingData <- subsetFire$Rating
+> #customizations
+> heroScatterplotFireMain <- "Rating on Execution in Fire Attacks"
+> heroScatterplotFireLabX <- "Execution"
+> heroScatterplotFireLabY <- "Rating"
+> #plot(...) function
+> plot(x = heroScatterplotFireExecutionData, y = heroScatterplotFireRatingData, main = heroScatterplotFireMain, xlab = heroScatterplotFireLabX, ylab = heroScatterplotFireLabY)
+> #does it make sense to use a best fit line in this situation?
+
+> #create a sunflower plot using the same function arguments within the sunflowerplot(...) function
+> sunflowerplot(x = heroScatterplotFireExecutionData, y = heroScatterplotFireRatingData, main = heroScatterplotFireMain, xlab = heroScatterplotFireLabX, ylab = heroScatterplotFireLabY)
+> #how does sunflowerplot(...) function differ from plot(...) in how it represents data?
+
+//CUSTOMIZING A LINE CHART
+
+> #modify the chapter 8 single line chart that depicted the durations of past fire attacks> #use the lwd argument to set the line width> #lwd accepts a nonnegative value and defaults to 1> lineFireDurationWidth <- 3> #use plot(...) to create and display the line chart> #recall that a line chart uses the same plot(...) function as a scatterplot, but with a different type argument> plot(x = lineFireDurationDataX, y = lineFireDurationDataY, main = lineFireDurationMain, xlab = lineFireDurationLabX, ylab = lineFireDurationLabY, type = lineFireDurationType, lwd = lineFireDurationWidth)
+
+> #prepare the line chart to incorporate data from the other battle methods> #modify the chart title> lineFireDurationMain = "Duration by Battle Method"> #rescale the y axis to handle the new data> lineFireDurationLimY <- c(0, 200)> #incorporate the col argument to distinguish between the different battle methods> lineFireDurationCol <- "red"> #use plot(...) to create and display the line chart> plot(x = lineFireDurationDataX, y = lineFireDurationDataY, main = lineFireDurationMain, xlab = lineFireDurationLabX, ylab = lineFireDurationLabY, ylim = lineFireDurationLimY, type = lineFireDurationType, lwd = lineFireDurationWidth, col = lineFireDurationCol)
+
+> #use lines(...) to add new relationships to a line chart> #add lines representing the three remaining battle methods to the chart> #note that after entering each subsequent function into the R console, it will be immediately drawn atop your existing line chart> #ambush> lineAmbushDataY <- subsetAmbush$DurationInDays> lineAmbushWidth <- 1> lineAmbushCol <- "blue"> lines(x = lineFireDurationDataX, y = lineAmbushDataY, type = lineFireDurationType, lwd = lineAmbushWidth, col = lineAmbushCol)> #head to head> lineHeadToHeadDataY <- subsetHeadToHead$DurationInDays> lineHeadToHeadWidth <- 1> lineHeadToHeadCol <- "darkorange2"> lines(x = lineFireDurationDataX, y = lineHeadToHeadDataY, type = lineFireDurationType, lwd = lineHeadToHeadWidth, col = lineHeadToHeadCol)> #surround> lineSurroundDataY <- subsetSurround$DurationInDays> lineSurroundWidth <- 1> lineSurroundCol <- "forestgreen"> lines(x = lineFireDurationDataX, y = lineSurroundDataY, type = lineFireDurationType, lwd = lineSurroundWidth, col = lineSurroundCol)
+
+> #add a legend to our line chart> #use the x and y arguments to specify the exact location of the legend> #add labels for the battle methods> #add fill colors to match the chart's lines> legend(x = 23, y = 210, legend = c("Fire", "Ambush", "Head to Head", "Surround"), fill = c("red", "blue", "darkorange2", "forestgreen"))
+
+> #create a multiline chart that portrays the number of Shu soldiers engaged in all instances of each battle method
+> #chart setup
+> heroLineShuSoldiersDataX <- c(1:30)
+> heroLineShuSoldiersMain <- "Shu Soldiers Engaged by Battle Method"
+> heroLineShuSoldiersLabX <- "Battle Number"
+> heroLineShuSoldiersLabY <- "Number of Soldiers"
+> heroLineShuSoldiersLimY <- c(0, 200000)
+> heroLineShuSoldiersType <- "l"
+> heroLineShuSoldiersWidth <- 2
+> #methods
+> heroLineShuSoldiersFireDataY <- subsetFire$ShuSoldiersEngaged
+> heroLineShuSoldiersFireCol <- "red"
+> heroLineShuSoldiersAmbushDataY <- subsetAmbush$ShuSoldiersEngaged
+> heroLineShuSoldiersAmbushCol <- "blue"
+> heroLineShuSoldiersHeadToHeadDataY <- subsetHeadToHead$ShuSoldiersEngaged
+> heroLineShuSoldiersHeadToHeadCol <- "darkorange2"
+> heroLineShuSoldiersSurroundDataY <- subsetSurround$ShuSoldiersEngaged
+> heroLineShuSoldiersSurroundCol <- "forestgreen"
+> #initial line chart
+> plot(x = heroLineShuSoldiersDataX, y = heroLineShuSoldiersFireDataY, main = heroLineShuSoldiersMain, xlab = heroLineShuSoldiersLabX, ylab = heroLineShuSoldiersLabY, ylim = heroLineShuSoldiersLimY, type = heroLineShuSoldiersType, lwd = heroLineShuSoldiersWidth, col = heroLineShuSoldiersFireCol)
+> #battle method lines
+> #ambush
+> lines(x = heroLineShuSoldiersDataX, y = heroLineShuSoldiersAmbushDataY, type = heroLineShuSoldiersType, lwd = heroLineShuSoldiersWidth, col = heroLineShuSoldiersAmbushCol)
+> #head to head
+> lines(x = heroLineShuSoldiersDataX, y = heroLineShuSoldiersHeadToHeadDataY, type = heroLineShuSoldiersType, lwd = heroLineShuSoldiersWidth, col = heroLineShuSoldiersHeadToHeadCol)
+> #surround
+> lines(x = heroLineShuSoldiersDataX, y = heroLineShuSoldiersSurroundDataY, type = heroLineShuSoldiersType, lwd = heroLineShuSoldiersWidth, col = heroLineShuSoldiersSurroundCol)
+> #legend
+> legend(x = 20, y = 200000, legend = c("Fire", "Ambush", "Head to Head", "Surround"), fill = c("red", "blue", "darkorange2", "forestgreen"))
+
+//CUSTOMIZING A BOX PLOT
+
+> #modify the chapter 8 multiple box plot that that compares the number of Shu soldiers required across the battle methods> #rescale the y axis to best display the new range> boxPlotAllMethodsShuSoldiersLimY <- c(0, 100000)> #use the range argument to alter the whisker length of each box> #use range = 0 to extend the whiskers to the most extreme points> #use range > 0 to extend the whisker to a value of n times the interquartile range> #here, limit the whisker range to 1 times the interquartile range> boxPlotAllMethodsShuSoldiersRange <- 1> #use boxplot(...) to create and display the revised line chart> boxplot(formula = boxplotAllMethodsShuSoldiersData, main = boxPlotAllMethodsShuSoldiersLabelMain, xlab = boxPlotAllMethodsShuSoldiersLabelX, ylab = boxPlotAllMethodsShuSoldiersLabelY, ylim = boxPlotAllMethodsShuSoldiersLimY, range = boxPlotAllMethodsShuSoldiersRange)
+
+> #hide the box plot's default axes> #redraw the box plot using the xaxt and yaxt arguments to hide the axes> boxplotAllMethodsShuSoldiersAxtX = "n"> boxplotAllMethodsShuSoldiersAxtY = "n"> #use boxplot(...) to create a display the box plot> #your box plot will have no labels or tick marks on the x and y axes> boxplot(formula = boxplotAllMethodsShuSoldiersData, main = boxPlotAllMethodsShuSoldiersLabelMain, xlab = boxPlotAllMethodsShuSoldiersLabelX, ylab = boxPlotAllMethodsShuSoldiersLabelY, ylim = boxPlotAllMethodsShuSoldiersLimY, range = boxPlotAllMethodsShuSoldiersRange, xaxt = boxplotAllMethodsShuSoldiersAxtX, yaxt = boxplotAllMethodsShuSoldiersAxtY)
+
+> #use axis(...) to add custom x and y axes to the box plot> #your custom axes will be drawn atop the plot that is displayed in the graphic window> #your axes will be displayed when the axis(...) function is executed in the R console> #custom x axis> axis(side = 1, at = c(1, 2, 3, 4), labels = c("Ambush", "Fire", "Head to Head", "Surround"), las = 0)> #custom y axis> axis(side = 2, at = c(1000, 25000, 50000, 75000, 100000), las = 0)
+
+> #create a box plot that depicts the relationship between the number of Wei soldiers targeted by each of the four battle methods
+> #box plot setup
+> heroBoxplotAllMethodsWeiSoldiersData <- battleHistory$WeiSoldiers ~ battleHistory$Method
+> heroBoxplotAllMethodsWeiSoldiersMain <- "Wei Soldiers Targeted by Battle Method"
+> heroBoxplotAllMethodsWeiSoldiersLabX <- "Battle Method"
+> heroBoxplotAllMethodsWeiSoldiersLabY <- "Number of Soldiers"
+> heroBoxplotAllMethodsWeiSoldiersLimY <- c(0, 75000)
+> heroBoxplotAllMethodsWeiSoldiersRange <- 1
+> heroBoxplotAllMethodsWeiSoldiersXaxt <- "n"
+> heroBoxplotAllMethodsWeiSoldiersYaxt <- "n"
+> #initial box plot
+> boxplot(formula = heroBoxplotAllMethodsWeiSoldiersData, main = heroBoxplotAllMethodsWeiSoldiersMain, xlab = heroBoxplotAllMethodsWeiSoldiersLabX, ylab = heroBoxplotAllMethodsWeiSoldiersLabY, ylim = heroBoxplotAllMethodsWeiSoldiersLimY, range = heroBoxplotAllMethodsWeiSoldiersRange, xaxt = heroBoxplotAllMethodsWeiSoldiersXaxt, yaxt = heroBoxplotAllMethodsWeiSoldiersYaxt)
+> #custom axes
+> #x
+> axis(side = 1, at = c(1, 2, 3, 4), labels = c("Ambush", "Fire", "Head to Head", "Surround"), las = 0)
+> #y
+> axis(side = 2, at = c(1000, 10000, 25000, 50000, 75000), las = 0)
+
+//CUSTOMIZING A HISTOGRAM
+
+> #modify the chapter 8 histogram that depicted the frequency distribution of past fire attack durations> #use the breaks argument to divide the histogram's columns along the x axis> #breaks accepts a vector containing the points at which columns should occur> histFireDurationBreaks <- c(0:14)> #use hist(...) to create and display the histogram> hist(x = histFireDurationData, main = histFireDurationDataMain, xlab = histFireDurationLabX, col = histFireDurationRainbowColor, breaks = histFireDurationBreaks)
+
+> #use the freq argument to plot densities or counts> #if freq is TRUE (default), counts are graphed on the y axis> #a count tells us the number of times that a data point occurred> #if freq is FALSE, densities are graphed on the y axis> #a density tells us what percentage a data point's count represents out of all occurrences> #when summed, the densities always add up to 1> histFireDurationFreq <- FALSE> #remember to modify the ylim argument, as our previous one applied to counts and not to densities> histFireDurationDensityLimY <- c(0, 0.2)> #use hist(...) to create and display the histogram> hist(x = histFireDurationData, main = histFireDurationDataMain, xlab = histFireDurationLabX, ylim = histFireDurationDensityLimY, col = histFireDurationRainbowColor, breaks = histFireDurationBreaks, freq = histFireDurationFreq)
+
+> #create a histogram that conveys the number of Shu soldiers engaged in past fire attacks
+> #count
+> heroHistShuSoldiersData <- subsetFire$ShuSoldiersEngaged
+> heroHistShuSoldiersMain <- "Shu Soldiers Engaged in Fire Attacks"
+> heroHistShuSoldiersLabX <- "Shu Soldiers"
+> heroHistShuSoldiersRainbowColor <- rainbow(8)
+> heroHistShuSoldiersBreaks <- c(0, 250, 500, 750, 1000, 2000, 5000, 10000)
+> heroHistShuSoldiersFreqCount <- TRUE
+> hist(x = heroHistShuSoldiersData, main = heroHistShuSoldiersMain, xlab = heroHistShuSoldiersLabX, col = heroHistShuSoldiersRainbowColor, breaks = heroHistShuSoldiersBreaks, freq = heroHistShuSoldiersFreqCount)
+> #density
+> heroHistShuSoldiersLimY <- c(0, 0.001)
+> heroHistShuSoldiersFreqDensity <- FALSE
+> hist(x = heroHistShuSoldiersData, main = heroHistShuSoldiersMain, xlab = heroHistShuSoldiersLabX, ylim = heroHistShuSoldiersLimY, col = heroHistShuSoldiersRainbowColor, breaks = heroHistShuSoldiersBreaks, freq = heroHistShuSoldiersFreqDensity)
+
+//CUSTOMIZING A PIE CHART
+
+> #modify the chapter 8 pie chart that depicted the gold cost of the fire attack in relation to the total funds allotted to the Shu army> #use the labels argument to add percentages to a pie chart> #create a vector containing the labels to be used for the pie's slices> pieFireGoldCostLabelsPercent <- round(pieFireGoldCostSlices / sum(pieFireGoldCostSlices) * 100, 1)> #use the paste(...) function to add a percent sign (%) to the end of each label> pieFireGoldCostLabelsPercent <- paste(pieFireGoldCostLabelsPercent, "%", sep="")> #note that paste(...) can be used to add any kind of text before or after a label> #use the pie(...) function to create and display the pie chart> pie(x = pieFireGoldCostSlices, labels = pieFireGoldCostLabelsPercent, main = pieFireGoldCostMain, col = pieFireGoldCostSpecificColors)
+
+> #add a legend to the pie chart> legend(x = "bottom", legend = pieFireGoldCostLabels, fill = pieFireGoldCostSpecificColors)
+
+> #create a pie chart that conveys the relationship between the number of soldiers engaged in the planned fire attack and the total number of soldiers housed at Hanzhong
+> #chart setup
+> heroFirePieHanzhongSlices <- c(2500, 197500)
+> heroFirePieHanzhongLabels <- c(round(heroFirePieHanzhongSlices / sum(heroFirePieHanzhongSlices) * 100, 1))
+> heroFirePieHanzhongMain <- "Soldiers Deployed Compared to Housed at Hanzhong"
+> heroFirePieHanzhongLabelsPercent <- paste(heroFirePieHanzhongLabels, "%", sep="")
+> heroFirePieHanzhongSpecificColors <- c("red", "yellow")
+> #pie(...) function> pie(x = heroFirePieHanzhongSlices, labels = heroFirePieHanzhongLabelsPercent, main = heroFirePieHanzhongMain, col = heroFirePieHanzhongSpecificColors)
+> #legend> legend(x = "bottom", legend = c("Deployed for Fire Attack", "Housed at Hanzhong"), fill = heroFirePieHanzhongSpecificColors)
+
+//BUILDING A GRAPHIC
+
+> #build a custom graphic from scratch> #step 1: create a foundation> #create a graphic that depicts the number of Shu and Wei soldiers engaged in past fire attacks> #prepare the graphic's basic parameters> #note that this will require thinking ahead about the information that you want to display> buildFireSoldiersMain <- "Soldiers Engaged by Kingdom"> buildFireSoldiersLabX <- "Battle Number"> buildFireSoldiersLabY <- ""> buildFireSoldiersLimX <- c(0, 30)> buildFireSoldiersLimY <- c(0, 50000)> #hide the points and axes> buildFireSoldiersType <- "n"> buildFireSoldiersAxtX <- "n"> buildFireSoldiersAxtY <- "n"> #use the plot(...) function to create a foundation for the graphic> plot(x = 0, y = 0, main = buildFireSoldiersMain, xlab = buildFireSoldiersLabX, ylab = buildFireSoldiersLabY, xlim = buildFireSoldiersLimX, ylim = buildFireSoldiersLimY, type = buildFireSoldiersType, xaxt = buildFireSoldiersAxtX, yaxt = buildFireSoldiersAxtY)
+
+> #step 2: add axes> #use axis(...) to add custom x and y axes to the graphic> #x axis> axis(side = 1, at = c(0:30), las = 0)> #y axis> axis(side = 2, at = c(1000, 5000, 10000, 20000, 30000, 40000, 50000), las = 1)
+
+> #step 3: add data> #use points(...) to add data to the graphic> #note that lines(...) can also be used to add data to a graphic> #add points to show the number of Shu soldiers engaged in past fire attacks> pointsFireShuSoldiersDataX <- c(1:30)> pointsFireShuSoldiersDataY <- subsetAmbush$ShuSoldiersEngaged> pointsFireShuSoldiersType <- "p"> pointsFireShuSoldiersColor <- "forestgreen"> points(x = pointsFireShuSoldiersDataX, y = pointsFireShuSoldiersDataY, type = pointsFireShuSoldiersType, col = pointsFireShuSoldiersColor)> #add points to show the number of Wei soldiers engaged in past fire attacks> pointsFireWeiSoldiersDataX <- c(1:30)> pointsFireWeiSoldiersDataY <- subsetAmbush$WeiSoldiersEngaged> pointsFireWeiSoldiersType <- "p"> pointsFireWeiSoldiersColor <- "blue"> pointsFireWeiSoldiersPch <- 0> points(x = pointsFireWeiSoldiersDataX, y = pointsFireWeiSoldiersDataY, type = pointsFireWeiSoldiersType, col = pointsFireWeiSoldiersColor, pch = pointsFireWeiSoldiersPch)
+
+> #step 4: add a legend, if necessary> #use legend(...) to add a legend to the graphic> legend(x = 0, y = 50000, legend = c("Shu", "Wei"), fill = c(pointsFireShuSoldiersColor, pointsFireWeiSoldiersColor))
+
+//BUILDING A GRAPHIC WITH MULTIPLE VISUALS
+
+> #use par(mfcol) to prepare the graphic window to display multiple graphics simultaneously> #the mfcol argument receives a vector indicating the number of rows and columns to reserve for separate graphics in the graphics window> #here, we want 4 total graphics, so use a 2x2 vector> par(mfcol = c(2,2))> #note that a blank graphic window will open> #if this window is closed, your graphic window will default back to displaying a single visual> #if it remains open, your graphic window will continue to add visuals to the 2x2 grid as they are created
+
+> #create the first graphic by duplicating the steps taken in the Building a graphic activity> #this scatterplot depicted the number of Shu and Wei soldiers engaged in past fire attacks> plot(x = 0, y = 0, main = buildFireSoldiersMain, xlab = buildFireSoldiersLabX, ylab = buildFireSoldiersLabY, xlim = buildFireSoldiersLimX, ylim = buildFireSoldiersLimY, type = buildFireSoldiersType, xaxt = buildFireSoldiersAxtX, yaxt = buildFireSoldiersAxtY)> axis(side = 1, at = c(0:30), las = 0)> axis(side = 2, at = c(1000, 5000, 10000, 20000, 30000, 40000, 50000), las = 1)> points(x = pointsFireShuSoldiersDataX, y = pointsFireShuSoldiersDataY, type = pointsFireShuSoldiersType, col = pointsFireShuSoldiersColor)> points(x = pointsFireWeiSoldiersDataX, y = pointsFireWeiSoldiersDataY, type = pointsFireWeiSoldiersType, col = pointsFireWeiSoldiersColor, pch = pointsFireWeiSoldiersPch)> legend(x = 0, y = 50000, legend = c("Shu", "Wei"), fill = c(pointsFireShuSoldiersColor, pointsFireWeiSoldiersColor))
+
+> #add a second chart that depicts the duration of past battles> #create new variables where necessary> #otherwise reuse the variables from our initial graphic> #basic parameters> buildFireDurationMain <- "Duration in Days"> buildFireDurationLabY <- "Days"> buildFireDurationLimY <- c(0, 14)> #use the plot(...) function to create a foundation for the graphic> plot(x = 0, y = 0, main = buildFireDurationMain, xlab = buildFireSoldiersLabX, ylab = buildFireDurationLabY, xlim = buildFireSoldiersLimX, ylim = buildFireDurationLimY, type = buildFireSoldiersType, xaxt = buildFireSoldiersAxtX, yaxt = buildFireSoldiersAxtY)> #axes> #x axis> axis(side = 1, at = c(0:30), las = 0)> #y axis> axis(side = 2, at = c(0:14), las = 1)> #use lines(...) to add data to the graphic> #add a line representing the duration in days for each battle> lineFireDurationDataX <- c(1:30)> lineFireDurationDataY <- subsetFire$DurationInDays> lineFireDurationType <- "o"> lineFireDurationWidth <- 1> lineFireDurationColor <- "red"> lines(x = lineFireDurationDataX, y = lineFireDurationDataY, type = lineFireDurationType, lwd = lineFireDurationWidth, col = lineFireDurationColor)> #use abline(...) to add a horizontal line to the chart> #add a line representing the mean duration> lineFireDurationMeanWidth <- 3> lineFireDurationMeanColor <- "blue"> abline(h = mean(lineFireDurationDataY), lwd = lineFireDurationMeanWidth, col = lineFireDurationMeanColor)
+
+> #add a third chart that depicts the percentage of victorious fire attacks when the strategy is executed successfully> #basic parameters> buildFireResultMain <- "Result When Successfully Executed"> buildFireResultSlices <- c(length(subset(numericResultFire, numericExecutionFire == 1 & numericResultFire == 1)), length(subset(numericExecutionFire, numericExecutionFire == 1 & numericResultFire == 0)))> buildFireResultLabels <- paste(buildFireResultSlices / sum(buildFireResultSlices) * 100,  "%", sep = "")> buildFireResultColors <- c("red", "blue")> #use the pie(...) function to create and display the pie chart> pie(x = buildFireResultSlices, labels = buildFireResultLabels, main = buildFireResultMain, col = buildFireResultColors)> #legend> legend(x = "topright", legend = c("Victory", "Defeat"), fill = buildFireResultColors, cex = 0.85)
+
+> #add a fourth chart that compares the gold cost (in thousands) of the fire attack with the other battle methods> #get the raw cost of the various methods using comparable resources> goldCostFire <- functionGoldCost(2500, 225, 7)> goldCostAmbush <- functionGoldCost(meanShuSoldiersAmbush, 225, meanDurationAmbush)> goldCostHeadToHead <- functionGoldCost(meanShuSoldiersHeadToHead, 225, meanDurationHeadToHead)> goldCostSurround <- functionGoldCost(meanShuSoldiersSurround, 225, meanDurationSurround)> #basic parameters> #note that the bar heights are divided by 1000 so they are represented in thousands of gold> #presenting larger numbers in this manner is one way to keep our axes cleaner and our graphics more readable> buildCostHeight <- c(goldCostFire, goldCostAmbush, goldCostHeadToHead, goldCostSurround) / 1000> buildCostMain <- "Cost Comparison by Method"> buildCostLabX <- "Gold Cost (in thousands)"> buildCostLimX <- c(0, 400)> buildCostLimY <- c(0, 5)> buildCostNames <- c("Fire", "Amb", "Head", "Sur")> buildCostColors <- rainbow(length(buildCostHeight))> buildCostHoriz <- TRUE> #use the barplot(...) function to create and display the bar chart> barplot(height = buildCostHeight, main = buildCostMain, xlab = buildCostLabX, xlim = buildCostLimX, ylim = buildCostLimY, names = buildCostNames, col = buildCostColors, horiz = buildCostHoriz)> #legend> legend(x = 275, y = 2, legend = round(buildCostHeight * 1000, 0), fil = buildCostColors, title = "Exact Cost", cex = 0.75)
+
+> #save your R workspace using save.image(file)
+> #remember to include the .RData file extension> save.image("myWorkspace.RData")> #save your R console text by copying and pasting it into a text file
+

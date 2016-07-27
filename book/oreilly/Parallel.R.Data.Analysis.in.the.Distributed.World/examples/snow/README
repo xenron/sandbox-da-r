@@ -1,0 +1,30 @@
+This directory contains R scripts that demonstrate the "snow" package,
+and are based on the examples in chapter two of the book "Parallel R".
+
+The example scripts can be executed using a command such as:
+
+  % R --slave -f kmeans.R
+
+or using the "source" function within an R session:
+
+  > source('kmeans.R')
+
+Using the "source" function allows the timing plots to be displayed
+interactively in clusterapplylb.R, loadbalancing.R and parlapply.R.
+
+Note that config.R will have to be edited, since it contains host and
+user names that very likely don't exist on your system.
+
+Example scripts:
+
+  kmeans.R             Parallel kmeans example using clusterApply
+  workerinit.R         Worker initialization
+  clusterapplylb.R     clusterApplyLB function example
+  parlapply.R          parLapply function example
+  clustersplit.R       Using clusterSplit to implement parVapply
+  loadbalancing.R      Using clusterApplyLB to implement parLapplyLB
+  env.R                Demonstrating function serialization
+  rng.R                Using clusterSetupRNG for parallel RNG
+  config.R             How to configure different workers differently
+  mpi.R                Simple example of creating and using an MPI cluster
+  batchmpi.sh          Simple PBS/TORQUE script for executing mpi.R

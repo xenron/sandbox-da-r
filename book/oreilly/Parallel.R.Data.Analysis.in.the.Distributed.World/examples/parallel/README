@@ -1,0 +1,20 @@
+This directory contains R scripts that demonstrate the "parallel"
+package, and are based on examples in chapter three of the book
+"Parallel R".  Note that you must be using R 2.14.0 or later to execute
+these examples.  If you're using an older version of R you won't be able
+to load the "parallel" package.  
+
+The example scripts can be executed using a command such as:
+
+  % R --slave -f parstarted.R
+
+or using the "source" function within an R session:
+
+  > source('parstarted.R')
+
+Example scripts:
+
+  parstarted.R         Using mclapply and clusterApply to implement
+                       parallel kmeans
+  parmakecluster.R     Creating PSOCK and FORK cluster objects
+  parrng.R             Using the new L'Ecuyer-CMRG RNG with parallel

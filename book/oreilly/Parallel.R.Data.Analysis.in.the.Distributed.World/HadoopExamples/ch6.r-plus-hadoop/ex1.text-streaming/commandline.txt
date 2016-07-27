@@ -1,0 +1,11 @@
+${HADOOP_COMMAND} jar ${HADOOP_STREAMING_JAR} \
+	\
+	-D mapred.output.compress=true \
+	-D mapred.output.compression.codec=${HADOOP_COMPRESSION_CODEC} \
+	-D mapreduce.job.reduces=0 \
+	-D mapred.task.timeout=600000 \
+	\
+	-inputformat ${HADOOP_INPUTFORMAT} \
+	-input /tmp/small.txt \
+	-output /tmp/hadoop-out \
+	-mapper $PWD/mapper.R

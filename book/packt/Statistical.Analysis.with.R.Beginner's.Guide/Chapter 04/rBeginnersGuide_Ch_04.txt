@@ -1,0 +1,183 @@
+//R Beginner's Guide
+//Chapter 4 - Collecting and Organizing Information
+//by John M. Quick
+//created June 7, 2010
+
+//IMPORTING EXTERNAL DATA
+
+> #set the R working directory
+> #replace the sample location with one that is relevant to you> setwd("/Users/johnmquick/rBeginnersGuide/")
+
+> #copy the hanzhongResources.csv file into your working directory
+
+> #use read.csv(file) to read an external data file into R> #Shu resources located in Hanzhong, China> read.csv("hanzhongResources.csv")
+
+//CREATING AND CALLING VARIABLES
+
+> #read the data from hanzhongResources.csv into a variable named hanzhongResources> hanzhongResources <- read.csv("hanzhongResources.csv")
+
+> #display the contents of the hanzhongResources variable> #Shu resources located in Hanzhong, China> hanzhongResources
+     Gold Provisions Soldiers EquipmentCondition
+1 1000000    1000000   100000                  1
+
+> #read the data from soldiersByCity.csv into a variable named soldiersByCity> soldiersByCity <- read.csv("soldiersByCity.csv")
+
+> #display the contents of soldiersByCity
+> soldiersByCity
+   Kingdom       City Soldiers
+1      Shu   Hanzhong   100000
+2      Shu    Chengdu    25000
+3      Shu    Yinping    15000
+4      Shu     Badong    15000
+5      Shu       Baxi    10000
+6      Shu   Guanghan    10000
+7      Shu         Ba     5000
+8      Shu      Zhuti     5000
+9      Shu     Jianti     5000
+10     Shu     Yunnan     5000
+11     Shu  Yongchang     5000
+12     Wei    Luoyang   200000
+13     Wei     Longxi    50000
+14     Wei    Nanyang    25000
+15     Wei      Runan    20000
+16     Wei     Xiping    15000
+17     Wei  Guangling    15000
+18     Wei Changguang    15000
+19     Wei  Changshan    15000
+20     Wei         Ye    15000
+21     Wei       Qiao    15000
+22     Wei     Anding    10000
+
+//ACCESSING DATA WITHIN VARIABLES
+
+> #isolate a single column within a dataset using the variable$column notation.> #display the contents of the Soldiers column from the soldiersByCity variable> soldiersByCity$Soldiers
+ [1] 100000  25000  15000  15000  10000  10000
+ [7]   5000   5000   5000   5000   5000 200000
+[13]  50000  25000  20000  15000  15000  15000
+[19]  15000  15000  15000  10000
+
+> #isolate a single column within a dataset using the attach(variable) function and simplified notation> #attach the soldiersByCity variable> attach(soldiersByCity)> #display the contents of the Soldiers column from the soldiersByCity variable> Soldiers
+ [1] 100000  25000  15000  15000  10000  10000
+ [7]   5000   5000   5000   5000   5000 200000
+[13]  50000  25000  20000  15000  15000  15000
+[19]  15000  15000  15000  10000
+
+> #isolate a single row within a dataset using the variable[row, column] matrix notation.> #display the contents of the tenth row in the soldiersByCity variable> soldiersByCity[10,]
+   Kingdom   City Soldiers
+10     Shu Yunnan     5000
+
+> #isolate a single cell within a dataset using the variable[row, column] matrix notation.> #display the contents of cell [5,3] in the soldiersByCity variable> soldiersByCity[5,3]
+
+//MANIPULATING VARIABLE DATA
+
+> #if a flood destroyed 75% of the Shu resources at Hanzhong, how much of each resource would remain?> #multiply the hanzhongResources variable by 0.25 to represent the remaining 25% of the original resources> hanzhongResources * 0.25
+    Gold Provisions Soldiers EquipmentCondition
+1 250000     250000    25000               0.25
+
+> #if a flood destroyed 75% of the Provisions at Hanzhong, how much would remain?> #multiply the Provisions column by 0.25 to represent the remaining 25% of the original resources> hanzhongResources$Provisions * 0.25
+[1] 250000
+
+> #use the mean(data) function to calculate the average number of soldiers stationed in a Shu city> #on average, a Shu city has this many soldiers:> mean(soldiersByCity$Soldiers)
+[1] 27045.45
+
+> #save the mean number of soldiers per city into a new variable named meanSoldiersByCity> meanSoldiersByCity <- mean(soldiersByCity$Soldiers)
+> #display the contents of meanSoldiersByCity
+> meanSoldiersByCity
+[1] 27045.45
+
+> #what happens if we try to make a numeric calculation on nonnumeric data?
+> #we receive a warning, because it does not make sense to manipulate text mathematically> soldiersByCity * 5
+   Kingdom City Soldiers
+1       NA   NA   500000
+2       NA   NA   125000
+3       NA   NA    75000
+4       NA   NA    75000
+5       NA   NA    50000
+6       NA   NA    50000
+7       NA   NA    25000
+8       NA   NA    25000
+9       NA   NA    25000
+10      NA   NA    25000
+11      NA   NA    25000
+12      NA   NA  1000000
+13      NA   NA   250000
+14      NA   NA   125000
+15      NA   NA   100000
+16      NA   NA    75000
+17      NA   NA    75000
+18      NA   NA    75000
+19      NA   NA    75000
+20      NA   NA    75000
+21      NA   NA    75000
+22      NA   NA    50000
+Warning messages:
+1: In Ops.factor(left, right) : * not meaningful for factors
+2: In Ops.factor(left, right) : * not meaningful for factors
+
+> #if a flood damaged 3/4 of our resources at Hanzhong, how much of each would remain?
+> hanzhongResourcesAfterFlood <- hanzhongResources / 2
+> #display the contents of hanzhongResourcesAfterFlood
+> hanzhongResourcesAfterFlood
+    Gold Provisions Soldiers EquipmentCondition
+1 500000     500000    50000                0.5
+
+> #if 5000 soldiers were relocated from Guanghan to Baxi, how could this shift in resources be represented using R?
+> #add 5000 soldiers from the soldiersByCity cell that represents Baxi
+> baxiSoldiersAfterRelocation <- soldiersByCity[5,3] + 5000
+> #display the contents of baxiSoldiersAfterRelocation
+> baxiSoldiersAfterRelocation
+[1] 15000
+> #subtract 5000 soldiers from the soldiersByCity cell that represents Guanghan
+> guanghanSoldiersAfterRelocation <- soldiersByCity[6,3] - 5000
+> #display the contents of guanghanSoldiersAfterRelocation
+> guanghanSoldiersAfterRelocation
+[1] 5000
+
+> #use min(data) and max(data) to calculate the minimum and maximum of a given dataset
+> #what is the mimimum number of soldiers in a Shu or Wei city?
+> minSoldiersByCity <- min(soldiersByCity[,3])
+> #display the contents of minSoldiersByCity
+> minSoldiersByCity
+[1] 5000
+> #what is the maximum number of soldiers in a Shu or Wei city?
+> maxSoldiersByCity <- max(soldiersByCity[,3])
+> #display the contents of maxSoldiersByCity
+> maxSoldiersByCity
+[1] 200000
+
+> #use sum(data) to calculate the sum a given dataset
+> #what is the total number of soldiers in the Shu and Wei armies?
+> totalSoldiers <- sum(soldiersByCity[,3])
+> #display the contents of totalSoldiers
+> totalSoldiers
+[1] 595000
+
+//MANAGING THE R WORKSPACE
+
+> #save the R workspace to the working directory using save.image(file)> save.image("rBeginnersGuide_Ch_04.RData")
+
+> #load a previously saved R workspace using load(file)> load("rBeginnersGuide_Ch_04.RData")
+
+> #list the current contents of the R workspace using ls()> ls()
+
+> #quit R using the q() command
+> q()
+
+//COLLECTING AND ORGANIZING NEW DATA
+
+> #read the contents of battleHistory.csv into a new variable named battleHistory
+> battleHistory <- read.csv("battleHistory.csv")
+
+> #what is the average number of soldiers to engage in combat for both the Shu and Wei forces?
+> meanSoldiersShu <- mean(battleHistory$ShuSoldiersEngaged)
+> #display the contents of meanSoldiersShu
+[1] 21035.83
+> #on average, the Wei army engages how many soldiers in battle?
+> meanSoldiersWei <- mean(battleHistory$WeiSoldiersEngaged)
+> #display the contents of meanSoldiersWei
+[1] 21937.5
+
+> #save your R workspace using save.image(file)
+> #remember to include the .RData file extension> save.image("rBeginnersGuide_Ch_04_hero.RData")
+
+> #save your R console text by copying and pasting it into a text file

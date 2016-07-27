@@ -1,0 +1,273 @@
+//R Beginner's Guide
+//Chapter 7 - Organizing the Battle Plans
+//by John M. Quick
+//created June 4, 2010
+
+//RETRACING AND REFINING A COMPLETE ANALYSIS
+
+//FIRST STEPS
+
+> #set the R working directory using setwd(dir)> setwd("/Users/johnmquick/rBeginnersGuide/") 
+
+> #verify the location of your working directory> getwd()[1] "/Users/johnmquick/rBeginnersGuide/"
+
+//DATA SETUP
+
+> #read the contents of battleHistory.csv into an R variable> #battleHistory contains data from 120 previous battles between the Shu and Wei forces> battleHistory <- read.table("battleHistory.csv", TRUE, ",")
+
+> #use the subset(data, ...) function to create a subset of the battleHistory dataset that contains data only from battles in which the fire attack strategy was employed> subsetFire <- subset(battleHistory, battleHistory$Method == "fire")
+
+> #display the fire attack data subset
+> subsetFire
+    Method Rating SuccessfullyExecuted  Result ShuSoldiersEngaged WeiSoldiersEngaged DurationInDays
+91    fire     30                    N  Defeat                100               1500              4
+92    fire    100                    Y Victory                100               1500              1
+93    fire     25                    N  Defeat                100               2500              2
+94    fire     10                    N  Defeat                250               2500             14
+95    fire     95                    Y Victory                250               2000              4
+96    fire     30                    N  Defeat                250               2000             10
+97    fire     30                    N  Defeat                500               4000             13
+98    fire     20                    N  Defeat                500               4000             13
+99    fire     70                    Y  Defeat                500               5000              3
+100   fire     90                    Y Victory                500               5000              6
+101   fire     30                    N  Defeat                500               5000             12
+102   fire     40                    N  Defeat               1000               5000              3
+103   fire     45                    N  Defeat               1000               5000              1
+104   fire     15                    N  Defeat               1000              10000             12
+105   fire     90                    Y Victory               1000              10000              3
+106   fire     15                    N  Defeat               1000              10000             10
+107   fire     20                    N  Defeat               1500              25000              2
+108   fire     25                    N  Defeat               1500              10000              4
+109   fire     85                    Y Victory               1500              10000             10
+110   fire     85                    Y Victory               2000               7500              9
+111   fire     30                    N  Defeat               2000               7500              7
+112   fire     40                    N  Defeat               2000              25000              2
+113   fire     40                    N  Defeat               2500              20000              3
+114   fire     30                    N  Defeat               2500              18000              7
+115   fire     80                    Y Victory               2500              12000              4
+116   fire     15                    N  Defeat               5000              10000             11
+117   fire     10                    N  Defeat               5000              50000             13
+118   fire     80                    Y Victory               7500              25000              4
+119   fire     50                    Y  Defeat               7500              50000              9
+120   fire     15                    N  Defeat              10000              25000             10
+
+//DATA EXPLORATION
+
+> #generate a summary of the fire subset> summaryFire <- summary(subsetFire)> #display the summary> summaryFire
+        Method       Rating       SuccessfullyExecuted     Result   ShuSoldiersEngaged WeiSoldiersEngaged DurationInDays  
+ ambush    : 0   Min.   : 10.00   N:20                 Defeat :22   Min.   :  100      Min.   : 1500      Min.   : 1.000  
+ fire      :30   1st Qu.: 21.25   Y:10                 Victory: 8   1st Qu.:  500      1st Qu.: 4250      1st Qu.: 3.000  
+ headToHead: 0   Median : 30.00                                     Median : 1000      Median : 8750      Median : 6.500  
+ surround  : 0   Mean   : 44.67                                     Mean   : 2052      Mean   :12333      Mean   : 6.867  
+                 3rd Qu.: 77.50                                     3rd Qu.: 2375      3rd Qu.:16500      3rd Qu.:10.000  
+                 Max.   :100.00                                     Max.   :10000      Max.   :50000      Max.   :14.000
+
+> #represent categorical data numerically using as.numeric(data)> #recode the Method column into Fire = 1> numericMethodFire <- as.numeric(subsetFire$Method) - 1
+
+> #recode the SuccessfullyExecuted column into N = 0 and Y = 1> numericExecutionFire <- as.numeric(subsetFire$SuccessfullyExecuted) - 1
+
+> #recode the Result column into Defeat = 0 and Victory = 1> numericResultFire <- as.numeric(subsetFire$Result) - 1
+
+> #save the data in the numeric Method, SuccessfullyExecuted, and Result columns back into the fire attack dataset> subsetFire$Method <- numericMethodFire> subsetFire$SuccessfullyExecuted <- numericExecutionFire> subsetFire$Result <- numericResultFire
+
+> #display the numeric version of the fire attack subset
+> subsetFire
+    Method Rating SuccessfullyExecuted Result ShuSoldiersEngaged WeiSoldiersEngaged DurationInDays
+91       1     30                    0      0                100               1500              4
+92       1    100                    1      1                100               1500              1
+93       1     25                    0      0                100               2500              2
+94       1     10                    0      0                250               2500             14
+95       1     95                    1      1                250               2000              4
+96       1     30                    0      0                250               2000             10
+97       1     30                    0      0                500               4000             13
+98       1     20                    0      0                500               4000             13
+99       1     70                    1      0                500               5000              3
+100      1     90                    1      1                500               5000              6
+101      1     30                    0      0                500               5000             12
+102      1     40                    0      0               1000               5000              3
+103      1     45                    0      0               1000               5000              1
+104      1     15                    0      0               1000              10000             12
+105      1     90                    1      1               1000              10000              3
+106      1     15                    0      0               1000              10000             10
+107      1     20                    0      0               1500              25000              2
+108      1     25                    0      0               1500              10000              4
+109      1     85                    1      1               1500              10000             10
+110      1     85                    1      1               2000               7500              9
+111      1     30                    0      0               2000               7500              7
+112      1     40                    0      0               2000              25000              2
+113      1     40                    0      0               2500              20000              3
+114      1     30                    0      0               2500              18000              7
+115      1     80                    1      1               2500              12000              4
+116      1     15                    0      0               5000              10000             11
+117      1     10                    0      0               5000              50000             13
+118      1     80                    1      1               7500              25000              4
+119      1     50                    1      0               7500              50000              9
+120      1     15                    0      0              10000              25000             10
+
+> #use cor(data) to calculate all of the correlations in the fire attack dataset> cor(subsetFire)
+                     Method     Rating SuccessfullyExecuted     Result ShuSoldiersEngaged WeiSoldiersEngaged DurationInDays
+Method                    1         NA                   NA         NA                 NA                 NA             NA
+Rating                   NA  1.0000000           0.91945796  0.9006976        -0.11452122        -0.17682082     -0.4597561
+SuccessfullyExecuted     NA  0.9194580           1.00000000  0.8528029         0.08174874         0.02636586     -0.2652026
+Result                   NA  0.9006976           0.85280287  1.0000000        -0.03270480        -0.15458357     -0.2514287
+ShuSoldiersEngaged       NA -0.1145212           0.08174874 -0.0327048         1.00000000         0.73850610      0.1629878
+WeiSoldiersEngaged       NA -0.1768208           0.02636586 -0.1545836         0.73850610         1.00000000      0.1070097
+DurationInDays           NA -0.4597561          -0.26520256 -0.2514287         0.16298783         0.10700973      1.0000000
+Warning message:
+In cor(subsetFire) : the standard deviation is zero
+
+//MODEL DEVELOPMENT
+
+> #create a linear regression model using the glm(formula, data) function> #predict the rating of battle using execution> lmFireRating_Execution <- glm(Rating ~ SuccessfullyExecuted, data = subsetFire)> #generate a summary of the model> lmFireRating_Execution_Summary <- summary(lmFireRating_Execution)> #display the model summary> lmFireRating_Execution_Summary
+Call:
+glm(formula = Rating ~ SuccessfullyExecuted, data = subsetFire)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-32.500   -9.500    2.500    6.687   19.250  
+
+Coefficients:
+                     Estimate Std. Error t value Pr(>|t|)    
+(Intercept)            25.750      2.648   9.725 1.78e-10 ***
+SuccessfullyExecuted   56.750      4.586  12.374 7.20e-13 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+(Dispersion parameter for gaussian family taken to be 140.2232)
+
+    Null deviance: 25396.7  on 29  degrees of freedom
+Residual deviance:  3926.2  on 28  degrees of freedom
+AIC: 237.36
+
+Number of Fisher Scoring iterations: 2
+
+> #keep execution in the model as an independent variable
+
+> #predict the rating of battle using execution and duration> lmFireRating_ExecutionDuration <- glm(Rating ~ SuccessfullyExecuted + DurationInDays, data = subsetFire)> #generate a summary of the model> lmFireRating_ExecutionDuration_Summary <- summary(lmFireRating_ExecutionDuration)> #display the model summary> lmFireRating_ExecutionDuration_Summary
+Call:
+glm(formula = Rating ~ SuccessfullyExecuted + DurationInDays, 
+    data = subsetFire)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-26.515   -6.360    3.052    8.377   12.905  
+
+Coefficients:
+                     Estimate Std. Error t value Pr(>|t|)    
+(Intercept)           38.1253     4.0899   9.322 6.27e-10 ***
+SuccessfullyExecuted  52.9484     3.9815  13.299 2.28e-13 ***
+DurationInDays        -1.6177     0.4493  -3.600  0.00126 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+(Dispersion parameter for gaussian family taken to be 98.24895)
+
+    Null deviance: 25396.7  on 29  degrees of freedom
+Residual deviance:  2652.7  on 27  degrees of freedom
+AIC: 227.6
+
+Number of Fisher Scoring iterations: 2
+
+> lmFireRating_ExecutionDuration_Summary
+
+> #predict the rating of battle using execution, duration, and the number of Shu and Wei soldiers engaged> lmFireRating_ExecutionDurationSoldiers <- glm(Rating ~ SuccessfullyExecuted + DurationInDays + ShuSoldiersEngaged + WeiSoldiersEngaged, data = subsetFire)> #generate a summary of the model> lmFireRating_ExecutionDurationSoldiers_Summary <- summary(lmFireRating_ExecutionDurationSoldiers)> #display the model summary> lmFireRating_ExecutionDurationSoldiers_Summary
+Call:
+glm(formula = Rating ~ SuccessfullyExecuted + DurationInDays + 
+    ShuSoldiersEngaged + WeiSoldiersEngaged, data = subsetFire)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-19.404   -5.672    2.546    6.168   10.559  
+
+Coefficients:
+                       Estimate Std. Error t value Pr(>|t|)    
+(Intercept)          41.7874992  3.7429832  11.164 3.32e-11 ***
+SuccessfullyExecuted 53.8544374  3.4852025  15.452 2.68e-14 ***
+DurationInDays       -1.4309681  0.3968799  -3.606  0.00135 ** 
+ShuSoldiersEngaged   -0.0005492  0.0009647  -0.569  0.57426    
+WeiSoldiersEngaged   -0.0003340  0.0001861  -1.795  0.08483 .  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+(Dispersion parameter for gaussian family taken to be 73.72798)
+
+    Null deviance: 25396.7  on 29  degrees of freedom
+Residual deviance:  1843.2  on 25  degrees of freedom
+AIC: 220.68
+
+Number of Fisher Scoring iterations: 2
+
+>#keep duration in the model as independent variable
+
+> #investigate a potential interaction effect between the number of Shu and Wei soldiers> #center each variable by subtracting its mean from each of its values> centeredShuSoldiersFire <- subsetFire$ShuSoldiersEngaged - mean(subsetFire$ShuSoldiersEngaged)> centeredWeiSoldiersFire <- subsetFire$WeiSoldiersEngaged - mean(subsetFire$WeiSoldiersEngaged)> #multiply the two centered variables to create the interaction variable> interactionSoldiersFire <- centeredShuSoldiersFire * centeredWeiSoldiersFire> #predict the rating of battle using execution, duration, and the interaction between the number of Shu and Wei soldiers engaged> lmFireRating_ExecutionDurationShuWeiInteraction <- glm(Rating ~ SuccessfullyExecuted + DurationInDays + interactionSoldiersFire, data = subsetFire)> #generate a summary of the modellmFireRating_ExecutionDurationShuWeiInteraction_Summary <- summary(lmFireRating_ExecutionDurationShuWeiInteraction)> #display the model summary> lmFireRating_ExecutionDurationShuWeiInteraction_Summary
+Call:
+glm(formula = Rating ~ SuccessfullyExecuted + DurationInDays + 
+    interactionSoldiersFire, data = subsetFire)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-18.233   -7.248    1.466    6.452   10.535  
+
+Coefficients:
+                          Estimate Std. Error t value Pr(>|t|)    
+(Intercept)              3.737e+01  3.467e+00  10.780 4.34e-11 ***
+SuccessfullyExecuted     5.602e+01  3.486e+00  16.071 5.08e-15 ***
+DurationInDays          -1.237e+00  3.960e-01  -3.125  0.00434 ** 
+interactionSoldiersFire -1.273e-07  3.717e-08  -3.424  0.00206 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+(Dispersion parameter for gaussian family taken to be 70.319)
+
+    Null deviance: 25396.7  on 29  degrees of freedom
+Residual deviance:  1828.3  on 26  degrees of freedom
+AIC: 218.43
+
+Number of Fisher Scoring iterations: 2
+
+> #drop the number of Shu and Wei soldiers from model as independent variables
+
+> #keep the interaction between the number of Shu and Wei soldiers engaged in the model as an independent variable
+
+> #use the AIC(object, ...) function to compare the models and choose the most appropriate one> #when comparing via AIC, the lowest value indicates the best statistical model> AIC(lmFireRating_Execution, lmFireRating_ExecutionDuration, lmFireRating_ExecutionDurationSoldiers, lmFireRating_ExecutionDurationShuWeiInteraction)
+                                                df      AIC
+lmFireRating_Execution                           3 237.3636
+lmFireRating_ExecutionDuration                   4 227.6006
+lmFireRating_ExecutionDurationSoldiers           6 220.6781
+lmFireRating_ExecutionDurationShuWeiInteraction  5 218.4345
+
+> #according to AIC, our model that includes execution, duration, and the interaction effect is best
+
+//MODEL DEPLOYMENT
+
+> #use the coef(object) function to extract the coefficients from a regression model> #this will make it easier to rearrange our equation by allowing us to focus only on these values> coef(lmFireRating_ExecutionDurationShuWeiInteraction)
+            (Intercept)    SuccessfullyExecuted          DurationInDays interactionSoldiersFire 
+           3.737354e+01            5.601947e+01           -1.237476e+00           -1.272603e-07
+
+> #rewrite the regression equation to solve for the number of Shu soldiers engaged in battle> #original equation: rating = 37 + 56 * execution - 1.24 * duration - 0.00000013 * soldiers interaction> #rearranged equation: Shu soldiers = (rating - 37 + 56 * execution + 1.24 * duration) / (0.00000013 * - Wei soldiers engaged)
+
+> #use function() to create a custom function in R> #the function() command follows this basic format: +	function(argument1, argument2,... argumenti) { equation } > #custom function that solves for the maximum number of Shu soldiers that can be deployed, given the desired rating, execution, duration, and number of Wei soldiers> functionFireShuSoldiers <- function(rating, execution, duration, WeiSoldiers) {+     (rating - 37 - 56 * execution ++     1.24 * duration) /+	(0.00000013 * - WeiSoldiers)+ }
+
+> #solve for the number of Shu soldiers that can be deployed given a result of 80, duration of 7, success of 1.0, and 15,000 WeiSoldiers> functionFireShuSoldiers(80, 1.0, 7, 10000)[1] 3323.077
+
+> #custom function that solves for rating of battle, given the execution, duration, number of Shu soldiers, and number of Wei soldiers> functionFireRating <- function(execution, duration, ShuSoldiers, WeiSoldiers) {+	37 + 56 * execution -+	1.24 * duration -+ 	0.00000013 * (ShuSoldiers * WeiSoldiers)+ }
+
+> What would happen to our rating value if we were to deploy 2,500 Shu soldiers instead of 3,323?> functionFireRating(1.0, 7, 2500, 10000)[1] 81.07> #Is the 1.07 increase in our predicted chances for victory worth the practical benefits derived from deploying 2,500 soldiers?
+
+> #custom function that calculates the gold cost of our strategy, given the number of Shu soldiers deployed, the distance of the target city, and the proposed duration of battle.> functionGoldCost <- function(ShuSoldiers, distance, duration) {+ 		ShuSoldiers * (distance / 100 + 2 * (duration / 30))+ }
+
+> #gold cost of fire attack that deploys 2,500 Shu soldiers a distance of 225 miles for a period of 7 days> functionGoldCost(2500, 225, 7)[1] 6791.667
+
+> #provisions required by our fire attack strategy> #consumption per 30 days is equal to the number of soldiers deployed> 2500 * (7/30)[1] 583.3333
+
+> #our gold cost of 6,792 is well below our allotment of 1,000,000> #our required provisions of 583 are well below our allotment of 1,000,000> #our 2,500 soldiers account for only 1.25% of our total army personnel> #yes, the fire attack strategy is viable given our resource constraints
+
+//LAST STEPS
+
+> #save the R workspace to your working directory> save.image("rBeginnersGuide_Ch_07_fireAttackAnalysis.RData")
+> #save your R console text by copying and pasting it into a text file
+
+//THE COMMON STEPS TO ALL R ANALYSES
+
+> #see the Common Steps text file that is included with this book to learn about the five steps common to every well-conducted data analysis in R
+

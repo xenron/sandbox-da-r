@@ -1,0 +1,10 @@
+##
+## common settings for chapter 6 examples
+##
+
+export HADOOP_VERSION="0.20.203.0"
+export HADOOP_HOME="/opt/thirdparty/dist/hadoop-${HADOOP_VERSION}"
+## yes, $HADOOP_BIN, not $HADOOP_HOME.  RHIPE prefers the former.
+export HADOOP_BIN="${HADOOP_HOME}/bin"
+
+export PATH="${PATH}:${HADOOP_BIN}"
