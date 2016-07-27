@@ -1,0 +1,85 @@
+<!----------------------------->
+<!-- jQuery row highlighting -->
+<!----------------------------->
+
+<html>
+
+<head>
+  <title>jQuery example</title>
+  <script src="shared/jquery.js" type="text/javascript"></script>
+  <script src="shared/shiny.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="shared/shiny.css"/>
+  <script type="text/javascript">
+  
+$(document).ready(function(){
+
+$(document).on("mouseover", "tr", function(evt) {
+    $(this).css('background-color', 'yellow');
+})
+
+$(document).on("mouseout", "tr", function(evt) {
+    $(this).css('background-color', 'transparent');
+});
+
+$(document).on("click", "td", function(evt) {
+    $('td').css('font-weight', 'normal');
+    $(this).css('font-weight', 'bold');
+})
+
+$(document).on("dblclick", "#datatext", function(evt) {
+    alert($('#hiddentext').text());
+})
+
+});
+  </script>
+  <style type = "text/css">
+
+    #navigation {
+      position: absolute;
+      width: 300px;
+    }
+ 
+    #centerdoc {
+      max-width: 600px;
+      margin-left: 350px;
+      border-left: 1px solid #c6ec8c;
+      padding-left: 20px;
+    }
+    
+  </style>
+
+</head>
+ 
+<body>
+
+    <h1>jQuery example</h1>
+
+    <div id = "navigation">
+    
+      <label for="dataSet">Select dataset</label>
+      <select id="dataSet">
+        <option value="iris" selected="selected">
+          Iris data</option>
+        <option value="USPersonalExpenditure">
+          Personal expenditure data</option>
+        <option value="CO2">CO2 data</option>
+      </select>
+    
+    </div>
+    
+    <div id = "centerdoc">
+    
+      <div id="datatext" class="shiny-text-output"></div>
+      
+      <div id="hiddentext" style = "text-indent: 100%;
+        white-space: nowrap; overflow: hidden"
+        class="shiny-text-output">
+      </div>
+      
+      <div id="dataset" class="shiny-html-output"></div> 
+ 
+    </div>
+       
+</body>
+
+</html>
