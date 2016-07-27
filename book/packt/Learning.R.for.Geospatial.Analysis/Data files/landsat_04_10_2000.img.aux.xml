@@ -1,0 +1,62 @@
+<PAMDataset>
+  <PAMRasterBand band="1">
+    <Description>Layer_1</Description>
+    <Metadata>
+      <MDI key="LAYER_TYPE">athematic</MDI>
+      <MDI key="STATISTICS_MAXIMUM">0.60806542634964</MDI>
+      <MDI key="STATISTICS_MEAN">1.#QNAN</MDI>
+      <MDI key="STATISTICS_MINIMUM">3.1097373721423e-005</MDI>
+      <MDI key="STATISTICS_STDDEV">1.#QNAN</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="2">
+    <Description>Layer_2</Description>
+    <Metadata>
+      <MDI key="LAYER_TYPE">athematic</MDI>
+      <MDI key="STATISTICS_MAXIMUM">0.69051384925842</MDI>
+      <MDI key="STATISTICS_MEAN">1.#QNAN</MDI>
+      <MDI key="STATISTICS_MINIMUM">0.020197916775942</MDI>
+      <MDI key="STATISTICS_STDDEV">1.#QNAN</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="3">
+    <Description>Layer_3</Description>
+    <Metadata>
+      <MDI key="LAYER_TYPE">athematic</MDI>
+      <MDI key="STATISTICS_MAXIMUM">0.74036353826523</MDI>
+      <MDI key="STATISTICS_MEAN">1.#QNAN</MDI>
+      <MDI key="STATISTICS_MINIMUM">0.03287898004055</MDI>
+      <MDI key="STATISTICS_STDDEV">1.#QNAN</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="4">
+    <Description>Layer_4</Description>
+    <Metadata>
+      <MDI key="LAYER_TYPE">athematic</MDI>
+      <MDI key="STATISTICS_MAXIMUM">0.76201152801514</MDI>
+      <MDI key="STATISTICS_MEAN">1.#QNAN</MDI>
+      <MDI key="STATISTICS_MINIMUM">0.06214103102684</MDI>
+      <MDI key="STATISTICS_STDDEV">1.#QNAN</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="5">
+    <Description>Layer_5</Description>
+    <Metadata>
+      <MDI key="LAYER_TYPE">athematic</MDI>
+      <MDI key="STATISTICS_MAXIMUM">0.56283229589462</MDI>
+      <MDI key="STATISTICS_MEAN">1.#QNAN</MDI>
+      <MDI key="STATISTICS_MINIMUM">0.03906062245369</MDI>
+      <MDI key="STATISTICS_STDDEV">1.#QNAN</MDI>
+    </Metadata>
+  </PAMRasterBand>
+  <PAMRasterBand band="6">
+    <Description>Layer_6</Description>
+    <Metadata>
+      <MDI key="LAYER_TYPE">athematic</MDI>
+      <MDI key="STATISTICS_MAXIMUM">0.58459901809692</MDI>
+      <MDI key="STATISTICS_MEAN">1.#QNAN</MDI>
+      <MDI key="STATISTICS_MINIMUM">0.027819149196148</MDI>
+      <MDI key="STATISTICS_STDDEV">1.#QNAN</MDI>
+    </Metadata>
+  </PAMRasterBand>
+</PAMDataset>
