@@ -1,0 +1,95 @@
+*************************
+***Animated Chart********
+*************************
+install.packages("googleVis")
+library(googleVis)
+data1 = read.csv("final.csv", sep =",", header = TRUE)
+chart<- gvisMotionChart(data1, idvar="Country", timevar="Years", xvar = "fert",yvar = "life")
+plot(chart)
+
+
+************************************
+*** Presentations in R**************
+************************************
+## Installing necessary Packages
+
+install.packages("devtools")
+library(devtools)
+install_github('slidify','ramnathv')
+install_github('slidifyLibraries','ramnathv')
+library(slidify)
+
+## generating a folder in Slidify
+setwd(<your directory path>)
+author("plots")
+
+*************************
+*** Index.Rmd file*******
+*************************
+---
+title       : A simple example
+subtitle    : 
+author      : ABCD
+job         : GHI
+framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+widgets     : [mathjax]            # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slides
+---
+
+## Read-And-Delete
+
+> 1. Introduction
+> 2. how to write an equation
+> 3. Plot in R
+> 4. Conclusion
+
+--- 
+
+## Writting an Equations in R
+
+# $ CMR = \hat{ \alpha } +  \ \hat{ \beta}PGNP +  \ \hat{ \gamma }  FLR + \ \hat{ \epsilon } $
+where : CMR = Child Mortality Rate
+        PGNP = per capita GNP
+        FMR = Female Literacy Rate
+
+---
+
+```{r}
+plot(cars, pch = 20, col = "blue")
+```
+
+---
+
+```{r}
+summary(cars)
+
+```
+
+---
+
+## How to read data in slidify
+```{r}
+setwd("C:/Users/agohil/Book")
+data = read.csv("final.csv" , sep = ",", header = TRUE)
+head(data)
+```
+
+******************************
+**XML API in R****************
+******************************
+install.packages("XML")
+library(XML)
+url = "http://api.nytimes.com/svc/elections/us/v3/finances/2008/independent_expenditures/race_totals/senate.xml?api-key=<your key>"
+data = readLines(url)
+data = xmlParse(data)
+state=xpathSApply(data, "//state",xmlValue)
+amount=xpathSApply(data, "//amount",xmlValue)
+amt = as.numeric(amount[1:5])
+amt = amt/100000
+names= as.vector(state[1:5])
+barplot(amt,beside = TRUE, col = "lightblue", names.arg = names, main = "campaign exp (2008)", xlab = "state", ylab = "Exp")
+
+

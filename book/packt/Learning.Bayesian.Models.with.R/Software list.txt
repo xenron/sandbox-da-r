@@ -1,0 +1,3 @@
+To try out the examples from the book, the following software are required:
+ ->R (https://cran.r-project.org/bin/windows/base/)
+ ->RStudio (https://www.rstudio.com/products/rstudio/download/)
