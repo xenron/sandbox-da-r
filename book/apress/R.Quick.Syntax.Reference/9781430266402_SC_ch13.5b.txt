@@ -1,0 +1,23 @@
+function () 
+{
+    set.seed(69785)
+    n.hist = numeric(10000)
+    n = 0
+    cl.sv = 0
+    n.col = 10000
+    repeat {
+        x = matrix(rnorm(n.col * 100), 100, n.col)
+        x = apply(x, 2, sum)
+        x = x/10
+        x = length(x[x > 1.965])
+        cl.sv = cl.sv + x
+        n = n + 1
+        n.hist[(cl.sv - x + 1):cl.sv] = n
+        n.col = n.col - x
+        if (n.col == 0) 
+            break
+    }
+    hist(n.hist)
+    print(mean(n.hist))
+    median(n.hist)
+}

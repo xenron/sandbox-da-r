@@ -1,0 +1,11 @@
+function () 
+{
+    set.seed(6978)
+    mc = "A"
+    for (i in 2:6) {
+        rn = runif(1)
+        mc = c(mc, ifelse(mc[i - 1] == "A", ifelse(rn <= 0.7, 
+            "A", "B"), ifelse(rn <= 0.8, "B", "A")))
+    }
+    print(mc)
+}

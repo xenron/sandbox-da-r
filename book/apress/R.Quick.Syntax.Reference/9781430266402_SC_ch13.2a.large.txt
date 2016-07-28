@@ -1,0 +1,12 @@
+function () 
+{
+    set.seed(129435)
+    n = 0
+    x = 0
+    while (x <= 1e+06) {
+        x = x + runif(1)
+        n = n + 1
+    }
+    print(n)
+    print(x)
+}

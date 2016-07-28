@@ -1,0 +1,9 @@
+function (x, i = 0) 
+{
+    if (abs(x^i/factorial(i)) > 1e-08) {
+        r.exp(x, i + 1) + x^i/factorial(i)
+    }
+    else {
+        0
+    }
+}

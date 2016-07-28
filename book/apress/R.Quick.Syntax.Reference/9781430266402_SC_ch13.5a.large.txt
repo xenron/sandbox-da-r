@@ -1,0 +1,19 @@
+function () 
+{
+    set.seed(69785)
+    n.hist = numeric(1e+05)
+    for (i in 1:1e+05) {
+        n = 0
+        repeat {
+            n = n + 1
+            x = sum(rnorm(100)/10)
+            if (x > 1.965) {
+                n.hist[i] = n
+                break
+            }
+        }
+    }
+    hist(n.hist)
+    mean(n.hist)
+    median(n.hist)
+}

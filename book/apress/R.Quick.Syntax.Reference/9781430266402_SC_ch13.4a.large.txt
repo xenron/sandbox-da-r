@@ -1,0 +1,12 @@
+function () 
+{
+    set.seed(69785)
+    x = rnorm(1)
+    for (i in 1:1e+05) {
+        x2 = rnorm(1)
+        if (x2 > 1.965) 
+            next
+        x = c(x, x2)
+    }
+    hist(x)
+}

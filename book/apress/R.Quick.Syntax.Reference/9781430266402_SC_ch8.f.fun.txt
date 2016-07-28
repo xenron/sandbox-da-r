@@ -1,0 +1,5 @@
+function (mu, se = 1, alpha = 0.05) 
+{
+    q_value = qnorm(1 - alpha/2, mu, se)
+    print(q_value)
+}

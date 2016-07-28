@@ -1,0 +1,14 @@
+function () 
+{
+    x = matrix(1:8, 2, 4)
+    colnames(x) = paste("c", 1:4, sep = "")
+    print(x)
+    ind.1 = rep(1:3, 3:1)
+    print(ind.1)
+    ind.2 = 2:4
+    for (i in 3:4) ind.2 = c(ind.2, i:4)
+    print(ind.2)
+    xp = x[, ind.1] - x[, ind.2]
+    colnames(xp) = paste("c", ind.1, "-", "c", ind.2, sep = "")
+    print(xp)
+}

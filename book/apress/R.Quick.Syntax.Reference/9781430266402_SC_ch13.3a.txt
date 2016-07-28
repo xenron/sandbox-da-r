@@ -1,0 +1,19 @@
+function () 
+{
+    x = matrix(1:8, 2, 4)
+    colnames(x) = paste("c", 1:4, sep = "")
+    print(x)
+    xp = matrix(0, 2, 6)
+    colnames(xp) = rep("", 6)
+    print(xp)
+    k = 0
+    for (i in 1:3) {
+        for (j in (i + 1):4) {
+            k = k + 1
+            xp[, k] = x[, i] - x[, j]
+            colnames(xp)[k] = paste(colnames(x)[i], "-", colnames(x)[j], 
+                sep = "")
+        }
+    }
+    xp
+}

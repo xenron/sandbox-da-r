@@ -1,0 +1,7 @@
+function () 
+{
+    set.seed(69785)
+    x = rnorm(10001)
+    x = x[x <= 1.965]
+    hist(x)
+}

@@ -1,0 +1,10 @@
+function () 
+{
+    set.seed(129435)
+    x = runif(3e+06)
+    x = cumsum(x)
+    n = length(x[x <= 1e+06]) + 1
+    x = x[n]
+    print(n)
+    print(x)
+}

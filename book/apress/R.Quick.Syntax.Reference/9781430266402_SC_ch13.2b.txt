@@ -1,0 +1,10 @@
+function () 
+{
+    set.seed(129435)
+    x = runif(25)
+    x = cumsum(x)
+    n = length(x[x <= 5]) + 1
+    x = x[n]
+    print(n)
+    x
+}
